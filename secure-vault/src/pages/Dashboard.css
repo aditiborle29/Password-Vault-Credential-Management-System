@@ -1,0 +1,105 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#f4f7fc;
+}
+
+.dashboard-container{
+    min-height:100vh;
+    padding:30px;
+}
+
+/* Navbar */
+
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:white;
+    padding:18px 35px;
+    border-radius:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+.navbar h2{
+    color:#2563eb;
+}
+
+.logout-btn{
+    background:#ef4444;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+    transition:.3s;
+}
+
+.logout-btn:hover{
+    background:#dc2626;
+}
+
+/* Welcome */
+
+.welcome{
+    text-align:center;
+    margin-top:40px;
+}
+
+.welcome h1{
+    color:#1f2937;
+    margin-bottom:10px;
+}
+
+.welcome p{
+    color:#6b7280;
+    font-size:17px;
+}
+
+/* Cards */
+
+.card-container{
+    margin-top:50px;
+    display:flex;
+    justify-content:center;
+    gap:30px;
+    flex-wrap:wrap;
+}
+
+.card{
+    width:280px;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    text-align:center;
+    text-decoration:none;
+    color:#111827;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 15px 30px rgba(0,0,0,.15);
+}
+
+.icon{
+    font-size:45px;
+    margin-bottom:15px;
+}
+
+.card h3{
+    color:#2563eb;
+    margin-bottom:10px;
+}
+
+.card p{
+    color:#6b7280;
+    font-size:15px;
+}
