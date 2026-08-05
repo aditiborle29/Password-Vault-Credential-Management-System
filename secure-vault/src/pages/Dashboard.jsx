@@ -23,8 +23,8 @@ function Dashboard() {
             </div>
 
             <div className="welcome">
-                <h1>Welcome 👋</h1>
-                <p>Manage your credentials securely from one place.</p>
+                <h1>Welcome </h1>
+                <p>Manage your credentials securely in one place.</p>
             </div>
 
             <div className="card-container">

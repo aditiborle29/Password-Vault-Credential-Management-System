@@ -28,6 +28,7 @@ body{
 
 .navbar h2{
     color:#2563eb;
+    background-color: white;
 }
 
 .logout-btn{
@@ -70,6 +71,7 @@ body{
     justify-content:center;
     gap:30px;
     flex-wrap:wrap;
+
 }
 
 .card{
@@ -92,14 +94,17 @@ body{
 .icon{
     font-size:45px;
     margin-bottom:15px;
+    background-color: white;
 }
 
 .card h3{
     color:#2563eb;
     margin-bottom:10px;
+    background-color: white;
 }
 
 .card p{
     color:#6b7280;
     font-size:15px;
+    background-color: white;
 }

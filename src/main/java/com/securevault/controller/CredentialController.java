@@ -15,21 +15,14 @@ public class CredentialController {
     @Autowired
     private CredentialService credentialService;
 
-    // Add Credential
     @PostMapping
     public Credential addCredential(@RequestBody Credential credential) {
         return credentialService.saveCredential(credential);
     }
 
-    // Get All Credentials
     @GetMapping
-    public List<Credential> getAllCredentials() {
-        return credentialService.getAllCredentials();
-    }
-
-    @GetMapping("/test")
-    public String test() {
-        return "Credential Controller Working";
+    public List<Credential> getAllCredentials(@RequestParam String email) {
+        return credentialService.getAllCredentials(email);
     }
 
     @GetMapping("/{id}")
@@ -38,9 +31,21 @@ public class CredentialController {
     }
 
     @PutMapping("/{id}")
-    public Credential updateCredential(@PathVariable Long id,
+    public Credential updateCredential(
+            @PathVariable Long id,
             @RequestBody Credential credential) {
+
         return credentialService.updateCredential(id, credential);
     }
 
+    @DeleteMapping("/{id}")
+    public String deleteCredential(@PathVariable Long id) {
+        credentialService.deleteCredential(id);
+        return "Credential Deleted Successfully";
+    }
+
+    @GetMapping("/test")
+    public String test() {
+        return "Credential Controller Working";
+    }
 }

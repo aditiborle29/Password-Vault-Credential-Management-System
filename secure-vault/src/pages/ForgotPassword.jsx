@@ -1,30 +1,70 @@
 import React, { useState } from "react";
-import "./ForgotPassword.css";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import "./ForgotPassword.css";
+import { useNavigate } from "react-router-dom";
 
 function ForgotPassword() {
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const [otpSent, setOtpSent] = useState(false);
+
+  // Send OTP
+  const sendOtp = async () => {
+    if (!email) {
+      alert("Please enter your email");
+      return;
+    }
 
     try {
+      const response = await axios.post(
+        `http://localhost:8080/api/auth/send-otp?email=${email}`
+      );
 
-      const response = await axios.put(
-        "http://localhost:8080/api/auth/forgot-password",
+      alert(response.data);
+      setOtpSent(true);
+
+    } catch (error) {
+      if (error.response) {
+        alert(error.response.data);
+      } else {
+        alert("Unable to connect to server");
+      }
+    }
+  };
+
+  // Verify OTP & Reset Password
+  const resetPassword = async () => {
+    if (!otp || !newPassword) {
+      alert("Please enter OTP and New Password");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/verify-otp",
         {
           email,
+          otp,
           newPassword,
         }
       );
 
       alert(response.data);
 
+      navigate("/login");
+
     } catch (error) {
-      alert("Failed to update password");
+
+      if (error.response) {
+        alert(error.response.data);
+      } else {
+        alert("Failed to update password");
+      }
+
     }
   };
 
@@ -33,41 +73,42 @@ function ForgotPassword() {
 
       <div className="forgot-card">
 
-        <div className="lock-icon">🔒</div>
+        <h2>🔐 Forgot Password</h2>
 
-        <h2>Forgot Password</h2>
+        <p>Reset your password using Email OTP</p>
 
-        <p className="subtitle">
-          Reset your Secure Vault password
-        </p>
+        <input
+          type="email"
+          placeholder="Enter Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
-        <form onSubmit={handleSubmit}>
+        <button onClick={sendOtp}>
+          Send OTP
+        </button>
 
-          <input
-            type="email"
-            placeholder="Enter your Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+        {otpSent && (
+          <>
+            <input
+              type="text"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+            />
 
-          <input
-            type="password"
-            placeholder="Enter New Password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-          />
+            <input
+              type="password"
+              placeholder="Enter New Password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
 
-          <button type="submit">
-            Update Password
-          </button>
-
-        </form>
-
-        <Link to="/login" className="back-link">
-          ← Back to Login
-        </Link>
+            <button onClick={resetPassword}>
+              Reset Password
+            </button>
+          </>
+        )}
 
       </div>
 

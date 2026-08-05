@@ -2,6 +2,7 @@ package com.securevault.service;
 
 import com.securevault.dto.ForgotPasswordRequest;
 import com.securevault.dto.LoginRequest;
+import com.securevault.dto.VerifyOtpRequest;
 import com.securevault.entity.User;
 import com.securevault.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,14 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // Register
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private OtpService otpService;
+
+    // ================= REGISTER =================
+
     public String register(User user) {
 
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
@@ -32,7 +40,8 @@ public class UserService {
         return "User Registered Successfully";
     }
 
-    // Login
+    // ================= LOGIN =================
+
     public String login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail()).orElse(null);
@@ -48,8 +57,26 @@ public class UserService {
         return "Login Successful";
     }
 
-    // Forgot Password
-    public String forgotPassword(ForgotPasswordRequest request) {
+    // ================= SEND OTP =================
+
+    public String sendOtp(String email) {
+
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            return "User not found!";
+        }
+
+        String otp = otpService.generateOtp(email);
+
+        emailService.sendOtp(email, otp);
+
+        return "OTP sent successfully";
+    }
+
+    // ================= VERIFY OTP =================
+
+    public String verifyOtpAndResetPassword(VerifyOtpRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail()).orElse(null);
 
@@ -57,10 +84,22 @@ public class UserService {
             return "User not found!";
         }
 
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        boolean validOtp = otpService.verifyOtp(
+                request.getEmail(),
+                request.getOtp());
+
+        if (!validOtp) {
+            return "Invalid OTP";
+        }
+
+        user.setPassword(
+                passwordEncoder.encode(request.getNewPassword()));
 
         userRepository.save(user);
 
+        otpService.removeOtp(request.getEmail());
+
         return "Password Updated Successfully";
     }
+
 }

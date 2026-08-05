@@ -1,79 +1,170 @@
 import React, { useState } from "react";
 import { addCredential } from "../services/credentialService";
 import { useNavigate } from "react-router-dom";
+import "./AddCredential.css";
 
 function AddCredential() {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [credential, setCredential] = useState({
+    website: "",
+    username: "",
+    password: "",
+  });
 
-    const [website, setWebsite] = useState("");
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+  const [strength, setStrength] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const checkStrength = (password) => {
+    let score = 0;
 
-        try {
+    if (password.length >= 8) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
 
-            await addCredential({
-                website,
-                username,
-                password
-            });
+    if (score <= 2) return "Weak";
+    if (score <= 4) return "Medium";
+    return "Strong";
+  };
 
-            alert("Credential Saved Successfully");
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-            navigate("/vault");
+    setCredential({
+      ...credential,
+      [name]: value,
+    });
 
-        } catch (error) {
+    if (name === "password") {
+      setStrength(checkStrength(value));
+    }
+  };
 
-            alert("Failed to Save Credential");
+  const generatePassword = () => {
+    const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const lower = "abcdefghijklmnopqrstuvwxyz";
+    const numbers = "0123456789";
+    const symbols = "!@#$%^&*()_+-=[]{}<>?";
 
-        }
-    };
+    const all = upper + lower + numbers + symbols;
+    const length = 16;
 
-    return (
-        <div style={{ textAlign: "center", marginTop: "80px" }}>
+    let password = "";
 
-            <h2>Add Credential</h2>
+    // Ensure all character types are included
+    password += upper[Math.floor(Math.random() * upper.length)];
+    password += lower[Math.floor(Math.random() * lower.length)];
+    password += numbers[Math.floor(Math.random() * numbers.length)];
+    password += symbols[Math.floor(Math.random() * symbols.length)];
 
-            <form onSubmit={handleSubmit}>
+    // Fill remaining characters
+    for (let i = password.length; i < length; i++) {
+      password += all[Math.floor(Math.random() * all.length)];
+    }
 
-                <input
-                    type="text"
-                    placeholder="Website"
-                    value={website}
-                    onChange={(e) => setWebsite(e.target.value)}
-                />
+    // Shuffle
+    password = password
+      .split("")
+      .sort(() => Math.random() - 0.5)
+      .join("");
 
-                <br /><br />
+    setCredential({
+      ...credential,
+      password,
+    });
 
-                <input
-                    type="text"
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
+    setStrength(checkStrength(password));
+  };
 
-                <br /><br />
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+    try {
+      await addCredential(credential);
+      alert("Credential Saved Successfully!");
+      navigate("/vault");
+    } catch (error) {
+      alert("Failed to save credential");
+    }
+  };
 
-                <br /><br />
+  return (
+    <div className="add-container">
+      <div className="add-card">
 
-                <button type="submit">
-                    Save Credential
-                </button>
+        <h2>🔐 Add Credential</h2>
+        <p>Store your website credentials securely</p>
 
-            </form>
+        <form onSubmit={handleSubmit}>
 
-        </div>
-    );
+          <input
+            type="text"
+            name="website"
+            placeholder="Website"
+            value={credential.website}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="text"
+            name="username"
+            placeholder="Username / Email"
+            value={credential.username}
+            onChange={handleChange}
+            required
+          />
+
+          <div className="password-container">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              value={credential.password}
+              onChange={handleChange}
+              required
+            />
+
+            <button
+              type="button"
+              className="eye-btn"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "🙈" : "👁"}
+            </button>
+          </div>
+
+          <button
+            type="button"
+            className="generate-btn"
+            onClick={generatePassword}
+          >
+            🎲 Generate Strong Password
+          </button>
+
+          {strength && (
+            <>
+              <div className="strength-bar">
+                <div className={strength.toLowerCase()}></div>
+              </div>
+
+              <p className={`strength-text ${strength.toLowerCase()}`}>
+                Password Strength: <span>{strength}</span>
+              </p>
+            </>
+          )}
+
+          <button type="submit" className="save-btn">
+            💾 Save Credential
+          </button>
+
+        </form>
+
+      </div>
+    </div>
+  );
 }
 
 export default AddCredential;

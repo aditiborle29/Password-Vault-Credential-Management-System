@@ -22,12 +22,12 @@ function Login() {
       );
 
       if (response.data === "Login Successful") {
+        localStorage.setItem("userEmail", email);
         alert("Login Successful");
         navigate("/dashboard");
       } else {
         alert(response.data);
       }
-
     } catch (error) {
       alert("Invalid Email or Password");
     }
@@ -38,6 +38,7 @@ function Login() {
       <div className="login-card">
 
         <h1>🔐 Secure Vault</h1>
+
         <p className="subtitle">
           Store and manage your credentials securely
         </p>

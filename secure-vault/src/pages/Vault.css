@@ -1,70 +1,168 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-body{
-    background:#f4f7fc;
+body {
+    background: #f4f7fb;
 }
 
-.vault-container{
-    min-height:100vh;
+.vault-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 50px 20px;
+}
+
+.vault-card {
+    width: 95%;
+    max-width: 1100px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.vault-card h2 {
+    text-align: center;
+    color: #2563eb;
+    margin-bottom: 25px;
+    background-color: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table thead {
+    background: #2563eb;
+    
+}
+
+table th,
+table td {
+    padding: 14px;
+    border-bottom: 2px solid black;
+    text-align: center;
+    background-color: white;
+}
+
+table tbody tr:hover {
+    background: #f5f7ff;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.edit-btn {
+    text-decoration: none;
+    background: #2563eb;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.edit-btn:hover {
+    background: #1d4ed8;
+}
+
+.delete-btn {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.delete-btn:hover {
+    background: #b91c1c;
+}
+
+.back-btn {
+    display: inline-block;
+    margin-top: 25px;
+    text-decoration: none;
+    color: white;
+    background: #2563eb;
+    padding: 10px 18px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.back-btn:hover {
+    background: #1d4ed8;
+}
+
+.no-data {
+    text-align: center;
+    color: gray;
+    font-size: 18px;
+    margin: 30px 0;
+}
+
+.action-buttons{
     display:flex;
+    flex-wrap:wrap;
     justify-content:center;
-    align-items:center;
-    padding:40px;
+    gap:8px;
 }
 
-.vault-card{
-    width:90%;
-    max-width:900px;
-    background:white;
-    border-radius:15px;
-    box-shadow:0 10px 25px rgba(0,0,0,.15);
-    padding:30px;
-}
+.show-btn,
+.copy-btn,
+.edit-btn,
+.delete-btn{
 
-.vault-card h2{
-    text-align:center;
-    color:#2563eb;
-    margin-bottom:25px;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-thead{
-    background:#2563eb;
-    color:white;
-}
-
-th,td{
-    padding:15px;
-    text-align:center;
-    border-bottom:1px solid #ddd;
-}
-
-tbody tr:hover{
-    background:#f1f5ff;
-}
-
-.edit-btn{
-    background:#2563eb;
-    color:white;
-    padding:8px 16px;
+    padding:8px 14px;
+    border:none;
     border-radius:6px;
-    text-decoration:none;
-    transition:.3s;
+    color:white;
+    cursor:pointer;
+    font-size:14px;
+    transition:0.3s;
 }
 
-.edit-btn:hover{
+.show-btn{
+    background:#2563eb;
+}
+
+.show-btn:hover{
     background:#1d4ed8;
 }
 
-td{
-    font-size:15px;
+.copy-btn{
+    background:#10b981;
+}
+
+.copy-btn:hover{
+    background:#059669;
+}
+
+.edit-btn{
+    background:#f59e0b;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.edit-btn:hover{
+    background:#d97706;
+}
+
+.delete-btn{
+    background:#ef4444;
+}
+
+.delete-btn:hover{
+    background:#dc2626;
 }
