@@ -8,46 +8,147 @@ function Dashboard() {
 
     const handleLogout = () => {
         localStorage.removeItem("user");
+        localStorage.removeItem("userEmail");
         navigate("/login");
     };
 
     return (
         <div className="dashboard-container">
 
+            {/* NAVBAR */}
+
             <div className="navbar">
+
                 <h2>🔐 Secure Vault</h2>
 
-                <button className="logout-btn" onClick={handleLogout}>
+                <button
+                    className="logout-btn"
+                    onClick={handleLogout}
+                >
                     Logout
                 </button>
+
             </div>
 
+
+            {/* WELCOME */}
+
             <div className="welcome">
-                <h1>Welcome </h1>
-                <p>Manage your credentials securely in one place.</p>
+
+                <h1>Welcome 👋</h1>
+
+                <p>
+                    Manage your credentials securely in one place.
+                </p>
+
             </div>
+
+
+            {/* CARDS */}
 
             <div className="card-container">
 
-                <Link to="/add" className="card">
-                    <div className="icon">➕</div>
-                    <h3>Add Credential</h3>
-                    <p>Save new website credentials securely.</p>
+                {/* ADD CREDENTIAL */}
+
+                <Link
+                    to="/add"
+                    className="card"
+                >
+
+                    <div className="icon">
+                        ➕
+                    </div>
+
+                    <h3>
+                        Add Credential
+                    </h3>
+
+                    <p>
+                        Save new website credentials securely.
+                    </p>
+
                 </Link>
 
-                <Link to="/vault" className="card">
-                    <div className="icon">🔒</div>
-                    <h3>View Credentials</h3>
-                    <p>Access all your stored credentials.</p>
+
+                {/* VIEW CREDENTIALS */}
+
+                <Link
+                    to="/vault"
+                    className="card"
+                >
+
+                    <div className="icon">
+                        🔒
+                    </div>
+
+                    <h3>
+                        View Credentials
+                    </h3>
+
+                    <p>
+                        Access all your stored credentials.
+                    </p>
+
                 </Link>
 
-                <Link to="/forgot-password" className="card">
-                    <div className="icon">🔑</div>
-                    <h3>Forgot Password</h3>
-                    <p>Update your account password.</p>
+
+                {/* SHARED WITH ME */}
+
+                <Link
+                    to="/shared"
+                    className="card"
+                >
+
+                    <div className="icon">
+                        🔗
+                    </div>
+
+                    <h3>
+                        Shared With Me
+                    </h3>
+
+                    <p>
+                        View credentials shared with you.
+                    </p>
+
                 </Link>
+
+
+                {/* FORGOT PASSWORD */}
+
+                {/* 
+                <Link
+                    to="/forgot-password"
+                    className="card"
+                >
+
+                    <div className="icon">
+                        🔑
+                    </div>
+
+                    <h3>
+                        Forgot Password
+                    </h3>
+
+                    <p>
+                        Update your account password.
+                    </p>
+
+                </Link>
+                */}
 
             </div>
+
+
+            {/* BACK BUTTON */}
+
+            <button
+                type="button"
+                className="back-btn"
+                onClick={() => navigate("/login")}
+            >
+                ← Back
+            </button>
 
         </div>
     );

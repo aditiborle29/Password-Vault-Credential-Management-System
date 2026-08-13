@@ -7,6 +7,8 @@ import Vault from "./pages/Vault";
 import AddCredential from "./pages/AddCredential";
 import EditCredential from "./pages/EditCredential";
 import ForgotPassword from "./pages/ForgotPassword";
+import SharedCredentials from "./pages/SharedCredentials";
+
 
 function App() {
   return (
@@ -18,6 +20,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/vault" element={<Vault />} />
+        <Route path="/shared" element={<SharedCredentials />} />
         <Route path="/add" element={<AddCredential />} />
         <Route path="/edit/:id" element={<EditCredential />} />
       </Routes>

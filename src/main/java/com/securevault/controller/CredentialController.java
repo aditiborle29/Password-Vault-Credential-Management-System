@@ -1,7 +1,9 @@
 package com.securevault.controller;
 
+import com.securevault.dto.SharedCredentialResponse;
 import com.securevault.entity.Credential;
 import com.securevault.service.CredentialService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,40 +14,69 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:5173")
 public class CredentialController {
 
-    @Autowired
-    private CredentialService credentialService;
+        @Autowired
+        private CredentialService credentialService;
 
-    @PostMapping
-    public Credential addCredential(@RequestBody Credential credential) {
-        return credentialService.saveCredential(credential);
-    }
+        // ADD CREDENTIAL
+        @PostMapping
+        public Credential addCredential(
+                        @RequestBody Credential credential) {
 
-    @GetMapping
-    public List<Credential> getAllCredentials(@RequestParam String email) {
-        return credentialService.getAllCredentials(email);
-    }
+                return credentialService.saveCredential(credential);
+        }
 
-    @GetMapping("/{id}")
-    public Credential getCredentialById(@PathVariable Long id) {
-        return credentialService.getCredentialById(id);
-    }
+        // GET MY CREDENTIALS
+        @GetMapping
+        public List<Credential> getAllCredentials(
+                        @RequestParam String email) {
 
-    @PutMapping("/{id}")
-    public Credential updateCredential(
-            @PathVariable Long id,
-            @RequestBody Credential credential) {
+                return credentialService.getAllCredentials(email);
+        }
 
-        return credentialService.updateCredential(id, credential);
-    }
+        // GET SHARED CREDENTIALS
+        @GetMapping("/shared")
+        public List<SharedCredentialResponse> getSharedCredentials(
+                        @RequestParam String email) {
 
-    @DeleteMapping("/{id}")
-    public String deleteCredential(@PathVariable Long id) {
-        credentialService.deleteCredential(id);
-        return "Credential Deleted Successfully";
-    }
+                return credentialService.getSharedCredentials(email);
+        }
 
-    @GetMapping("/test")
-    public String test() {
-        return "Credential Controller Working";
-    }
+        // GET CREDENTIAL BY ID
+        @GetMapping("/{id}")
+        public Credential getCredentialById(
+                        @PathVariable Long id) {
+
+                return credentialService.getCredentialById(id);
+        }
+
+        // UPDATE CREDENTIAL
+        @PutMapping("/{id}")
+        public Credential updateCredential(
+                        @PathVariable Long id,
+                        @RequestParam String email,
+                        @RequestBody Credential credential) {
+
+                return credentialService.updateCredential(
+                                id,
+                                credential,
+                                email);
+        }
+
+        // DELETE CREDENTIAL
+        @DeleteMapping("/{id}")
+        public String deleteCredential(
+                        @PathVariable Long id,
+                        @RequestParam String email) {
+
+                return credentialService.deleteCredential(
+                                id,
+                                email);
+        }
+
+        // TEST
+        @GetMapping("/test")
+        public String test() {
+
+                return "Credential Controller Working";
+        }
 }

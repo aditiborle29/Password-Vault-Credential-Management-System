@@ -108,3 +108,20 @@ body{
     font-size:15px;
     background-color: white;
 }
+
+.back-btn {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 7px 14px;
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* .back-btn:hover {
+    background: #4b5563;
+} */

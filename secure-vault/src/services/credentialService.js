@@ -2,28 +2,79 @@ import axios from "axios";
 
 const API = "http://localhost:8080/api/credentials";
 
-// Get logged-in user's credentials
+// ================= GET MY CREDENTIALS =================
+
 export const getCredentials = () => {
   const email = localStorage.getItem("userEmail");
-  return axios.get(`${API}?email=${email}`);
+
+  return axios.get(API, {
+    params: {
+      email: email,
+    },
+  });
 };
 
-// Add credential
+
+// ================= ADD CREDENTIAL =================
+
 export const addCredential = (credential) => {
-  credential.email = localStorage.getItem("userEmail");
-  return axios.post(API, credential);
+  const email = localStorage.getItem("userEmail");
+
+  return axios.post(API, {
+    ...credential,
+    email: email,
+  });
 };
 
-// Get credential by ID
-export const getCredentialById = (id) =>
-  axios.get(`${API}/${id}`);
 
-// Update credential
+// ================= GET CREDENTIAL BY ID =================
+
+export const getCredentialById = (id) => {
+  return axios.get(`${API}/${id}`);
+};
+
+
+// ================= UPDATE CREDENTIAL =================
+
 export const updateCredential = (id, credential) => {
-  credential.email = localStorage.getItem("userEmail");
-  return axios.put(`${API}/${id}`, credential);
+  const email = localStorage.getItem("userEmail");
+
+  return axios.put(
+    `${API}/${id}`,
+    credential,
+    {
+      params: {
+        email: email,
+      },
+    }
+  );
 };
 
-// Delete credential
-export const deleteCredential = (id) =>
-  axios.delete(`${API}/${id}`);
+
+// ================= DELETE CREDENTIAL =================
+
+export const deleteCredential = (id) => {
+  const email = localStorage.getItem("userEmail");
+
+  return axios.delete(
+    `${API}/${id}`,
+    {
+      params: {
+        email: email,
+      },
+    }
+  );
+};
+
+
+// ================= GET SHARED CREDENTIALS =================
+
+export const getSharedCredentials = () => {
+  const email = localStorage.getItem("userEmail");
+
+  return axios.get(`${API}/shared`, {
+    params: {
+      email: email,
+    },
+  });
+};

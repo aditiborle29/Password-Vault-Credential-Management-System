@@ -141,7 +141,7 @@ function AddCredential() {
             className="generate-btn"
             onClick={generatePassword}
           >
-            🎲 Generate Strong Password
+            🎲 Generate Password
           </button>
 
           {strength && (
@@ -160,9 +160,18 @@ function AddCredential() {
             💾 Save Credential
           </button>
 
-        </form>
+          <button
+                type="button"
+                className="back-btn"
+                onClick={() => navigate("/login")}
+            >
+                ← Back
+            </button>
 
+        </form>
+       
       </div>
+      
     </div>
   );
 }
