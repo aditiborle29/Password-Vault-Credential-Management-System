@@ -1,10 +1,10 @@
 package com.securevault.service;
 
-import com.securevault.dto.ForgotPasswordRequest;
 import com.securevault.dto.LoginRequest;
 import com.securevault.dto.VerifyOtpRequest;
 import com.securevault.entity.User;
 import com.securevault.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +24,9 @@ public class UserService {
     @Autowired
     private OtpService otpService;
 
+    @Autowired
+    private LoginMonitoringService loginMonitoringService;
+
     // ================= REGISTER =================
 
     public String register(User user) {
@@ -32,7 +35,9 @@ public class UserService {
             return "Email already exists!";
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(
+                passwordEncoder.encode(user.getPassword()));
+
         user.setRole("USER");
 
         userRepository.save(user);
@@ -42,17 +47,54 @@ public class UserService {
 
     // ================= LOGIN =================
 
-    public String login(LoginRequest request) {
+    public String login(
+            LoginRequest request,
+            String ipAddress) {
 
-        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
+        String email = request.getEmail();
+
+        /*
+         * For local development.
+         * Later this can be replaced with the
+         * actual client IP address.
+         */
+
+        User user = userRepository
+                .findByEmail(email)
+                .orElse(null);
+
+        // ================= USER NOT FOUND =================
 
         if (user == null) {
+
+            loginMonitoringService.recordLogin(
+                    email,
+                    false,
+                    ipAddress);
+
             return "User not found!";
         }
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        // ================= WRONG PASSWORD =================
+
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword())) {
+
+            loginMonitoringService.recordLogin(
+                    email,
+                    false,
+                    ipAddress);
+
             return "Invalid Password!";
         }
+
+        // ================= SUCCESSFUL LOGIN =================
+
+        loginMonitoringService.recordLogin(
+                email,
+                true,
+                ipAddress);
 
         return "Login Successful";
     }
@@ -61,7 +103,9 @@ public class UserService {
 
     public String sendOtp(String email) {
 
-        User user = userRepository.findByEmail(email).orElse(null);
+        User user = userRepository
+                .findByEmail(email)
+                .orElse(null);
 
         if (user == null) {
             return "User not found!";
@@ -76,9 +120,12 @@ public class UserService {
 
     // ================= VERIFY OTP =================
 
-    public String verifyOtpAndResetPassword(VerifyOtpRequest request) {
+    public String verifyOtpAndResetPassword(
+            VerifyOtpRequest request) {
 
-        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
+        User user = userRepository
+                .findByEmail(request.getEmail())
+                .orElse(null);
 
         if (user == null) {
             return "User not found!";
@@ -93,7 +140,8 @@ public class UserService {
         }
 
         user.setPassword(
-                passwordEncoder.encode(request.getNewPassword()));
+                passwordEncoder.encode(
+                        request.getNewPassword()));
 
         userRepository.save(user);
 
@@ -101,5 +149,4 @@ public class UserService {
 
         return "Password Updated Successfully";
     }
-
 }

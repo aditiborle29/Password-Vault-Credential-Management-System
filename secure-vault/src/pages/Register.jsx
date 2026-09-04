@@ -11,28 +11,102 @@ function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // Error and loading states
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const handleRegister = async (e) => {
+
     e.preventDefault();
 
+    // Clear previous messages
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    // Frontend validation
+    if (!name.trim()) {
+      setErrorMessage("Please enter your full name.");
+      return;
+    }
+
+    if (!email.trim()) {
+      setErrorMessage("Please enter your email address.");
+      return;
+    }
+
+    if (!password) {
+      setErrorMessage("Please enter a password.");
+      return;
+    }
+
+    if (password.length < 8) {
+      setErrorMessage(
+        "Password must contain at least 8 characters."
+      );
+      return;
+    }
+
     try {
+
+      setLoading(true);
 
       const response = await axios.post(
         "http://localhost:8080/api/auth/register",
         {
           name,
           email,
-          password,
+          password
         }
       );
 
-      alert(response.data);
-
       if (response.data === "User Registered Successfully") {
-        navigate("/login");
+
+        setSuccessMessage(
+          "Registration successful! Redirecting to login..."
+        );
+
+        setTimeout(() => {
+          navigate("/login");
+        }, 1500);
+
+      } else {
+
+        setErrorMessage(
+          response.data || "Registration failed."
+        );
       }
 
     } catch (error) {
-      alert("Registration Failed");
+
+      console.error("Registration error:", error);
+
+      if (error.response) {
+
+        // Backend returned an error
+        setErrorMessage(
+          error.response.data ||
+          "Registration failed. Please check your details."
+        );
+
+      } else if (error.request) {
+
+        // Backend is not running
+        setErrorMessage(
+          "Unable to connect to server. Please make sure the backend is running."
+        );
+
+      } else {
+
+        setErrorMessage(
+          "Something went wrong. Please try again."
+        );
+      }
+
+    } finally {
+
+      setLoading(false);
+
     }
   };
 
@@ -47,6 +121,22 @@ function Register() {
           Register to access Secure Vault
         </p>
 
+        {/* ERROR MESSAGE */}
+
+        {errorMessage && (
+          <div className="message error-message">
+            ⚠️ {errorMessage}
+          </div>
+        )}
+
+        {/* SUCCESS MESSAGE */}
+
+        {successMessage && (
+          <div className="message success-message">
+            ✅ {successMessage}
+          </div>
+        )}
+
         <form onSubmit={handleRegister}>
 
           <input
@@ -54,7 +144,6 @@ function Register() {
             placeholder="Full Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            required
           />
 
           <input
@@ -62,7 +151,6 @@ function Register() {
             placeholder="Email Address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
           />
 
           <input
@@ -70,11 +158,13 @@ function Register() {
             placeholder="Create Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
           />
 
-          <button type="submit">
-            Register
+          <button
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? "Creating Account..." : "Register"}
           </button>
 
         </form>

@@ -8,7 +8,8 @@ import AddCredential from "./pages/AddCredential";
 import EditCredential from "./pages/EditCredential";
 import ForgotPassword from "./pages/ForgotPassword";
 import SharedCredentials from "./pages/SharedCredentials";
-
+import SecurityDashboard from "./pages/SecurityDashboard";
+import Reports from "./pages/Reports";
 
 function App() {
   return (
@@ -23,6 +24,12 @@ function App() {
         <Route path="/shared" element={<SharedCredentials />} />
         <Route path="/add" element={<AddCredential />} />
         <Route path="/edit/:id" element={<EditCredential />} />
+        <Route
+          path="/security"
+          element={<SecurityDashboard />}
+        />
+        <Route path="/reports" element={<Reports />} />
+
       </Routes>
     </BrowserRouter>
   );

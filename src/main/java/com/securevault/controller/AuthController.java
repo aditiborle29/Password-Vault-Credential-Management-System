@@ -6,6 +6,7 @@ import com.securevault.entity.User;
 import com.securevault.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -25,8 +26,13 @@ public class AuthController {
     // ================= LOGIN =================
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest request) {
-        return userService.login(request);
+    public String login(
+            @RequestBody LoginRequest request,
+            HttpServletRequest httpRequest) {
+
+        String ipAddress = httpRequest.getRemoteAddr();
+
+        return userService.login(request, ipAddress);
     }
 
     // ================= SEND OTP =================

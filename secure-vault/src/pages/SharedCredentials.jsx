@@ -43,7 +43,7 @@ function SharedCredentials() {
 
             <div className="vault-card">
 
-                <h2>🔗 Shared With Me</h2>
+                <h2>🔗 Shared</h2>
 
                 {credentials.length === 0 ? (
 

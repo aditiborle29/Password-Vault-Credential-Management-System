@@ -19,17 +19,27 @@ function Dashboard() {
 
             <div className="navbar">
 
-                <h2>🔐 Secure Vault</h2>
+    <h2>🔐 Secure Vault</h2>
 
-                <button
-                    className="logout-btn"
-                    onClick={handleLogout}
-                >
-                    Logout
-                </button>
+    <div className="nav-links">
 
-            </div>
+        <Link
+            to="/security"
+            className="security-link"
+        >
+            🛡️ Security
+        </Link>
 
+        <button
+            className="logout-btn"
+            onClick={handleLogout}
+        >
+            Logout
+        </button>
+
+    </div>
+
+</div>
 
             {/* WELCOME */}
 
@@ -104,7 +114,7 @@ function Dashboard() {
                     </div>
 
                     <h3>
-                        Shared With Me
+                        Shared
                     </h3>
 
                     <p>
@@ -113,7 +123,25 @@ function Dashboard() {
 
                 </Link>
 
+                <Link
+    to="/reports"
+    className="card"
+>
 
+    <div className="icon">
+        📊
+    </div>
+
+    <h3>
+        Security Reports
+    </h3>
+
+    <p>
+        View password health and login
+        activity reports.
+    </p>
+
+</Link>
                 {/* FORGOT PASSWORD */}
 
                 {/* 

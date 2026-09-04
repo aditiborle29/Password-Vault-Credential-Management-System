@@ -461,7 +461,7 @@ function Vault() {
                     }}
                 >
 
-                    🤝 Shared With Me
+                    🤝 Shared
 
                 </h2>
 
@@ -800,77 +800,40 @@ function Vault() {
                                     e.target.value
                                 )
                             }
-
                         >
-
                             <option value="VIEW">
-
                                 VIEW - Can view credential
-
                             </option>
-
                             <option value="EDIT">
-
                                 EDIT - Can view and edit credential
-
                             </option>
-
                         </select>
-
-
                         {/* BUTTONS */}
 
                         <div className="share-modal-buttons">
-
-
                             <button
-
                                 type="button"
-
                                 className="cancel-btn"
-
                                 onClick={
                                     closeShareModal
                                 }
-
                             >
-
                                 Cancel
-
                             </button>
-
-
                             <button
-
                                 type="button"
-
                                 className="share-submit-btn"
-
                                 onClick={
                                     submitShare
                                 }
-
                             >
-
                                 🔗 Share Credential
-
                             </button>
-
-
                         </div>
-
-
                     </div>
-
                 </div>
-
             )}
-
         </div>
-
     );
-
 }
-
-
 export default Vault;

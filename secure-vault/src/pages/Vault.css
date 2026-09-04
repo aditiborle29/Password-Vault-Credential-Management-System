@@ -15,27 +15,21 @@ body {
 
 .vault-container {
     min-height: 100vh;
-
     display: flex;
     justify-content: center;
     align-items: flex-start;
-
-    padding: 50px 20px;
+    padding: 40px 20px;
 }
 
 .vault-card {
-    width: 95%;
-    max-width: 1100px;
-
+    width: 100%;
+    max-width: 1200px;
     background: #fff;
-
     padding: 30px;
-
     border-radius: 15px;
-
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
 }
-
 
 /* =========================================
    HEADINGS
@@ -43,55 +37,57 @@ body {
 
 .vault-card h2 {
     text-align: center;
-
     color: #2563eb;
-
     margin-bottom: 25px;
-
     background-color: white;
+    font-size: 25px;
 }
 
-
 /* =========================================
-   TABLE
+   TABLE WRAPPER BEHAVIOR
 ========================================= */
 
 table {
     width: 100%;
-
     border-collapse: collapse;
-
     margin-bottom: 20px;
+    background: white;
 }
+
+/* =========================================
+   TABLE HEADER
+========================================= */
 
 table thead {
     background: #2563eb;
 }
 
 table th {
-    padding: 14px;
-
+    padding: 14px 12px;
     background: #2563eb;
-
     color: white;
-
     text-align: center;
+    font-size: 14px;
+    white-space: nowrap;
 }
 
+/* =========================================
+   TABLE DATA
+========================================= */
+
 table td {
-    padding: 14px;
-
-    border-bottom: 2px solid black;
-
+    padding: 14px 12px;
+    border-bottom: 1px solid #ddd;
     text-align: center;
-
     background-color: white;
+    color: #333;
+    font-size: 14px;
+    vertical-align: middle;
 }
 
 table tbody tr:hover td {
     background: #f5f7ff;
 }
-
 
 /* =========================================
    ACTION BUTTONS
@@ -99,14 +95,12 @@ table tbody tr:hover td {
 
 .action-buttons {
     display: flex;
-
     flex-wrap: wrap;
-
     justify-content: center;
-
-    gap: 8px;
+    align-items: center;
+    gap: 7px;
+    min-width: 280px;
 }
-
 
 /* =========================================
    COMMON BUTTON STYLE
@@ -117,24 +111,18 @@ table tbody tr:hover td {
 .edit-btn,
 .delete-btn,
 .share-btn {
-    padding: 8px 14px;
-
+    padding: 8px 12px;
     border: none;
-
     border-radius: 6px;
-
     color: white;
-
     cursor: pointer;
-
-    font-size: 14px;
-
+    font-size: 13px;
     transition: 0.3s;
+    white-space: nowrap;
 }
 
-
 /* =========================================
-   SHOW BUTTON
+   SHOW
 ========================================= */
 
 .show-btn {
@@ -145,9 +133,8 @@ table tbody tr:hover td {
     background: #1d4ed8;
 }
 
-
 /* =========================================
-   COPY BUTTON
+   COPY
 ========================================= */
 
 .copy-btn {
@@ -158,20 +145,15 @@ table tbody tr:hover td {
     background: #059669;
 }
 
-
 /* =========================================
-   EDIT BUTTON
+   EDIT
 ========================================= */
 
 .edit-btn {
     background: #f59e0b;
-
     text-decoration: none;
-
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
 }
 
@@ -179,9 +161,8 @@ table tbody tr:hover td {
     background: #d97706;
 }
 
-
 /* =========================================
-   DELETE BUTTON
+   DELETE
 ========================================= */
 
 .delete-btn {
@@ -192,9 +173,8 @@ table tbody tr:hover td {
     background: #dc2626;
 }
 
-
 /* =========================================
-   SHARE BUTTON
+   SHARE
 ========================================= */
 
 .share-btn {
@@ -205,33 +185,25 @@ table tbody tr:hover td {
     background: #7c3aed;
 }
 
-
 /* =========================================
    BACK BUTTON
 ========================================= */
 
 .back-btn {
     display: inline-block;
-
     margin-top: 25px;
-
     text-decoration: none;
-
     color: white;
-
     background: #2563eb;
-
     padding: 10px 18px;
-
     border-radius: 8px;
-
     transition: 0.3s;
+    font-size: 14px;
 }
 
 .back-btn:hover {
     background: #1d4ed8;
 }
-
 
 /* =========================================
    NO DATA
@@ -239,16 +211,11 @@ table tbody tr:hover td {
 
 .no-data {
     text-align: center;
-
     color: gray;
-
     font-size: 18px;
-
     margin: 30px 0;
-
     background-color: white;
 }
-
 
 /* =========================================
    SHARE MODAL OVERLAY
@@ -256,9 +223,7 @@ table tbody tr:hover td {
 
 .share-modal-overlay {
     position: fixed;
-
-    top: 0;
-    left: 0;
+    inset: 0;
 
     width: 100%;
     height: 100%;
@@ -266,16 +231,15 @@ table tbody tr:hover td {
     background: rgba(0, 0, 0, 0.55);
 
     display: flex;
-
     justify-content: center;
-
     align-items: center;
 
     z-index: 9999;
 
     padding: 20px;
-}
 
+    overflow-y: auto;
+}
 
 /* =========================================
    SHARE MODAL
@@ -283,7 +247,6 @@ table tbody tr:hover td {
 
 .share-modal {
     width: 450px;
-
     max-width: 100%;
 
     background: white;
@@ -297,23 +260,17 @@ table tbody tr:hover td {
     animation: modalAppear 0.2s ease-in-out;
 }
 
-
-/* Modal animation */
-
 @keyframes modalAppear {
     from {
         opacity: 0;
-
         transform: scale(0.95);
     }
 
     to {
         opacity: 1;
-
         transform: scale(1);
     }
 }
-
 
 /* =========================================
    MODAL HEADING
@@ -324,33 +281,31 @@ table tbody tr:hover td {
     color: #2563eb;
     background-color: white;
     margin-bottom: 20px;
+    font-size: 23px;
 }
-
 
 /* =========================================
    SELECTED CREDENTIAL
 ========================================= */
 
 .selected-credential {
-    background: white;
-
+    background: #f8fafc;
     padding: 15px;
-
     border-radius: 8px;
-
     margin-bottom: 20px;
-
     border-left: 4px solid #2563eb;
 }
-.selected-credential strong{
-    background-color: white;
-}
-.selected-credential p {
-    margin: 6px 0;
-    background-color: white;
-    color: #333;
+
+.selected-credential strong {
+    background-color: transparent;
 }
 
+.selected-credential p {
+    margin: 6px 0;
+    background-color: transparent;
+    color: #333;
+    line-height: 1.5;
+}
 
 /* =========================================
    MODAL LABELS
@@ -358,16 +313,12 @@ table tbody tr:hover td {
 
 .share-modal label {
     display: block;
-
     font-weight: bold;
-
     margin-top: 15px;
-
     margin-bottom: 7px;
     background-color: white;
     color: #333;
 }
-
 
 /* =========================================
    MODAL INPUT & SELECT
@@ -376,60 +327,50 @@ table tbody tr:hover td {
 .share-modal input,
 .share-modal select {
     width: 100%;
-
     padding: 12px;
 
     border: 1px solid #ccc;
-
     border-radius: 7px;
 
     font-size: 15px;
 
     background: white;
-
-    box-sizing: border-box;
 }
 
 .share-modal input:focus,
 .share-modal select:focus {
     outline: none;
+    border-color: #2563eb;
     box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
 }
 
-
 /* =========================================
-   MODAL BUTTON CONTAINER
+   MODAL BUTTONS
 ========================================= */
 
 .share-modal-buttons {
     display: flex;
-
     justify-content: flex-end;
-    background-color: white;
-
     gap: 10px;
 
     margin-top: 25px;
+
+    background-color: white;
 }
 
-
 /* =========================================
-   CANCEL BUTTON
+   CANCEL
 ========================================= */
 
 .cancel-btn {
     padding: 11px 18px;
-
     border: none;
-
     border-radius: 7px;
 
     background: #ddd;
-
     color: #333;
 
     cursor: pointer;
-
     font-size: 14px;
 
     transition: 0.3s;
@@ -439,24 +380,19 @@ table tbody tr:hover td {
     background: #ccc;
 }
 
-
 /* =========================================
-   SHARE SUBMIT BUTTON
+   SHARE SUBMIT
 ========================================= */
 
 .share-submit-btn {
     padding: 11px 18px;
-
     border: none;
-
     border-radius: 7px;
 
     background: #2563eb;
-
     color: white;
 
     cursor: pointer;
-
     font-size: 14px;
 
     transition: 0.3s;
@@ -466,43 +402,121 @@ table tbody tr:hover td {
     background: #1d4ed8;
 }
 
-
 /* =========================================
-   RESPONSIVE TABLE
+   TABLET
 ========================================= */
 
-@media (max-width: 800px) {
+@media (max-width: 900px) {
 
     .vault-container {
-        padding: 20px 10px;
+        padding: 25px 15px;
     }
 
     .vault-card {
-        width: 100%;
-
-        padding: 20px;
+        padding: 22px;
     }
+
+    /* Horizontal scrolling instead of breaking table */
 
     table {
         display: block;
-
+        width: 100%;
         overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    table th,
+    table td {
+        padding: 12px 10px;
     }
 
     .action-buttons {
-        min-width: 250px;
+        min-width: 280px;
     }
 }
 
-
 /* =========================================
-   RESPONSIVE SHARE MODAL
+   MOBILE
 ========================================= */
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
+
+    .vault-container {
+        padding: 15px 10px;
+    }
+
+    .vault-card {
+        padding: 18px 12px;
+        border-radius: 10px;
+    }
+
+    .vault-card h2 {
+        font-size: 21px;
+        margin-bottom: 20px;
+    }
+
+    /* Table remains scrollable */
+
+    table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table th {
+        font-size: 13px;
+        padding: 11px 10px;
+    }
+
+    table td {
+        font-size: 13px;
+        padding: 11px 10px;
+    }
+
+    .action-buttons {
+        min-width: 270px;
+        gap: 6px;
+    }
+
+    .show-btn,
+    .copy-btn,
+    .edit-btn,
+    .delete-btn,
+    .share-btn {
+        font-size: 12px;
+        padding: 7px 9px;
+    }
+
+    .back-btn {
+        width: 100%;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    /* Modal */
+
+    .share-modal-overlay {
+        padding: 12px;
+        align-items: center;
+    }
 
     .share-modal {
+        width: 100%;
         padding: 20px;
+        border-radius: 12px;
+        max-height: 95vh;
+        overflow-y: auto;
+    }
+
+    .share-modal h2 {
+        font-size: 21px;
+    }
+
+    .share-modal input,
+    .share-modal select {
+        font-size: 14px;
+        padding: 11px;
     }
 
     .share-modal-buttons {
@@ -512,5 +526,47 @@ table tbody tr:hover td {
     .cancel-btn,
     .share-submit-btn {
         width: 100%;
+    }
+}
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 380px) {
+
+    .vault-container {
+        padding: 10px 6px;
+    }
+
+    .vault-card {
+        padding: 15px 8px;
+    }
+
+    .vault-card h2 {
+        font-size: 19px;
+    }
+
+    table th,
+    table td {
+        font-size: 12px;
+        padding: 9px 8px;
+    }
+
+    .action-buttons {
+        min-width: 250px;
+    }
+
+    .show-btn,
+    .copy-btn,
+    .edit-btn,
+    .delete-btn,
+    .share-btn {
+        font-size: 11px;
+        padding: 6px 8px;
+    }
+
+    .share-modal {
+        padding: 17px;
     }
 }
