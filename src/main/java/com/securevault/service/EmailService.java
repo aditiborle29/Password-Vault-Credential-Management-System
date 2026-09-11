@@ -1,31 +1,48 @@
 package com.securevault.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import com.resend.Resend;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.CreateEmailOptions;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    @Value("${RESEND_API_KEY}")
+    private String resendApiKey;
+
+    @Value("${MAIL_FROM:onboarding@resend.dev}")
+    private String fromEmail;
 
     public void sendOtp(String toEmail, String otp) {
 
-        SimpleMailMessage message = new SimpleMailMessage();
+        Resend resend = new Resend(resendApiKey);
 
-        message.setTo(toEmail);
-        message.setSubject("Secure Vault - Password Reset OTP");
+        CreateEmailOptions params = CreateEmailOptions.builder()
+                .from("Secure Vault <" + fromEmail + ">")
+                .to(toEmail)
+                .subject("Secure Vault - Password Reset OTP")
+                .html(
+                        "<h2>Secure Vault</h2>" +
+                                "<p>Hello,</p>" +
+                                "<p>Your OTP for resetting your password is:</p>" +
+                                "<h1>" + otp + "</h1>" +
+                                "<p>This OTP is valid for 5 minutes.</p>" +
+                                "<p>Do not share this OTP with anyone.</p>" +
+                                "<br>" +
+                                "<p>Regards,<br>Secure Vault</p>")
+                .build();
 
-        message.setText(
-                "Hello,\n\n" +
-                        "Your OTP for resetting your password is:\n\n" +
-                        otp +
-                        "\n\nThis OTP is valid for 5 minutes.\n\n" +
-                        "Do not share this OTP with anyone.\n\n" +
-                        "Regards,\nSecure Vault");
+        try {
 
-        mailSender.send(message);
+            resend.emails().send(params);
+
+        } catch (ResendException e) {
+
+            throw new RuntimeException(
+                    "Unable to send OTP email: " + e.getMessage());
+        }
     }
 }

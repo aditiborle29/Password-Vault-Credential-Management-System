@@ -10,9 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
-
     @Autowired
     private UserService userService;
 

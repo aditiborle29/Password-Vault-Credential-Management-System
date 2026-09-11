@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,6 +17,7 @@
     <artifactId>securevault</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>securevault</name>
+    <description>Secure Vault Credential Management System</description>
 
     <properties>
         <java.version>17</java.version>
@@ -23,22 +25,16 @@
 
     <dependencies>
 
-        <!-- Spring Web -->
+        <!-- Spring Boot Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Spring Data JPA -->
+        <!-- Spring Boot JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-
-        <!-- PostgreSQL -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
         </dependency>
 
         <!-- Spring Security -->
@@ -47,26 +43,19 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!-- Mail -->
+        <!-- PostgreSQL -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
-
-        <!-- DevTools -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
-            <optional>true</optional>
         </dependency>
 
-        <!-- Lombok -->
+        <!-- Resend Email API -->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
+    <groupId>com.resend</groupId>
+    <artifactId>resend-java</artifactId>
+    <version>4.19.0</version>
+</dependency>
 
         <!-- Testing -->
         <dependency>
