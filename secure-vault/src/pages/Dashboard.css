@@ -1,3 +1,7 @@
+/* =========================
+   GLOBAL
+========================= */
+
 * {
     margin: 0;
     padding: 0;
@@ -5,31 +9,54 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
-body {
-    background: #f4f7fc;
+html,
+body,
+#root {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
 }
+
+html,
+body {
+    min-height: 100vh;
+    background: lightskyblue;
+}
+
+#root {
+    min-height: 100vh;
+    background: lightskyblue;
+}
+
 
 /* =========================
    DASHBOARD CONTAINER
 ========================= */
 
 .dashboard-container {
+    width: 100%;
     min-height: 100vh;
     padding: 30px;
+    background: lightskyblue;
 }
+
 
 /* =========================
    NAVBAR
 ========================= */
 
 .navbar {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     background: white;
     padding: 18px 35px;
+
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
     gap: 20px;
 }
 
@@ -39,25 +66,38 @@ body {
     white-space: nowrap;
 }
 
-/* Right side navigation */
+
+/* =========================
+   RIGHT SIDE NAVIGATION
+========================= */
 
 .nav-links {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 20px;
+
     background-color: white;
 }
 
-/* Security */
+
+/* =========================
+   SECURITY LINK
+========================= */
 
 .security-link {
     background-color: white;
     text-decoration: none;
     color: #333;
+
     font-weight: 600;
+
     padding: 8px 14px;
+
     border-radius: 6px;
+
     transition: 0.2s;
+
     white-space: nowrap;
 }
 
@@ -66,17 +106,27 @@ body {
     color: #0d6efd;
 }
 
-/* Logout */
+
+/* =========================
+   LOGOUT BUTTON
+========================= */
 
 .logout-btn {
     background: #ef4444;
     color: white;
+
     border: none;
+
     padding: 10px 20px;
+
     border-radius: 8px;
+
     cursor: pointer;
+
     font-size: 15px;
+
     transition: 0.3s;
+
     white-space: nowrap;
 }
 
@@ -84,11 +134,13 @@ body {
     background: #dc2626;
 }
 
+
 /* =========================
    WELCOME SECTION
 ========================= */
 
 .welcome {
+    width: 100%;
     text-align: center;
     margin-top: 40px;
 }
@@ -103,59 +155,104 @@ body {
     font-size: 17px;
 }
 
+
 /* =========================
-   CARDS
+   CARDS CONTAINER
 ========================= */
 
 .card-container {
+    width: 100%;
+
     margin-top: 50px;
+
     display: flex;
     justify-content: center;
+    align-items: stretch;
+
     gap: 30px;
+
     flex-wrap: wrap;
 }
+
+
+/* =========================
+   CARD
+========================= */
 
 .card {
     width: 280px;
     min-height: 220px;
+
     background: white;
+
     padding: 30px;
+
     border-radius: 15px;
+
     text-align: center;
+
     text-decoration: none;
+
     color: #111827;
+
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+
     transition: 0.3s;
 
     display: flex;
     flex-direction: column;
+
     align-items: center;
     justify-content: center;
 }
 
 .card:hover {
     transform: translateY(-8px);
+
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
 
+
+/* =========================
+   CARD ICON
+========================= */
+
 .icon {
     font-size: 45px;
+
     margin-bottom: 15px;
+
     background-color: white;
 }
+
+
+/* =========================
+   CARD HEADING
+========================= */
 
 .card h3 {
     color: #2563eb;
+
     margin-bottom: 10px;
+
     background-color: white;
 }
 
+
+/* =========================
+   CARD DESCRIPTION
+========================= */
+
 .card p {
     color: #6b7280;
+
     font-size: 15px;
+
     line-height: 1.5;
+
     background-color: white;
 }
+
 
 /* =========================
    BACK BUTTON
@@ -163,14 +260,23 @@ body {
 
 .back-btn {
     display: inline-block;
+
     margin-top: 30px;
+
     padding: 8px 15px;
+
     background-color: #000000;
+
     color: white;
+
     border: none;
+
     border-radius: 6px;
+
     font-size: 13px;
+
     text-decoration: none;
+
     cursor: pointer;
 }
 
@@ -178,37 +284,64 @@ body {
     background-color: #333333;
 }
 
-/* =========================
+
+/* =====================================================
    TABLET
-========================= */
+===================================================== */
 
 @media (max-width: 768px) {
 
     .dashboard-container {
         padding: 20px;
+        min-height: 100vh;
     }
+
+
+    /* Navbar */
 
     .navbar {
         padding: 16px 20px;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        text-align: center;
     }
 
     .navbar h2 {
         font-size: 20px;
+
+        margin-bottom: 12px;
     }
 
+
+    /* Navigation */
+
     .nav-links {
+        justify-content: center;
+
+        flex-wrap: wrap;
+
         gap: 10px;
     }
 
+
     .security-link {
-        padding: 7px 10px;
+        padding: 8px 12px;
+
         font-size: 14px;
     }
 
+
     .logout-btn {
         padding: 9px 14px;
+
         font-size: 14px;
     }
+
+
+    /* Welcome */
 
     .welcome {
         margin-top: 30px;
@@ -220,58 +353,91 @@ body {
 
     .welcome p {
         font-size: 16px;
+
+        line-height: 1.5;
     }
+
+
+    /* Cards */
 
     .card-container {
         margin-top: 35px;
+
         gap: 20px;
     }
 
     .card {
         width: calc(50% - 10px);
+
         min-width: 250px;
+
+        min-height: 200px;
+
+        padding: 25px;
     }
 }
 
-/* =========================
+
+/* =====================================================
    MOBILE
-========================= */
+===================================================== */
 
 @media (max-width: 600px) {
 
     .dashboard-container {
+        width: 100%;
+
+        min-height: 100vh;
+
         padding: 15px;
+
+        background: lightskyblue;
     }
 
-    /* Navbar becomes vertical */
+
+    /* Navbar */
 
     .navbar {
-        flex-direction: column;
-        align-items: stretch;
-        text-align: center;
+        width: 100%;
+
         padding: 18px 15px;
+
+        border-radius: 10px;
     }
 
     .navbar h2 {
         font-size: 20px;
+
         margin-bottom: 12px;
     }
 
+
+    /* Navigation */
+
     .nav-links {
+        width: 100%;
+
         justify-content: center;
+
         flex-wrap: wrap;
+
         gap: 10px;
     }
 
+
     .security-link {
         padding: 9px 12px;
+
         font-size: 14px;
     }
 
+
     .logout-btn {
         padding: 9px 15px;
+
         font-size: 14px;
     }
+
 
     /* Welcome */
 
@@ -281,41 +447,65 @@ body {
 
     .welcome h1 {
         font-size: 25px;
+
+        margin-bottom: 8px;
     }
 
     .welcome p {
         font-size: 15px;
+
         line-height: 1.5;
+
         padding: 0 10px;
     }
 
-    /* Cards become single column */
+
+    /* Cards */
 
     .card-container {
+        width: 100%;
+
         margin-top: 30px;
+
+        display: flex;
+
         flex-direction: column;
+
         align-items: center;
+
         gap: 18px;
     }
 
+
     .card {
         width: 100%;
+
         max-width: 400px;
+
+        min-width: 0;
+
         min-height: 190px;
+
         padding: 25px 20px;
     }
 
+
     .icon {
         font-size: 40px;
+
+        margin-bottom: 12px;
     }
+
 
     .card h3 {
         font-size: 19px;
     }
 
+
     .card p {
         font-size: 14px;
     }
+
 
     /* Back button */
 
@@ -324,24 +514,53 @@ body {
     }
 }
 
-/* =========================
-   SMALL MOBILE
-========================= */
 
-@media (max-width: 380px) {
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
 
     .dashboard-container {
         padding: 10px;
+
+        min-height: 100vh;
+
+        background: lightskyblue;
     }
+
+
+    /* Navbar */
+
+    .navbar {
+        padding: 15px 10px;
+    }
+
 
     .navbar h2 {
         font-size: 18px;
     }
 
+
+    /* Navigation */
+
+    .nav-links {
+        gap: 8px;
+    }
+
+
     .security-link,
     .logout-btn {
         font-size: 13px;
+
         padding: 8px 10px;
+    }
+
+
+    /* Welcome */
+
+    .welcome {
+        margin-top: 20px;
     }
 
     .welcome h1 {
@@ -350,10 +569,166 @@ body {
 
     .welcome p {
         font-size: 14px;
+
+        padding: 0 5px;
+    }
+
+
+    /* Cards */
+
+    .card-container {
+        margin-top: 25px;
+
+        gap: 15px;
+    }
+
+
+    .card {
+        width: 100%;
+
+        max-width: 100%;
+
+        min-height: 175px;
+
+        padding: 20px 15px;
+    }
+
+
+    .icon {
+        font-size: 36px;
+
+        margin-bottom: 10px;
+    }
+
+
+    .card h3 {
+        font-size: 18px;
+
+        margin-bottom: 8px;
+    }
+
+
+    .card p {
+        font-size: 13px;
+    }
+}
+
+
+/* =====================================================
+   VERY SMALL DEVICES
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .dashboard-container {
+        padding: 8px;
+    }
+
+
+    .navbar {
+        padding: 14px 8px;
+    }
+
+
+    .navbar h2 {
+        font-size: 17px;
+    }
+
+
+    .security-link,
+    .logout-btn {
+        font-size: 12px;
+
+        padding: 7px 9px;
+    }
+
+
+    .welcome h1 {
+        font-size: 20px;
+    }
+
+
+    .welcome p {
+        font-size: 13px;
+    }
+
+
+    .card {
+        min-height: 165px;
+
+        padding: 18px 12px;
+    }
+
+
+    .icon {
+        font-size: 32px;
+    }
+
+
+    .card h3 {
+        font-size: 17px;
+    }
+
+
+    .card p {
+        font-size: 12px;
+    }
+}
+
+.card-container {
+    background: transparent !important;
+}
+.dashboard-container {
+    background: lightskyblue !important;
+}
+
+.card {
+    background: white !important;
+}
+
+@media (max-width: 1000px) {
+
+    .card-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-container {
+        padding: 25px;
+    }
+}
+
+@media (max-width: 700px) {
+
+    .dashboard-container {
+        padding: 15px;
+    }
+
+    .navbar {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+
+    .card-container {
+        grid-template-columns: 1fr;
     }
 
     .card {
-        min-height: 175px;
-        padding: 20px 15px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 450px) {
+
+    .dashboard-container {
+        padding: 10px;
+    }
+
+    .navbar {
+        padding: 15px;
+    }
+
+    .card {
+        padding: 18px;
     }
 }

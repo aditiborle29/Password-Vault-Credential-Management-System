@@ -22,4 +22,7 @@ public interface SharedCredentialRepository
         boolean existsByCredentialIdAndSharedWith(
                         Long credentialId,
                         User sharedWith);
+
+        // Delete all sharing records related to a credential
+        void deleteByCredentialId(Long credentialId);
 }

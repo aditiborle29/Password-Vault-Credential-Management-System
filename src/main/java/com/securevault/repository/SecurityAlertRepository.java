@@ -13,6 +13,10 @@ public interface SecurityAlertRepository
         List<SecurityAlert> findByEmailOrderByTimestampDesc(
                         String email);
 
+        // USER-SPECIFIC latest 50 alerts
+        List<SecurityAlert> findTop50ByEmailOrderByTimestampDesc(
+                        String email);
+
         boolean existsByEmailAndAlertTypeAndResolvedFalse(
                         String email,
                         String alertType);

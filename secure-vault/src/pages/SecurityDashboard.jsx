@@ -4,599 +4,859 @@ import "./SecurityDashboard.css";
 
 function SecurityDashboard() {
 
-  const [loginAttempts, setLoginAttempts] = useState([]);
-  const [alerts, setAlerts] = useState([]);
-  const [suspiciousActivities, setSuspiciousActivities] = useState([]);
-  const [auditLogs, setAuditLogs] = useState([]);
+    const [loginAttempts, setLoginAttempts] = useState([]);
+    const [alerts, setAlerts] = useState([]);
+    const [suspiciousActivities, setSuspiciousActivities] = useState([]);
+    const [auditLogs, setAuditLogs] = useState([]);
 
-  const API = "http://localhost:8080/api/security";
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const [error, setError] = useState("");
 
-  // ==========================================
-  // LOAD SECURITY DATA
-  // ==========================================
+    const userEmail = localStorage.getItem("userEmail");
 
-  useEffect(() => {
-    loadSecurityData();
-  }, []);
+    const API = "http://localhost:8080/api/security";
 
-  const loadSecurityData = async () => {
-    try {
+    // ==========================================
+    // LOAD SECURITY DATA
+    // ==========================================
 
-      const loginResponse =
-        await axios.get(`${API}/login-attempts`);
+    useEffect(() => {
+        loadSecurityData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-      const alertResponse =
-        await axios.get(`${API}/alerts`);
+    const loadSecurityData = async () => {
 
-      const suspiciousResponse =
-        await axios.get(`${API}/suspicious-activities`);
+        try {
 
-      const auditResponse =
-        await axios.get(`${API}/audit-logs`);
+            setLoading(true);
+            setRefreshing(true);
+            setError("");
 
-      setLoginAttempts(loginResponse.data);
-      setAlerts(alertResponse.data);
-      setSuspiciousActivities(suspiciousResponse.data);
-      setAuditLogs(auditResponse.data);
+            if (!userEmail) {
 
-    } catch (error) {
+                setError(
+                    "User session not found. Please login again."
+                );
 
-      console.error(
-        "Error loading security data:",
-        error
-      );
+                return;
+            }
 
-    }
-  };
+            const encodedEmail =
+                encodeURIComponent(userEmail);
 
+            // USER-SPECIFIC LOGIN ATTEMPTS
+            const loginResponse =
+                await axios.get(
+                    `${API}/login-attempts?email=${encodedEmail}`
+                );
 
-  // ==========================================
-  // RESOLVE ALERT
-  // ==========================================
+            // USER-SPECIFIC SECURITY ALERTS
+            const alertResponse =
+                await axios.get(
+                    `${API}/alerts?email=${encodedEmail}`
+                );
 
-  const resolveAlert = async (id) => {
+            // USER-SPECIFIC SUSPICIOUS ACTIVITIES
+            const suspiciousResponse =
+                await axios.get(
+                    `${API}/suspicious-activities?email=${encodedEmail}`
+                );
 
-    try {
+            // USER-SPECIFIC AUDIT LOGS
+            const auditResponse =
+                await axios.get(
+                    `${API}/audit-logs?email=${encodedEmail}`
+                );
 
-      await axios.put(
-        `${API}/alerts/${id}/resolve`
-      );
+            setLoginAttempts(
+                loginResponse.data
+            );
 
-      alert("Security alert resolved successfully");
+            setAlerts(
+                alertResponse.data
+            );
 
-      loadSecurityData();
+            setSuspiciousActivities(
+                suspiciousResponse.data
+            );
 
-    } catch (error) {
+            setAuditLogs(
+                auditResponse.data
+            );
 
-      console.error(
-        "Error resolving alert:",
-        error
-      );
+        } catch (error) {
 
-      alert("Failed to resolve security alert");
-    }
-  };
+            console.error(
+                "Error loading security data:",
+                error
+            );
 
+            if (error.response) {
 
-  return (
+                if (error.response.status === 400) {
 
-    <div className="security-dashboard">
+                    setError(
+                        error.response.data?.message ||
+                        "Email is required."
+                    );
 
-      {/* ======================================
-          HEADER
-      ====================================== */}
+                } else if (error.response.status === 401) {
 
-      <div className="security-header">
+                    setError(
+                        "You are not authorized to access security monitoring."
+                    );
 
-        <h1>
-          🛡️ Security Monitoring
-        </h1>
+                } else if (error.response.status === 403) {
 
-        <p>
-          Monitor login activity, suspicious activities,
-          security alerts and audit logs.
-        </p>
+                    setError(
+                        "Access denied."
+                    );
 
-      </div>
+                } else if (error.response.status === 500) {
 
+                    setError(
+                        "Server error while loading security data."
+                    );
 
-      {/* ======================================
-          SUMMARY CARDS
-      ====================================== */}
+                } else {
 
-      <div className="security-cards">
+                    setError(
+                        error.response.data?.message ||
+                        "Unable to load security data."
+                    );
+                }
 
-        {/* LOGIN ATTEMPTS */}
+            } else if (error.request) {
 
-        <div className="security-card">
+                setError(
+                    "Unable to connect to backend. Please make sure Spring Boot is running."
+                );
 
-          <div className="security-card-icon">
-            🔐
-          </div>
+            } else {
 
-          <div>
-            <h3>Login Attempts</h3>
+                setError(
+                    "Something went wrong while loading security data."
+                );
+            }
 
-            <h2>
-              {loginAttempts.length}
-            </h2>
-          </div>
+        } finally {
 
-        </div>
+            setLoading(false);
+            setRefreshing(false);
+        }
+    };
 
 
-        {/* SECURITY ALERTS */}
+    // ==========================================
+    // RESOLVE ALERT
+    // ==========================================
 
-        <div className="security-card alert-card">
+    const resolveAlert = async (id) => {
 
-          <div className="security-card-icon">
-            🚨
-          </div>
+        try {
 
-          <div>
-            <h3>Security Alerts</h3>
-            
-            <h2>
-              {alerts.length}
-            </h2>
+            if (!userEmail) {
+                setError(
+                    "User session not found. Please login again."
+                );
+                return;
+            }
 
-          </div>
+            const encodedEmail =
+                encodeURIComponent(userEmail);
 
-        </div>
+            await axios.put(
+                `${API}/alerts/${id}/resolve?email=${encodedEmail}`
+            );
 
+            await loadSecurityData();
 
-        {/* SUSPICIOUS ACTIVITIES */}
+        } catch (error) {
 
-        <div className="security-card warning-card">
+            console.error(
+                "Error resolving alert:",
+                error
+            );
 
-          <div className="security-card-icon">
-            ⚠️
-          </div>
+            if (error.response) {
 
-          <div>
-            <h3>Suspicious Activities</h3>
+                if (error.response.status === 403) {
 
-            <h2>
-              {suspiciousActivities.length}
-            </h2>
-          </div>
+                    setError(
+                        "You are not allowed to resolve this alert."
+                    );
 
-        </div>
+                } else if (error.response.status === 404) {
 
+                    setError(
+                        "Security alert not found."
+                    );
 
-        {/* AUDIT LOGS */}
+                } else {
 
-        <div className="security-card">
+                    setError(
+                        error.response.data?.message ||
+                        "Failed to resolve security alert."
+                    );
+                }
 
-          <div className="security-card-icon">
-            📋
-          </div>
+            } else if (error.request) {
 
-          <div>
-            <h3>Audit Logs</h3>
+                setError(
+                    "Unable to connect to the backend."
+                );
 
-            <h2>
-              {auditLogs.length}
-            </h2>
-          </div>
+            } else {
 
-        </div>
+                setError(
+                    "Something went wrong while resolving the alert."
+                );
+            }
+        }
+    };
 
-      </div>
 
+    // ==========================================
+    // SESSION ERROR
+    // ==========================================
 
-      {/* ======================================
-          SECURITY ALERTS
-      ====================================== */}
+    if (!userEmail) {
 
-      <section className="security-section">
+        return (
+            <div className="security-dashboard">
 
-        <div className="section-title">
+                <div className="security-section">
 
-          <h2>
-            🚨 Security Alerts
-          </h2>
+                    <div className="no-data">
 
-        </div>
+                        <h2>
+                            ⚠️ Session Expired
+                        </h2>
 
-
-        {alerts.length === 0 ? (
-
-          <p className="no-data">
-            No security alerts found.
-          </p>
-
-        ) : (
-
-          <div className="table-wrapper">
-
-            <table className="security-table">
-
-              <thead>
-
-                <tr>
-                  <th>ID</th>
-                  <th>Email</th>
-                  <th>Alert Type</th>
-                  <th>Message</th>
-                  <th>Severity</th>
-                  <th>Time</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-
-              </thead>
-
-
-              <tbody>
-
-                {alerts.map((alertItem) => (
-
-                  <tr key={alertItem.id}>
-
-                    <td>
-                      {alertItem.id}
-                    </td>
-
-                    <td>
-                      {alertItem.email}
-                    </td>
-
-                    <td>
-                      <span className="activity-type">
-                        {alertItem.alertType}
-                      </span>
-                    </td>
-
-                    <td>
-                      {alertItem.message}
-                    </td>
-
-                    <td>
-
-                      <span className="status-high">
-                        {alertItem.severity}
-                      </span>
-
-                    </td>
-
-                    <td>
-                      {new Date(
-                        alertItem.timestamp
-                      ).toLocaleString()}
-                    </td>
-
-                    <td>
-
-                      {alertItem.resolved ? (
-
-                        <span className="status-resolved">
-                          Resolved
-                        </span>
-
-                      ) : (
-
-                        <span className="status-active">
-                          Active
-                        </span>
-
-                      )}
-
-                    </td>
-
-                    <td>
-
-                      {!alertItem.resolved && (
+                        <p>
+                            Please login again to access
+                            Security Monitoring.
+                        </p>
 
                         <button
-                          onClick={() =>
-                            resolveAlert(alertItem.id)
-                          }
-                          className="resolve-button"
+                            className="resolve-button"
+                            onClick={() => {
+                                window.location.href = "/login";
+                            }}
                         >
-                          Resolve
+                            Go to Login
                         </button>
 
-                      )}
+                    </div>
 
-                    </td>
+                </div>
 
-                  </tr>
-
-                ))}
-
-              </tbody>
-
-            </table>
-
-          </div>
-
-        )}
-
-      </section>
+            </div>
+        );
+    }
 
 
-      {/* ======================================
-          SUSPICIOUS ACTIVITIES
-      ====================================== */}
+    // ==========================================
+    // LOADING
+    // ==========================================
 
-      <section className="security-section">
+    if (loading) {
 
-        <div className="section-title">
+        return (
+            <div className="security-dashboard">
 
-          <h2>
-            ⚠️ Suspicious Activities
-          </h2>
+                <div className="security-section">
 
-        </div>
+                    <div className="no-data">
 
+                        <h2>
+                            🔐 Loading Security Monitoring...
+                        </h2>
 
-        {suspiciousActivities.length === 0 ? (
+                        <p>
+                            Loading security information
+                            for <strong>{userEmail}</strong>.
+                        </p>
 
-          <p className="no-data">
-            No suspicious activities found.
-          </p>
+                    </div>
 
-        ) : (
+                </div>
 
-          <div className="table-wrapper">
-
-            <table className="security-table">
-
-              <thead>
-
-                <tr>
-                  <th>ID</th>
-                  <th>Email</th>
-                  <th>Activity</th>
-                  <th>Description</th>
-                  <th>Detected At</th>
-                  <th>Status</th>
-                </tr>
-
-              </thead>
+            </div>
+        );
+    }
 
 
-              <tbody>
+    // ==========================================
+    // ERROR
+    // ==========================================
 
-                {suspiciousActivities.map(
-                  (activity) => (
+    if (error) {
 
-                    <tr key={activity.id}>
+        return (
+            <div className="security-dashboard">
 
-                      <td>
-                        {activity.id}
-                      </td>
+                <div className="security-section">
 
-                      <td>
-                        {activity.userEmail}
-                      </td>
+                    <div className="no-data">
 
-                      <td>
-                        <span className="activity-type">
-                          {activity.activityType}
-                        </span>
-                      </td>
+                        <h2>
+                            ⚠️ Unable to Load Security Data
+                        </h2>
 
-                      <td>
-                        {activity.description}
-                      </td>
+                        <p>
+                            {error}
+                        </p>
 
-                      <td>
-                        {new Date(
-                          activity.detectedAt
-                        ).toLocaleString()}
-                      </td>
+                        <button
+                            className="resolve-button"
+                            onClick={loadSecurityData}
+                            disabled={refreshing}
+                        >
+                            {refreshing
+                                ? "Loading..."
+                                : "Retry"}
+                        </button>
 
-                      <td>
+                    </div>
 
-                        <span className="status-flagged">
-                          {activity.status}
-                        </span>
+                </div>
 
-                      </td>
+            </div>
+        );
+    }
 
-                    </tr>
 
-                  )
+    return (
+
+        <div className="security-dashboard">
+
+            {/* ======================================
+                HEADER
+            ====================================== */}
+
+            <div className="security-header">
+
+                <div>
+
+                    <h1>
+                        🛡️ Security Monitoring
+                    </h1>
+
+                    <p>
+                        Monitor login activity, suspicious
+                        activities, security alerts and audit logs.
+                    </p>
+
+                    <p>
+                        👤 Logged in as:
+                        <strong> {userEmail}</strong>
+                    </p>
+
+                </div>
+
+                <button
+                    className="resolve-button"
+                    onClick={loadSecurityData}
+                    disabled={refreshing}
+                >
+                    {refreshing
+                        ? "Refreshing..."
+                        : "🔄 Refresh"}
+                </button>
+
+            </div>
+
+
+            {/* ======================================
+                SUMMARY CARDS
+            ====================================== */}
+
+            <div className="security-cards">
+
+                {/* LOGIN ATTEMPTS */}
+
+                <div className="security-card">
+
+                    <div className="security-card-icon">
+                        🔐
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Login Attempts
+                        </h3>
+
+                        <h2>
+                            {loginAttempts.length}
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                {/* SECURITY ALERTS */}
+
+                <div className="security-card alert-card">
+
+                    <div className="security-card-icon">
+                        🚨
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Security Alerts
+                        </h3>
+
+                        <h2>
+                            {alerts.length}
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                {/* SUSPICIOUS ACTIVITIES */}
+
+                <div className="security-card warning-card">
+
+                    <div className="security-card-icon">
+                        ⚠️
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Suspicious Activities
+                        </h3>
+
+                        <h2>
+                            {suspiciousActivities.length}
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                {/* AUDIT LOGS */}
+
+                <div className="security-card">
+
+                    <div className="security-card-icon">
+                        📋
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Audit Logs
+                        </h3>
+
+                        <h2>
+                            {auditLogs.length}
+                        </h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {/* ======================================
+                SECURITY ALERTS
+            ====================================== */}
+
+            <section className="security-section">
+
+                <div className="section-title">
+
+                    <h2>
+                        🚨 Security Alerts
+                    </h2>
+
+                </div>
+
+
+                {alerts.length === 0 ? (
+
+                    <p className="no-data">
+                        No security alerts found for your account.
+                    </p>
+
+                ) : (
+
+                    <div className="table-wrapper">
+
+                        <table className="security-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>ID</th>
+                                    <th>Alert Type</th>
+                                    <th>Message</th>
+                                    <th>Severity</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {alerts.map((alertItem) => (
+
+                                    <tr key={alertItem.id}>
+
+                                        <td>
+                                            {alertItem.id}
+                                        </td>
+
+                                        <td>
+                                            <span className="activity-type">
+                                                {alertItem.alertType}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            {alertItem.message}
+                                        </td>
+
+                                        <td>
+
+                                            <span className="status-high">
+                                                {alertItem.severity}
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+                                            {new Date(
+                                                alertItem.timestamp
+                                            ).toLocaleString()}
+                                        </td>
+
+                                        <td>
+
+                                            {alertItem.resolved ? (
+
+                                                <span className="status-resolved">
+                                                    Resolved
+                                                </span>
+
+                                            ) : (
+
+                                                <span className="status-active">
+                                                    Active
+                                                </span>
+
+                                            )}
+
+                                        </td>
+
+                                        <td>
+
+                                            {!alertItem.resolved && (
+
+                                                <button
+                                                    onClick={() =>
+                                                        resolveAlert(
+                                                            alertItem.id
+                                                        )
+                                                    }
+                                                    className="resolve-button"
+                                                >
+                                                    Resolve
+                                                </button>
+
+                                            )}
+
+                                        </td>
+
+                                    </tr>
+
+                                ))}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
                 )}
 
-              </tbody>
-
-            </table>
-
-          </div>
-
-        )}
-
-      </section>
+            </section>
 
 
-      {/* ======================================
-          LOGIN ATTEMPTS
-      ====================================== */}
+            {/* ======================================
+                SUSPICIOUS ACTIVITIES
+            ====================================== */}
 
-      <section className="security-section">
+            <section className="security-section">
 
-        <div className="section-title">
+                <div className="section-title">
 
-          <h2>
-            🔐 Recent Login Attempts
-          </h2>
+                    <h2>
+                        ⚠️ Suspicious Activities
+                    </h2>
 
+                </div>
+
+
+                {suspiciousActivities.length === 0 ? (
+
+                    <p className="no-data">
+                        No suspicious activities found for your account.
+                    </p>
+
+                ) : (
+
+                    <div className="table-wrapper">
+
+                        <table className="security-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>ID</th>
+                                    <th>Activity</th>
+                                    <th>Description</th>
+                                    <th>Detected At</th>
+                                    <th>Status</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {suspiciousActivities.map(
+                                    (activity) => (
+
+                                        <tr key={activity.id}>
+
+                                            <td>
+                                                {activity.id}
+                                            </td>
+
+                                            <td>
+                                                <span className="activity-type">
+                                                    {activity.activityType}
+                                                </span>
+                                            </td>
+
+                                            <td>
+                                                {activity.description}
+                                            </td>
+
+                                            <td>
+                                                {new Date(
+                                                    activity.detectedAt
+                                                ).toLocaleString()}
+                                            </td>
+
+                                            <td>
+
+                                                <span className="status-flagged">
+                                                    {activity.status}
+                                                </span>
+
+                                            </td>
+
+                                        </tr>
+
+                                    )
+                                )}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                )}
+
+            </section>
+
+
+            {/* ======================================
+                LOGIN ATTEMPTS
+            ====================================== */}
+
+            <section className="security-section">
+
+                <div className="section-title">
+
+                    <h2>
+                        🔐 Recent Login Attempts
+                    </h2>
+
+                </div>
+
+
+                {loginAttempts.length === 0 ? (
+
+                    <p className="no-data">
+                        No login attempts found for your account.
+                    </p>
+
+                ) : (
+
+                    <div className="table-wrapper">
+
+                        <table className="security-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Result</th>
+                                    <th>Timestamp</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {loginAttempts.map((attempt) => (
+
+                                    <tr key={attempt.id}>
+
+                                        <td>
+
+                                            {attempt.success ? (
+
+                                                <span className="status-success">
+                                                    SUCCESS
+                                                </span>
+
+                                            ) : (
+
+                                                <span className="status-failed">
+                                                    FAILED
+                                                </span>
+
+                                            )}
+
+                                        </td>
+
+                                        <td>
+                                            {new Date(
+                                                attempt.timestamp
+                                            ).toLocaleString()}
+                                        </td>
+
+                                    </tr>
+
+                                ))}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                )}
+
+            </section>
+
+
+            {/* ======================================
+                AUDIT LOGS
+            ====================================== */}
+
+            <section className="security-section">
+
+                <div className="section-title">
+
+                    <h2>
+                        📋 Audit Logs
+                    </h2>
+
+                </div>
+
+
+                {auditLogs.length === 0 ? (
+
+                    <p className="no-data">
+                        No audit logs found for your account.
+                    </p>
+
+                ) : (
+
+                    <div className="table-wrapper">
+
+                        <table className="security-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Action</th>
+                                    <th>Description</th>
+                                    <th>Timestamp</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {auditLogs.map((log) => (
+
+                                    <tr key={log.id}>
+
+                                        <td>
+
+                                            <span className="action-type">
+                                                {log.action}
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+                                            {log.description}
+                                        </td>
+
+                                        <td>
+                                            {new Date(
+                                                log.timestamp
+                                            ).toLocaleString()}
+                                        </td>
+
+                                    </tr>
+
+                                ))}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                )}
+
+            </section>
 
         </div>
-
-
-        {loginAttempts.length === 0 ? (
-
-          <p className="no-data">
-            No login attempts found.
-          </p>
-
-        ) : (
-
-          <div className="table-wrapper">
-
-            <table className="security-table">
-
-              <thead>
-
-                <tr>
-                    
-                  <th>Email</th>
-                  <th>IP Address</th>
-                  <th>Result</th>
-                  <th>Timestamp</th>
-                </tr>
-
-              </thead>
-
-
-              <tbody>
-
-                {loginAttempts.map((attempt) => (
-
-                  <tr key={attempt.id}>
-
-
-                    <td>
-                      {attempt.email}
-                    </td>
-
-                    <td>
-                      <span className="ip-address">
-                        {attempt.ipAddress}
-                      </span>
-                    </td>
-
-                    <td>
-
-                      {attempt.success ? (
-
-                        <span className="status-success">
-                          SUCCESS
-                        </span>
-
-                      ) : (
-
-                        <span className="status-failed">
-                          FAILED
-                        </span>
-
-                      )}
-
-                    </td>
-
-                    <td>
-                      {new Date(
-                        attempt.timestamp
-                      ).toLocaleString()}
-                    </td>
-
-                  </tr>
-
-                ))}
-
-              </tbody>
-
-            </table>
-
-          </div>
-
-        )}
-
-      </section>
-
-
-      {/* ======================================
-          AUDIT LOGS
-      ====================================== */}
-
-      <section className="security-section">
-
-        <div className="section-title">
-
-          <h2>
-            📋 Audit Logs
-          </h2>
-
-
-        </div>
-
-
-        {auditLogs.length === 0 ? (
-
-          <p className="no-data">
-            No audit logs found.
-          </p>
-
-        ) : (
-
-          <div className="table-wrapper">
-
-            <table className="security-table">
-
-              <thead>
-
-                <tr>
-                  
-                  <th>Email</th>
-                  <th>Action</th>
-                  <th>Description</th>
-                  <th>Timestamp</th>
-                </tr>
-
-              </thead>
-
-
-              <tbody>
-
-                {auditLogs.map((log) => (
-
-                  <tr key={log.id}>
-
-                    
-
-                    <td>
-                      {log.userEmail}
-                    </td>
-
-                    <td>
-
-                      <span className="action-type">
-                        {log.action}
-                      </span>
-
-                    </td>
-
-                    <td>
-                      {log.description}
-                    </td>
-
-                    <td>
-                      {new Date(
-                        log.timestamp
-                      ).toLocaleString()}
-                    </td>
-
-                  </tr>
-
-                ))}
-
-              </tbody>
-
-            </table>
-
-          </div>
-
-        )}
-
-      </section>
-
-
-    </div>
-  );
+    );
 }
 
 export default SecurityDashboard;

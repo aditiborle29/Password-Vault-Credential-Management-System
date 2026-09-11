@@ -1,3 +1,7 @@
+/* ================================
+   RESET
+================================ */
+
 * {
     margin: 0;
     padding: 0;
@@ -9,54 +13,95 @@ body {
     background: #f4f7fb;
 }
 
-/* =========================================
+
+/* ================================
    VAULT CONTAINER
-========================================= */
+================================ */
 
 .vault-container {
     min-height: 100vh;
+
     display: flex;
     justify-content: center;
     align-items: flex-start;
+
     padding: 40px 20px;
 }
+
+
+/* ================================
+   VAULT CARD
+================================ */
 
 .vault-card {
     width: 100%;
     max-width: 1200px;
-    background: #fff;
+
+    background: white;
+
     padding: 30px;
+
     border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.12);
+
     overflow: hidden;
 }
 
-/* =========================================
+
+/* ================================
    HEADINGS
-========================================= */
+================================ */
 
 .vault-card h2 {
     text-align: center;
+
     color: #2563eb;
+
     margin-bottom: 25px;
-    background-color: white;
+
     font-size: 25px;
 }
 
-/* =========================================
-   TABLE WRAPPER BEHAVIOR
-========================================= */
+.shared-heading {
+    margin-top: 40px;
+}
+
+
+/* ================================
+   TABLE WRAPPER
+================================ */
+
+.table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+
+    margin-bottom: 20px;
+}
+
+
+/* ================================
+   TABLE
+================================ */
 
 table {
     width: 100%;
+
+    min-width: 850px;
+
     border-collapse: collapse;
-    margin-bottom: 20px;
+
     background: white;
 }
 
-/* =========================================
+
+/* ================================
    TABLE HEADER
-========================================= */
+================================ */
 
 table thead {
     background: #2563eb;
@@ -64,24 +109,36 @@ table thead {
 
 table th {
     padding: 14px 12px;
+
     background: #2563eb;
+
     color: white;
+
     text-align: center;
+
     font-size: 14px;
+
     white-space: nowrap;
 }
 
-/* =========================================
+
+/* ================================
    TABLE DATA
-========================================= */
+================================ */
 
 table td {
     padding: 14px 12px;
+
     border-bottom: 1px solid #ddd;
+
     text-align: center;
-    background-color: white;
+
+    background: white;
+
     color: #333;
+
     font-size: 14px;
+
     vertical-align: middle;
 }
 
@@ -89,22 +146,29 @@ table tbody tr:hover td {
     background: #f5f7ff;
 }
 
-/* =========================================
+
+/* ================================
    ACTION BUTTONS
-========================================= */
+================================ */
 
 .action-buttons {
     display: flex;
+
     flex-wrap: wrap;
+
     justify-content: center;
+
     align-items: center;
+
     gap: 7px;
+
     min-width: 280px;
 }
 
-/* =========================================
-   COMMON BUTTON STYLE
-========================================= */
+
+/* ================================
+   COMMON BUTTON
+================================ */
 
 .show-btn,
 .copy-btn,
@@ -112,18 +176,26 @@ table tbody tr:hover td {
 .delete-btn,
 .share-btn {
     padding: 8px 12px;
+
     border: none;
+
     border-radius: 6px;
+
     color: white;
+
     cursor: pointer;
+
     font-size: 13px;
+
     transition: 0.3s;
+
     white-space: nowrap;
 }
 
-/* =========================================
+
+/* ================================
    SHOW
-========================================= */
+================================ */
 
 .show-btn {
     background: #2563eb;
@@ -133,9 +205,10 @@ table tbody tr:hover td {
     background: #1d4ed8;
 }
 
-/* =========================================
+
+/* ================================
    COPY
-========================================= */
+================================ */
 
 .copy-btn {
     background: #10b981;
@@ -145,15 +218,20 @@ table tbody tr:hover td {
     background: #059669;
 }
 
-/* =========================================
+
+/* ================================
    EDIT
-========================================= */
+================================ */
 
 .edit-btn {
     background: #f59e0b;
+
     text-decoration: none;
+
     display: inline-flex;
+
     align-items: center;
+
     justify-content: center;
 }
 
@@ -161,9 +239,10 @@ table tbody tr:hover td {
     background: #d97706;
 }
 
-/* =========================================
+
+/* ================================
    DELETE
-========================================= */
+================================ */
 
 .delete-btn {
     background: #ef4444;
@@ -173,9 +252,16 @@ table tbody tr:hover td {
     background: #dc2626;
 }
 
-/* =========================================
+.delete-btn:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+}
+
+
+/* ================================
    SHARE
-========================================= */
+================================ */
 
 .share-btn {
     background: #8b5cf6;
@@ -185,19 +271,28 @@ table tbody tr:hover td {
     background: #7c3aed;
 }
 
-/* =========================================
+
+/* ================================
    BACK BUTTON
-========================================= */
+================================ */
 
 .back-btn {
     display: inline-block;
+
     margin-top: 25px;
+
     text-decoration: none;
+
     color: white;
+
     background: #2563eb;
+
     padding: 10px 18px;
+
     border-radius: 8px;
+
     transition: 0.3s;
+
     font-size: 14px;
 }
 
@@ -205,24 +300,227 @@ table tbody tr:hover td {
     background: #1d4ed8;
 }
 
-/* =========================================
+
+/* ================================
    NO DATA
-========================================= */
+================================ */
 
 .no-data {
     text-align: center;
-    color: gray;
-    font-size: 18px;
+
+    color: #6b7280;
+
+    font-size: 17px;
+
     margin: 30px 0;
-    background-color: white;
+
+    padding: 25px;
+
+    background: white;
 }
 
-/* =========================================
+.empty-icon {
+    font-size: 35px;
+
+    margin-bottom: 10px;
+}
+
+
+/* ================================
+   ADD CREDENTIAL BUTTON
+================================ */
+
+.add-credential-btn {
+    display: inline-block;
+
+    margin-top: 15px;
+
+    padding: 10px 16px;
+
+    background: #2563eb;
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 7px;
+
+    font-size: 14px;
+}
+
+.add-credential-btn:hover {
+    background: #1d4ed8;
+}
+
+
+/* ================================
+   ERROR MESSAGE
+================================ */
+
+.vault-error {
+    width: 100%;
+
+    padding: 13px 15px;
+
+    margin-bottom: 20px;
+
+    background: #fee2e2;
+
+    border: 1px solid #fca5a5;
+
+    border-radius: 8px;
+
+    color: #b91c1c;
+
+    font-size: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    line-height: 1.5;
+}
+
+.vault-error button {
+    border: none;
+
+    background: #dc2626;
+
+    color: white;
+
+    padding: 7px 12px;
+
+    border-radius: 5px;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+.vault-error button:hover {
+    background: #b91c1c;
+}
+
+
+/* ================================
+   COPY MESSAGE
+================================ */
+
+.copy-message {
+    padding: 10px 14px;
+
+    margin-bottom: 18px;
+
+    background: #dcfce7;
+
+    border: 1px solid #86efac;
+
+    color: #166534;
+
+    border-radius: 7px;
+
+    text-align: center;
+
+    font-size: 14px;
+}
+
+
+/* ================================
+   SHARED LOADING
+================================ */
+
+.shared-loading {
+    text-align: center;
+
+    color: #6b7280;
+
+    padding: 25px;
+
+    font-size: 15px;
+}
+
+
+/* ================================
+   PERMISSIONS
+================================ */
+
+.permission-edit {
+    color: #15803d;
+}
+
+.permission-view {
+    color: #555;
+}
+
+
+/* ================================
+   LOADING CARD
+================================ */
+
+.loading-card {
+    max-width: 500px;
+
+    text-align: center;
+
+    margin-top: 80px;
+}
+
+.loading-card h2 {
+    margin-top: 15px;
+
+    margin-bottom: 8px;
+}
+
+.loading-card p {
+    color: #666;
+
+    font-size: 14px;
+}
+
+
+/* ================================
+   LOADER
+================================ */
+
+.vault-loader {
+    width: 40px;
+
+    height: 40px;
+
+    margin: auto;
+
+    border: 4px solid #dbeafe;
+
+    border-top: 4px solid #2563eb;
+
+    border-radius: 50%;
+
+    animation: vaultSpin 1s linear infinite;
+}
+
+@keyframes vaultSpin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* ================================
    SHARE MODAL OVERLAY
-========================================= */
+================================ */
 
 .share-modal-overlay {
     position: fixed;
+
     inset: 0;
 
     width: 100%;
@@ -231,7 +529,9 @@ table tbody tr:hover td {
     background: rgba(0, 0, 0, 0.55);
 
     display: flex;
+
     justify-content: center;
+
     align-items: center;
 
     z-index: 9999;
@@ -241,13 +541,19 @@ table tbody tr:hover td {
     overflow-y: auto;
 }
 
-/* =========================================
+
+/* ================================
    SHARE MODAL
-========================================= */
+================================ */
 
 .share-modal {
     width: 450px;
+
     max-width: 100%;
+
+    max-height: 90vh;
+
+    overflow-y: auto;
 
     background: white;
 
@@ -255,81 +561,101 @@ table tbody tr:hover td {
 
     border-radius: 15px;
 
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.3);
 
     animation: modalAppear 0.2s ease-in-out;
 }
 
 @keyframes modalAppear {
+
     from {
         opacity: 0;
+
         transform: scale(0.95);
     }
 
     to {
         opacity: 1;
+
         transform: scale(1);
     }
 }
 
-/* =========================================
+
+/* ================================
    MODAL HEADING
-========================================= */
+================================ */
 
 .share-modal h2 {
     text-align: center;
+
     color: #2563eb;
-    background-color: white;
+
     margin-bottom: 20px;
+
     font-size: 23px;
 }
 
-/* =========================================
+
+/* ================================
    SELECTED CREDENTIAL
-========================================= */
+================================ */
 
 .selected-credential {
     background: #f8fafc;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    border-left: 4px solid #2563eb;
-}
 
-.selected-credential strong {
-    background-color: transparent;
+    padding: 15px;
+
+    border-radius: 8px;
+
+    margin-bottom: 20px;
+
+    border-left: 4px solid #2563eb;
 }
 
 .selected-credential p {
     margin: 6px 0;
-    background-color: transparent;
+
     color: #333;
+
     line-height: 1.5;
 }
 
-/* =========================================
-   MODAL LABELS
-========================================= */
+.selected-credential strong {
+    background: transparent;
+}
+
+
+/* ================================
+   MODAL LABEL
+================================ */
 
 .share-modal label {
     display: block;
+
     font-weight: bold;
+
     margin-top: 15px;
+
     margin-bottom: 7px;
-    background-color: white;
+
     color: #333;
 }
 
-/* =========================================
-   MODAL INPUT & SELECT
-========================================= */
+
+/* ================================
+   MODAL INPUT + SELECT
+================================ */
 
 .share-modal input,
 .share-modal select {
     width: 100%;
+
     padding: 12px;
 
     border: 1px solid #ccc;
+
     border-radius: 7px;
 
     font-size: 15px;
@@ -340,37 +666,99 @@ table tbody tr:hover td {
 .share-modal input:focus,
 .share-modal select:focus {
     outline: none;
+
     border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+
+    box-shadow:
+        0 0 0 2px rgba(37, 99, 235, 0.1);
 }
 
-/* =========================================
+.share-modal input:disabled,
+.share-modal select:disabled {
+    background: #f3f4f6;
+
+    cursor: not-allowed;
+}
+
+
+/* ================================
+   MODAL ERROR
+================================ */
+
+.modal-error {
+    padding: 11px 12px;
+
+    margin-bottom: 15px;
+
+    background: #fee2e2;
+
+    border: 1px solid #fca5a5;
+
+    color: #b91c1c;
+
+    border-radius: 7px;
+
+    font-size: 13px;
+
+    line-height: 1.4;
+}
+
+
+/* ================================
+   MODAL SUCCESS
+================================ */
+
+.modal-success {
+    padding: 11px 12px;
+
+    margin-bottom: 15px;
+
+    background: #dcfce7;
+
+    border: 1px solid #86efac;
+
+    color: #166534;
+
+    border-radius: 7px;
+
+    font-size: 13px;
+
+    line-height: 1.4;
+}
+
+
+/* ================================
    MODAL BUTTONS
-========================================= */
+================================ */
 
 .share-modal-buttons {
     display: flex;
+
     justify-content: flex-end;
+
     gap: 10px;
 
     margin-top: 25px;
-
-    background-color: white;
 }
 
-/* =========================================
+
+/* ================================
    CANCEL
-========================================= */
+================================ */
 
 .cancel-btn {
     padding: 11px 18px;
+
     border: none;
+
     border-radius: 7px;
 
     background: #ddd;
+
     color: #333;
 
     cursor: pointer;
+
     font-size: 14px;
 
     transition: 0.3s;
@@ -380,19 +768,30 @@ table tbody tr:hover td {
     background: #ccc;
 }
 
-/* =========================================
+.cancel-btn:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+}
+
+
+/* ================================
    SHARE SUBMIT
-========================================= */
+================================ */
 
 .share-submit-btn {
     padding: 11px 18px;
+
     border: none;
+
     border-radius: 7px;
 
     background: #2563eb;
+
     color: white;
 
     cursor: pointer;
+
     font-size: 14px;
 
     transition: 0.3s;
@@ -402,9 +801,16 @@ table tbody tr:hover td {
     background: #1d4ed8;
 }
 
-/* =========================================
+.share-submit-btn:disabled {
+    opacity: 0.7;
+
+    cursor: not-allowed;
+}
+
+
+/* ================================
    TABLET
-========================================= */
+================================ */
 
 @media (max-width: 900px) {
 
@@ -416,18 +822,12 @@ table tbody tr:hover td {
         padding: 22px;
     }
 
-    /* Horizontal scrolling instead of breaking table */
-
-    table {
-        display: block;
-        width: 100%;
+    .table-wrapper {
         overflow-x: auto;
-        white-space: nowrap;
     }
 
-    table th,
-    table td {
-        padding: 12px 10px;
+    table {
+        min-width: 800px;
     }
 
     .action-buttons {
@@ -435,9 +835,10 @@ table tbody tr:hover td {
     }
 }
 
-/* =========================================
+
+/* ================================
    MOBILE
-========================================= */
+================================ */
 
 @media (max-width: 600px) {
 
@@ -447,35 +848,39 @@ table tbody tr:hover td {
 
     .vault-card {
         padding: 18px 12px;
+
         border-radius: 10px;
     }
 
     .vault-card h2 {
         font-size: 21px;
+
         margin-bottom: 20px;
     }
 
-    /* Table remains scrollable */
+    .shared-heading {
+        margin-top: 30px !important;
+    }
 
     table {
-        display: block;
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+        min-width: 760px;
     }
 
     table th {
         font-size: 13px;
+
         padding: 11px 10px;
     }
 
     table td {
         font-size: 13px;
+
         padding: 11px 10px;
     }
 
     .action-buttons {
-        min-width: 270px;
+        min-width: 260px;
+
         gap: 6px;
     }
 
@@ -485,28 +890,47 @@ table tbody tr:hover td {
     .delete-btn,
     .share-btn {
         font-size: 12px;
+
         padding: 7px 9px;
     }
 
     .back-btn {
         width: 100%;
+
         text-align: center;
+
         margin-top: 20px;
     }
 
-    /* Modal */
+    .vault-error {
+        flex-direction: column;
+
+        align-items: stretch;
+
+        text-align: center;
+    }
+
+    .vault-error button {
+        width: 100%;
+    }
+
+
+    /* MODAL */
 
     .share-modal-overlay {
         padding: 12px;
+
         align-items: center;
     }
 
     .share-modal {
         width: 100%;
+
         padding: 20px;
+
         border-radius: 12px;
+
         max-height: 95vh;
-        overflow-y: auto;
     }
 
     .share-modal h2 {
@@ -516,6 +940,7 @@ table tbody tr:hover td {
     .share-modal input,
     .share-modal select {
         font-size: 14px;
+
         padding: 11px;
     }
 
@@ -529,9 +954,10 @@ table tbody tr:hover td {
     }
 }
 
-/* =========================================
+
+/* ================================
    SMALL MOBILE
-========================================= */
+================================ */
 
 @media (max-width: 380px) {
 
@@ -547,14 +973,19 @@ table tbody tr:hover td {
         font-size: 19px;
     }
 
+    table {
+        min-width: 720px;
+    }
+
     table th,
     table td {
         font-size: 12px;
+
         padding: 9px 8px;
     }
 
     .action-buttons {
-        min-width: 250px;
+        min-width: 240px;
     }
 
     .show-btn,
@@ -563,6 +994,7 @@ table tbody tr:hover td {
     .delete-btn,
     .share-btn {
         font-size: 11px;
+
         padding: 6px 8px;
     }
 

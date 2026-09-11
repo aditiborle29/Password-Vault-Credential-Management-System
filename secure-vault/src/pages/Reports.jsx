@@ -3,71 +3,98 @@ import axios from "axios";
 import "./Reports.css";
 
 function Reports() {
-
     const [passwordReport, setPasswordReport] = useState(null);
     const [loginReport, setLoginReport] = useState(null);
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    const API = "http://localhost:8080/api/reports";
+    const userEmail = localStorage.getItem("userEmail");
 
-    // ==========================================
-    // LOAD REPORT DATA
-    // ==========================================
+    const API = "http://localhost:8080/api/reports";
 
     useEffect(() => {
         loadReports();
     }, []);
 
     const loadReports = async () => {
-
         try {
-
             setLoading(true);
             setError("");
 
-            const passwordResponse =
-                await axios.get(
-                    `${API}/password-health`
-                );
+            if (!userEmail) {
+                setError("User session not found. Please login again.");
+                return;
+            }
 
-            const loginResponse =
-                await axios.get(
-                    `${API}/login-activity`
-                );
+            console.log("Reports user:", userEmail);
 
-            setPasswordReport(
+            const encodedEmail = encodeURIComponent(userEmail);
+
+            const passwordResponse = await axios.get(
+                `${API}/password-health?email=${encodedEmail}`
+            );
+
+            console.log(
+                "Password Report:",
                 passwordResponse.data
             );
 
-            setLoginReport(
+            const loginResponse = await axios.get(
+                `${API}/login-activity?email=${encodedEmail}`
+            );
+
+            console.log(
+                "Login Report:",
                 loginResponse.data
             );
 
-        } catch (error) {
+            setPasswordReport(passwordResponse.data);
+            setLoginReport(loginResponse.data);
 
-            console.error(
-                "Error loading reports:",
-                error
-            );
+        } catch (err) {
+            console.error("Reports error:", err);
 
-            setError(
-                "Unable to load security reports. Please make sure the backend is running."
-            );
-
+            if (err.response) {
+                setError(
+                    err.response.data?.message ||
+                    `Server error: ${err.response.status}`
+                );
+            } else if (err.request) {
+                setError(
+                    "Backend is not reachable."
+                );
+            } else {
+                setError(
+                    "Unable to load security reports."
+                );
+            }
         } finally {
-
             setLoading(false);
         }
     };
 
+    if (!userEmail) {
+        return (
+            <div className="reports-container">
+                <div className="error-box">
+                    <h2>Session Expired</h2>
+                    <p>Please login again.</p>
 
-    // ==========================================
-    // LOADING
-    // ==========================================
+                    <button
+                        className="retry-button"
+                        onClick={() => {
+                            window.location.href = "/login";
+                        }}
+                    >
+                        Go to Login
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     if (loading) {
-
         return (
             <div className="reports-loading">
                 <div className="loading-box">
@@ -80,24 +107,16 @@ function Reports() {
                     </h2>
 
                     <p>
-                        Fetching security information
-                        from the server.
+                        Loading reports for {userEmail}
                     </p>
                 </div>
             </div>
         );
     }
 
-
-    // ==========================================
-    // ERROR
-    // ==========================================
-
     if (error) {
-
         return (
             <div className="reports-container">
-
                 <div className="error-box">
 
                     <div className="error-icon">
@@ -105,7 +124,7 @@ function Reports() {
                     </div>
 
                     <h2>
-                        Something went wrong
+                        Unable to Load Reports
                     </h2>
 
                     <p>
@@ -120,19 +139,14 @@ function Reports() {
                     </button>
 
                 </div>
-
             </div>
         );
     }
 
-
     return (
-
         <div className="reports-container">
 
-            {/* =====================================
-                HEADER
-            ===================================== */}
+            {/* HEADER */}
 
             <div className="reports-header">
 
@@ -151,8 +165,12 @@ function Reports() {
                     </div>
 
                     <p>
-                        Analyze password health and
-                        login activity of your Secure Vault.
+                        Password health and login activity
+                        for your account.
+                    </p>
+
+                    <p className="logged-user">
+                        👤 {userEmail}
                     </p>
 
                 </div>
@@ -167,9 +185,7 @@ function Reports() {
             </div>
 
 
-            {/* =====================================
-                PASSWORD HEALTH REPORT
-            ===================================== */}
+            {/* PASSWORD HEALTH */}
 
             <section className="report-section">
 
@@ -179,25 +195,18 @@ function Reports() {
                         🔑
                     </div>
 
-                    <div className="section-report">
-                        <h2>
-                            Password Health
-                        </h2>
+                    <div>
+                        <h2>Password Health</h2>
 
                         <p>
-                            Overview of the strength
-                            of your stored passwords.
+                            Strength of your stored passwords.
                         </p>
                     </div>
 
                 </div>
 
 
-                {/* PASSWORD CARDS */}
-
                 <div className="report-cards">
-
-                    {/* TOTAL */}
 
                     <div className="report-card total-card">
 
@@ -213,14 +222,8 @@ function Reports() {
                             {passwordReport?.totalCredentials || 0}
                         </h1>
 
-                        <p>
-                            Stored credentials
-                        </p>
-
                     </div>
 
-
-                    {/* STRONG */}
 
                     <div className="report-card strong-card">
 
@@ -236,14 +239,8 @@ function Reports() {
                             {passwordReport?.strongPasswords || 0}
                         </h1>
 
-                        <p>
-                            Excellent protection
-                        </p>
-
                     </div>
 
-
-                    {/* MEDIUM */}
 
                     <div className="report-card medium-card">
 
@@ -259,14 +256,8 @@ function Reports() {
                             {passwordReport?.mediumPasswords || 0}
                         </h1>
 
-                        <p>
-                            Can be improved
-                        </p>
-
                     </div>
 
-
-                    {/* WEAK */}
 
                     <div className="report-card weak-card">
 
@@ -282,58 +273,44 @@ function Reports() {
                             {passwordReport?.weakPasswords || 0}
                         </h1>
 
-                        <p>
-                            Needs attention
-                        </p>
-
                     </div>
 
                 </div>
 
-
-                {/* =================================
-                    HEALTH SCORE
-                ================================= */}
 
                 <div className="health-summary">
 
                     <div className="health-info">
 
                         <div>
-
                             <h3>
                                 Overall Password Health
                             </h3>
 
                             <p>
-                                Based on your password
-                                strength analysis
+                                Based on your password strength.
                             </p>
-
                         </div>
 
                         <div className="health-score">
-
                             {passwordReport?.healthScore || 0}%
-
                         </div>
 
                     </div>
-
-
-                    {/* PROGRESS BAR */}
 
                     <div className="health-progress">
 
                         <div
                             className="health-progress-bar"
                             style={{
-                                width: `${passwordReport?.healthScore || 0}%`
+                                width: `${Math.min(
+                                    passwordReport?.healthScore || 0,
+                                    100
+                                )}%`
                             }}
                         />
 
                     </div>
-
 
                     <div className="health-status">
 
@@ -348,9 +325,7 @@ function Reports() {
             </section>
 
 
-            {/* =====================================
-                LOGIN ACTIVITY REPORT
-            ===================================== */}
+            {/* LOGIN ACTIVITY */}
 
             <section className="report-section">
 
@@ -361,26 +336,19 @@ function Reports() {
                     </div>
 
                     <div>
-
                         <h2>
                             Login Activity
                         </h2>
 
                         <p>
-                            Overview of recent login
-                            attempts and authentication activity.
+                            Your recent login attempts.
                         </p>
-
                     </div>
 
                 </div>
 
 
-                {/* LOGIN SUMMARY */}
-
-                <div className="report-cards login-summary">
-
-                    {/* TOTAL */}
+                <div className="report-cards">
 
                     <div className="report-card total-card">
 
@@ -396,14 +364,8 @@ function Reports() {
                             {loginReport?.totalAttempts || 0}
                         </h1>
 
-                        <p>
-                            Login attempts recorded
-                        </p>
-
                     </div>
 
-
-                    {/* SUCCESS */}
 
                     <div className="report-card strong-card">
 
@@ -419,14 +381,8 @@ function Reports() {
                             {loginReport?.successfulLogins || 0}
                         </h1>
 
-                        <p>
-                            Successful authentication
-                        </p>
-
                     </div>
 
-
-                    {/* FAILED */}
 
                     <div className="report-card weak-card">
 
@@ -442,45 +398,23 @@ function Reports() {
                             {loginReport?.failedLogins || 0}
                         </h1>
 
-                        <p>
-                            Failed authentication
-                        </p>
-
                     </div>
 
                 </div>
 
 
-                {/* =================================
-                    RECENT LOGIN ACTIVITIES
-                ================================= */}
-
                 <div className="recent-activity">
 
-                    <div className="recent-heading">
+                    <h3>
+                        Recent Login Activities
+                    </h3>
 
-                        <div>
-
-                            <h3>
-                                Recent Login Activities
-                            </h3>
-
-                            <p>
-                                Latest authentication attempts
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    {loginReport?.recentActivities?.length === 0 ? (
+                    {!loginReport?.recentActivities ||
+                    loginReport.recentActivities.length === 0 ? (
 
                         <div className="empty-state">
 
-                            <div>
-                                📭
-                            </div>
+                            <div>📭</div>
 
                             <p>
                                 No login activities found.
@@ -495,9 +429,7 @@ function Reports() {
                             <table className="report-table">
 
                                 <thead>
-
                                     <tr>
-
                                         <th>
                                             Email
                                         </th>
@@ -509,25 +441,19 @@ function Reports() {
                                         <th>
                                             Timestamp
                                         </th>
-
                                     </tr>
-
                                 </thead>
-
 
                                 <tbody>
 
-                                    {loginReport?.recentActivities?.map(
+                                    {loginReport.recentActivities.map(
                                         (attempt) => (
 
                                             <tr key={attempt.id}>
 
-                                                <td className="email-cell">
-
+                                                <td>
                                                     {attempt.email}
-
                                                 </td>
-
 
                                                 <td>
 
@@ -542,18 +468,14 @@ function Reports() {
                                                         <span className="status-badge failed-badge">
                                                             ✕ FAILED
                                                         </span>
-
                                                     )}
 
                                                 </td>
 
-
-                                                <td className="time-cell">
-
+                                                <td>
                                                     {new Date(
                                                         attempt.timestamp
                                                     ).toLocaleString()}
-
                                                 </td>
 
                                             </tr>
@@ -566,7 +488,6 @@ function Reports() {
                             </table>
 
                         </div>
-
                     )}
 
                 </div>

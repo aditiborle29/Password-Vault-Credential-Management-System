@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface SuspiciousActivityRepository
-        extends JpaRepository<SuspiciousActivity, Long> {
+                extends JpaRepository<SuspiciousActivity, Long> {
 
-    List<SuspiciousActivity> findByUserEmailOrderByDetectedAtDesc(
-            String userEmail);
+        List<SuspiciousActivity> findByUserEmailOrderByDetectedAtDesc(
+                        String userEmail);
 
-    List<SuspiciousActivity> findAllByOrderByDetectedAtDesc();
+        List<SuspiciousActivity> findAllByOrderByDetectedAtDesc();
 }

@@ -11,6 +11,7 @@ import com.securevault.util.AESUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,19 +85,17 @@ public class CredentialService {
         public List<SharedCredentialResponse> getSharedCredentials(
                         String email) {
 
-                // Find the user who is logged in
+                // Find the logged-in user
                 User user = userRepository
                                 .findByEmail(email)
                                 .orElse(null);
 
-                // User does not exist
                 if (user == null) {
                         return List.of();
                 }
 
                 // Find credentials shared WITH this user
-                List<SharedCredential> sharedCredentials = sharedCredentialRepository
-                                .findBySharedWith(user);
+                List<SharedCredential> sharedCredentials = sharedCredentialRepository.findBySharedWith(user);
 
                 List<SharedCredentialResponse> responseList = new ArrayList<>();
 
@@ -242,6 +241,7 @@ public class CredentialService {
         // DELETE CREDENTIAL
         // =====================================================
 
+        @Transactional
         public String deleteCredential(
                         Long id,
                         String email) {
@@ -273,6 +273,17 @@ public class CredentialService {
 
                         return "Access denied. Only the owner can delete this credential.";
                 }
+
+                // =================================================
+                // DELETE SHARING RECORDS FIRST
+                // =================================================
+
+                sharedCredentialRepository
+                                .deleteByCredentialId(id);
+
+                // =================================================
+                // DELETE CREDENTIAL
+                // =================================================
 
                 credentialRepository.deleteById(id);
 

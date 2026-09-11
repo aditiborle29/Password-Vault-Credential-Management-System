@@ -1,23 +1,39 @@
-/* =========================================
-   MAIN CONTAINER
-========================================= */
-*{
-    background-color: #87cefa
+/* =========================================================
+   REPORTS PAGE - MAIN
+========================================================= */
+
+* {
+    box-sizing: border-box;
 }
-.reports-container {
-    min-height: 100vh;
-    background: #f5f7fb;
-    padding: 35px 45px;
+
+html,
+body,
+#root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
     font-family: Arial, sans-serif;
+}
+
+.reports-container {
+    width: 100%;
+    min-height: 100vh;
+    padding: 35px 45px;
+    background: lightskyblue;
     color: #212529;
 }
 
 
-/* =========================================
+/* =========================================================
    HEADER
-========================================= */
+========================================================= */
 
 .reports-header {
+    width: 100%;
     background: white;
     padding: 25px 30px;
     border-radius: 14px;
@@ -26,45 +42,59 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 20px;
 
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+.title {
+    background: white;
 }
 
 .header-title {
     display: flex;
     align-items: center;
     gap: 12px;
+    background: white;
+}
+
+.header-icon {
+    font-size: 32px;
+    background: white;
 }
 
 .header-title h1 {
     margin: 0;
     font-size: 30px;
-}
-
-.header-icon {
-    font-size: 32px;
+    color: #212529;
+    background: white;
 }
 
 .reports-header p {
     margin: 8px 0 0;
     color: #6c757d;
     font-size: 15px;
+    background: white;
 }
 
 
-/* =========================================
+/* =========================================================
    REFRESH BUTTON
-========================================= */
+========================================================= */
 
 .refresh-button {
     border: none;
     padding: 11px 18px;
     border-radius: 8px;
+
     background: #0d6efd;
     color: white;
+
     font-size: 14px;
     cursor: pointer;
+
     transition: 0.2s;
+    white-space: nowrap;
 }
 
 .refresh-button:hover {
@@ -73,12 +103,14 @@
 }
 
 
-/* =========================================
+/* =========================================================
    REPORT SECTION
-========================================= */
+========================================================= */
 
 .report-section {
+    width: 100%;
     background: white;
+
     padding: 30px;
     border-radius: 14px;
     margin-bottom: 30px;
@@ -87,27 +119,39 @@
 }
 
 
-/* =========================================
+/* =========================================================
    SECTION HEADING
-========================================= */
+========================================================= */
 
 .section-heading {
     display: flex;
     align-items: center;
     gap: 15px;
+
     margin-bottom: 25px;
+    background: white;
+}
+
+.section-report {
+    background: white;
 }
 
 .section-heading h2 {
-    border-color: white;
     margin: 0 0 5px;
+
     font-size: 22px;
+    color: #212529;
+
+    background: white;
 }
 
 .section-heading p {
     margin: 0;
+
     color: #6c757d;
     font-size: 14px;
+
+    background: white;
 }
 
 .section-icon {
@@ -131,23 +175,25 @@
 }
 
 
-/* =========================================
-   SUMMARY CARDS
-========================================= */
+/* =========================================================
+   SUMMARY CARDS CONTAINER
+========================================================= */
 
 .report-cards {
-    display: grid;
+    width: 100%;
 
-    grid-template-columns:
-        repeat(auto-fit, minmax(200px, 1fr));
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
 
     gap: 20px;
+
+    background: white;
 }
 
 
-/* =========================================
+/* =========================================================
    REPORT CARD
-========================================= */
+========================================================= */
 
 .report-card {
     background: #f8f9fa;
@@ -174,54 +220,63 @@
     margin: 8px 0;
 
     font-size: 15px;
-
     color: #6c757d;
+
+    background: #f8f9fa;
 }
 
 .report-card h1 {
     margin: 5px 0;
 
     font-size: 34px;
+    color: #212529;
+
+    background: #f8f9fa;
 }
 
 .report-card p {
     margin: 5px 0 0;
 
     font-size: 13px;
-
     color: #868e96;
+
+    background: #f8f9fa;
 }
 
 
-/* =========================================
+/* =========================================================
    CARD ICON
-========================================= */
+========================================================= */
 
 .card-icon {
     font-size: 25px;
+    background: transparent;
 }
 
 
-/* =========================================
-   PASSWORD COLORS
-========================================= */
+/* =========================================================
+   PASSWORD NUMBER COLORS
+========================================================= */
 
 .strong-number {
     color: #198754 !important;
+    background: transparent !important;
 }
 
 .medium-number {
     color: #f39c12 !important;
+    background: transparent !important;
 }
 
 .weak-number {
     color: #dc3545 !important;
+    background: transparent !important;
 }
 
 
-/* =========================================
-   CARD BORDERS
-========================================= */
+/* =========================================================
+   CARD TOP BORDERS
+========================================================= */
 
 .strong-card {
     border-top: 4px solid #198754;
@@ -240,53 +295,59 @@
 }
 
 
-/* =========================================
+/* =========================================================
    PASSWORD HEALTH SUMMARY
-========================================= */
+========================================================= */
 
 .health-summary {
-    margin-top: 25px;
+    width: 100%;
 
+    margin-top: 25px;
     padding: 25px;
 
     border-radius: 12px;
 
     background: #eef2ff;
-
     border: 1px solid #dfe5ff;
 }
 
 
-/* =========================================
+/* =========================================================
    HEALTH INFORMATION
-========================================= */
+========================================================= */
 
 .health-info {
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
+
+    gap: 20px;
+
+    background: #eef2ff;
 }
 
 .health-info h3 {
     margin: 0 0 5px;
 
     font-size: 18px;
+    color: #212529;
+
+    background: #eef2ff;
 }
 
 .health-info p {
     margin: 0;
 
     color: #6c757d;
-
     font-size: 13px;
+
+    background: #eef2ff;
 }
 
 
-/* =========================================
+/* =========================================================
    HEALTH SCORE
-========================================= */
+========================================================= */
 
 .health-score {
     font-size: 38px;
@@ -294,16 +355,17 @@
     font-weight: bold;
 
     color: #198754;
+
+    background: transparent;
 }
 
 
-/* =========================================
-   PROGRESS BAR
-========================================= */
+/* =========================================================
+   HEALTH PROGRESS BAR
+========================================================= */
 
 .health-progress {
     width: 100%;
-
     height: 12px;
 
     background: #dee2e6;
@@ -326,12 +388,13 @@
 }
 
 
-/* =========================================
+/* =========================================================
    HEALTH STATUS
-========================================= */
+========================================================= */
 
 .health-status {
     margin-top: 12px;
+    background: #eef2ff;
 }
 
 .health-status span {
@@ -342,55 +405,60 @@
     border-radius: 20px;
 
     background: #d1e7dd;
-
     color: #146c43;
 
     font-size: 13px;
-
     font-weight: bold;
 }
 
 
-/* =========================================
+/* =========================================================
    LOGIN SUMMARY
-========================================= */
+========================================================= */
 
 .login-summary {
-    grid-template-columns:
-        repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 
-/* =========================================
+/* =========================================================
    RECENT ACTIVITY
-========================================= */
+========================================================= */
 
 .recent-activity {
+    width: 100%;
     margin-top: 30px;
+
+    background: white;
 }
 
 .recent-heading {
     margin-bottom: 15px;
+    background: white;
 }
 
 .recent-heading h3 {
     margin: 0 0 5px;
 
     font-size: 18px;
+    color: #212529;
+
+    background: white;
 }
 
 .recent-heading p {
     margin: 0;
 
     color: #6c757d;
-
     font-size: 13px;
+
+    background: white;
 }
 
 
-/* =========================================
-   TABLE
-========================================= */
+/* =========================================================
+   TABLE CONTAINER
+========================================================= */
 
 .report-table-container {
     width: 100%;
@@ -398,9 +466,17 @@
     overflow-x: auto;
 
     border: 1px solid #e9ecef;
-
     border-radius: 10px;
+
+    background: white;
+
+    -webkit-overflow-scrolling: touch;
 }
+
+
+/* =========================================================
+   TABLE
+========================================================= */
 
 .report-table {
     width: 100%;
@@ -408,6 +484,8 @@
     border-collapse: collapse;
 
     min-width: 600px;
+
+    background: white;
 }
 
 .report-table th {
@@ -420,7 +498,6 @@
     text-align: left;
 
     font-size: 13px;
-
     font-weight: 600;
 
     border-bottom: 2px solid #dee2e6;
@@ -429,10 +506,11 @@
 .report-table td {
     padding: 15px;
 
+    background: white;
+
     border-bottom: 1px solid #e9ecef;
 
     font-size: 14px;
-
     color: #495057;
 }
 
@@ -440,7 +518,7 @@
     transition: background 0.2s;
 }
 
-.report-table tbody tr:hover {
+.report-table tbody tr:hover td {
     background: #f8f9fa;
 }
 
@@ -449,29 +527,33 @@
 }
 
 
-/* =========================================
+/* =========================================================
    EMAIL
-========================================= */
+========================================================= */
 
 .email-cell {
     font-weight: 500;
 
     color: #212529 !important;
+
+    background: white;
 }
 
 
-/* =========================================
+/* =========================================================
    TIME
-========================================= */
+========================================================= */
 
 .time-cell {
     color: #6c757d !important;
+
+    background: white;
 }
 
 
-/* =========================================
+/* =========================================================
    STATUS BADGES
-========================================= */
+========================================================= */
 
 .status-badge {
     display: inline-block;
@@ -481,28 +563,27 @@
     border-radius: 20px;
 
     font-size: 12px;
-
     font-weight: bold;
 }
 
 .success-badge {
-    background: #d1e7dd;
-
-    color: #146c43;
+    background: #d1e7dd !important;
+    color: #146c43 !important;
 }
 
 .failed-badge {
-    background: #f8d7da;
-
-    color: #b02a37;
+    background: #f8d7da !important;
+    color: #b02a37 !important;
 }
 
 
-/* =========================================
+/* =========================================================
    EMPTY STATE
-========================================= */
+========================================================= */
 
 .empty-state {
+    width: 100%;
+
     padding: 40px;
 
     text-align: center;
@@ -518,16 +599,20 @@
     font-size: 35px;
 
     margin-bottom: 10px;
+
+    background: transparent;
 }
 
 .empty-state p {
     margin: 0;
+
+    background: #f8f9fa;
 }
 
 
-/* =========================================
+/* =========================================================
    INFORMATION BOX
-========================================= */
+========================================================= */
 
 .report-info {
     display: flex;
@@ -549,6 +634,7 @@
 
 .info-icon {
     font-size: 25px;
+    background: transparent;
 }
 
 .report-info h3 {
@@ -557,6 +643,8 @@
     font-size: 16px;
 
     color: #084298;
+
+    background: #e7f1ff;
 }
 
 .report-info p {
@@ -567,28 +655,35 @@
     font-size: 13px;
 
     line-height: 1.6;
+
+    background: #e7f1ff;
 }
 
 
-/* =========================================
-   LOADING
-========================================= */
+/* =========================================================
+   LOADING PAGE
+========================================================= */
 
 .reports-loading {
+    width: 100%;
     min-height: 100vh;
 
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
-    background: #f5f7fb;
+    padding: 30px;
+
+    background: lightskyblue;
 
     font-family: Arial, sans-serif;
 }
 
 .loading-box {
+    width: 100%;
+    max-width: 450px;
+
     background: white;
 
     padding: 40px;
@@ -605,27 +700,33 @@
     font-size: 45px;
 
     margin-bottom: 15px;
+
+    background: white;
 }
 
 .loading-box h2 {
     margin: 0 0 8px;
+
+    background: white;
+
+    color: #212529;
 }
 
 .loading-box p {
     margin: 0;
-    background-color: white;
+
+    background: white;
 
     color: #6c757d;
 }
 
 
-/* =========================================
-   ERROR
-========================================= */
+/* =========================================================
+   ERROR PAGE
+========================================================= */
 
 .error-box {
-    background: white;
-
+    width: 100%;
     max-width: 500px;
 
     margin: 100px auto;
@@ -633,6 +734,8 @@
     padding: 40px;
 
     text-align: center;
+
+    background: white;
 
     border-radius: 14px;
 
@@ -644,22 +747,30 @@
     font-size: 45px;
 
     margin-bottom: 15px;
+
+    background: white;
 }
 
 .error-box h2 {
-    margin-bottom: 10px;
+    margin: 0 0 10px;
+
+    background: white;
+
+    color: #212529;
 }
 
 .error-box p {
     color: #6c757d;
 
     line-height: 1.5;
+
+    background: white;
 }
 
 
-/* =========================================
+/* =========================================================
    RETRY BUTTON
-========================================= */
+========================================================= */
 
 .retry-button {
     margin-top: 15px;
@@ -677,6 +788,8 @@
     cursor: pointer;
 
     font-size: 14px;
+
+    transition: 0.2s;
 }
 
 .retry-button:hover {
@@ -684,55 +797,118 @@
 }
 
 
-/* =========================================
-   RESPONSIVE DESIGN
-========================================= */
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .reports-container {
+        padding: 25px;
+    }
+
+    .report-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .login-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (max-width: 768px) {
 
     .reports-container {
-        padding: 20px;
+        width: 100%;
+        min-height: 100vh;
+
+        padding: 20px 15px;
+
+        background: lightskyblue;
     }
 
     .reports-header {
         flex-direction: column;
-        background-color: white;
 
-        align-items: flex-start;
+        align-items: stretch;
 
-        gap: 20px;
-    }
-    .reports-header{
-        background-color: white;
+        padding: 20px;
+
+        margin-bottom: 20px;
     }
 
-    .reports-header h1 {
-        background-color: white;
+    .header-title {
+        width: 100%;
+    }
+
+    .header-title h1 {
         font-size: 25px;
     }
-    .reports-header p{
-        background-color: white;
-    }
-    .reports-header span{
-        background-color: white;
+
+    .reports-header p {
+        font-size: 14px;
     }
 
-    .header-title h1{
-        background-color: white;
-    }
     .refresh-button {
         width: 100%;
+
+        padding: 12px;
     }
 
     .report-section {
         padding: 20px;
+
+        margin-bottom: 20px;
     }
 
     .section-heading {
         align-items: flex-start;
+
+        gap: 12px;
     }
-    div{
-        background-color: white;
+
+    .section-icon {
+        min-width: 45px;
+        width: 45px;
+        height: 45px;
+
+        font-size: 21px;
+    }
+
+    .section-heading h2 {
+        font-size: 20px;
+    }
+
+    .section-heading p {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .report-cards {
+        grid-template-columns: 1fr;
+
+        gap: 15px;
+    }
+
+    .login-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .report-card {
+        padding: 20px;
+    }
+
+    .report-card h1 {
+        font-size: 32px;
+    }
+
+    .health-summary {
+        padding: 20px;
     }
 
     .health-info {
@@ -740,57 +916,186 @@
 
         align-items: flex-start;
 
-        gap: 15px;
+        gap: 12px;
     }
 
     .health-score {
         font-size: 32px;
     }
 
+    .report-table-container {
+        width: 100%;
+    }
+
+    .report-table {
+        min-width: 600px;
+    }
+
+    .recent-activity {
+        margin-top: 25px;
+    }
+
     .report-info {
         flex-direction: column;
     }
-    .section-heading h2{
-        background: #f5f7fb
-    }
-    }
-    .section-heading p{
-        background: #f5f7fb
 
-    }
-    .total-card h1,p,h3{
-        background: #f5f7fb
-    }
-    .strong-card h1,h3,p{
-    background: #f5f7fb
+    .error-box {
+        margin: 50px auto;
+        padding: 30px 20px;
     }
 
-    .medium-card h1,h3,p{
-        background: #f5f7fb
-    }
-    .weak-card h1,h3,p{
-        background: #f5f7fb
-
-    }
-    .card-icon{
-        background: #f5f7fb
+    .reports-loading {
+        padding: 20px;
     }
 
-    .report-cards{
-        background-color: white;
+    .loading-box {
+        padding: 30px 20px;
     }
-    .reports-header{
-        background-color: white;
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .reports-container {
+        padding: 12px 10px;
     }
-    .title{
-        background-color: white;
+
+    .reports-header {
+        padding: 18px 15px;
+
+        border-radius: 10px;
     }
+
+    .header-title {
+        gap: 8px;
+    }
+
+    .header-icon {
+        font-size: 27px;
+    }
+
+    .header-title h1 {
+        font-size: 21px;
+    }
+
+    .reports-header p {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .report-section {
+        padding: 15px;
+
+        border-radius: 10px;
+    }
+
     .section-heading {
-        background-color: white;
+        gap: 10px;
     }
-    .section-report{
-        background-color: white;
+
+    .section-icon {
+        min-width: 40px;
+        width: 40px;
+        height: 40px;
+
+        font-size: 18px;
     }
-.reports-loadings{
-    background-color: #87cefa;
+
+    .section-heading h2 {
+        font-size: 18px;
+    }
+
+    .section-heading p {
+        font-size: 12px;
+    }
+
+    .report-card {
+        padding: 18px 12px;
+    }
+
+    .report-card h3 {
+        font-size: 14px;
+    }
+
+    .report-card h1 {
+        font-size: 29px;
+    }
+
+    .report-card p {
+        font-size: 12px;
+    }
+
+    .health-summary {
+        padding: 17px;
+    }
+
+    .health-info h3 {
+        font-size: 16px;
+    }
+
+    .health-score {
+        font-size: 29px;
+    }
+
+    .health-progress {
+        height: 10px;
+    }
+
+    .status-badge {
+        font-size: 11px;
+        padding: 5px 9px;
+    }
+
+    .report-table th,
+    .report-table td {
+        padding: 12px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 360px) {
+
+    .reports-container {
+        padding: 8px;
+    }
+
+    .reports-header {
+        padding: 15px 12px;
+    }
+
+    .header-title h1 {
+        font-size: 19px;
+    }
+
+    .header-icon {
+        font-size: 24px;
+    }
+
+    .report-section {
+        padding: 12px;
+    }
+
+    .section-heading h2 {
+        font-size: 17px;
+    }
+
+    .report-card {
+        padding: 16px 10px;
+    }
+
+    .report-card h1 {
+        font-size: 27px;
+    }
+
+    .health-summary {
+        padding: 14px;
+    }
 }

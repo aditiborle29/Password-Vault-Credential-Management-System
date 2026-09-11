@@ -10,9 +10,12 @@ import com.securevault.repository.LoginAttemptRepository;
 import com.securevault.repository.SecurityAlertRepository;
 import com.securevault.repository.SuspiciousActivityRepository;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/security")
@@ -37,25 +40,40 @@ public class SecurityController {
     }
 
     // =====================================================
-    // 1. LOGIN ATTEMPTS
+    // 1. USER-SPECIFIC LOGIN ATTEMPTS
     // =====================================================
 
     @GetMapping("/login-attempts")
-    public List<LoginAttempt> getLoginAttempts() {
+    public ResponseEntity<?> getLoginAttempts(
+            @RequestParam String email) {
 
-        return loginAttemptRepository
-                .findTop50ByOrderByTimestampDesc();
+        if (email == null || email.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                    Map.of("message", "Email is required"));
+        }
+
+        List<LoginAttempt> attempts = loginAttemptRepository
+                .findTop50ByEmailOrderByTimestampDesc(email);
+
+        return ResponseEntity.ok(attempts);
     }
 
     // =====================================================
-    // 2. SECURITY ALERTS
+    // 2. USER-SPECIFIC SECURITY ALERTS
     // =====================================================
 
     @GetMapping("/alerts")
-    public List<SecurityAlert> getAlerts() {
+    public ResponseEntity<?> getAlerts(
+            @RequestParam String email) {
 
-        return securityAlertRepository
-                .findTop50ByOrderByTimestampDesc();
+        if (email == null || email.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                    Map.of("message", "Email is required"));
+        }
+
+        List<SecurityAlert> alerts = securityAlertRepository.findTop50ByEmailOrderByTimestampDesc(email);
+
+        return ResponseEntity.ok(alerts);
     }
 
     // =====================================================
@@ -63,54 +81,95 @@ public class SecurityController {
     // =====================================================
 
     @GetMapping("/alerts/{email}")
-    public List<SecurityAlert> getUserAlerts(
+    public ResponseEntity<?> getUserAlerts(
             @PathVariable String email) {
 
-        return securityAlertRepository
-                .findByEmailOrderByTimestampDesc(email);
+        if (email == null || email.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                    Map.of("message", "Email is required"));
+        }
+
+        return ResponseEntity.ok(
+                securityAlertRepository
+                        .findByEmailOrderByTimestampDesc(email));
     }
 
     // =====================================================
-    // 4. SUSPICIOUS ACTIVITIES
+    // 4. USER-SPECIFIC SUSPICIOUS ACTIVITIES
     // =====================================================
 
     @GetMapping("/suspicious-activities")
-    public List<SuspiciousActivity> getSuspiciousActivities() {
+    public ResponseEntity<?> getSuspiciousActivities(
+            @RequestParam String email) {
 
-        return suspiciousActivityRepository
-                .findAllByOrderByDetectedAtDesc();
+        if (email == null || email.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                    Map.of("message", "Email is required"));
+        }
+
+        return ResponseEntity.ok(
+                suspiciousActivityRepository
+                        .findByUserEmailOrderByDetectedAtDesc(email));
     }
 
     // =====================================================
-    // 5. AUDIT LOGS
+    // 5. USER-SPECIFIC AUDIT LOGS
     // =====================================================
 
     @GetMapping("/audit-logs")
-    public List<AuditLog> getAuditLogs() {
+    public ResponseEntity<?> getAuditLogs(
+            @RequestParam String email) {
 
-        return auditLogRepository.findAll();
+        if (email == null || email.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                    Map.of("message", "Email is required"));
+        }
+
+        return ResponseEntity.ok(
+                auditLogRepository
+                        .findByUserEmailOrderByTimestampDesc(email));
     }
 
     // =====================================================
-    // 6. RESOLVE SECURITY ALERT
+    // 6. RESOLVE USER'S OWN SECURITY ALERT
     // =====================================================
 
     @PutMapping("/alerts/{id}/resolve")
-    public String resolveAlert(
-            @PathVariable Long id) {
+    public ResponseEntity<?> resolveAlert(
+            @PathVariable Long id,
+            @RequestParam String email) {
 
         SecurityAlert alert = securityAlertRepository
                 .findById(id)
                 .orElse(null);
 
         if (alert == null) {
-            return "Security alert not found";
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                            "message",
+                            "Security alert not found"));
+        }
+
+        // Important:
+        // User can resolve only their own alert
+        if (!alert.getEmail().equalsIgnoreCase(email)) {
+
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(Map.of(
+                            "message",
+                            "You are not allowed to resolve this alert"));
         }
 
         alert.setResolved(true);
 
         securityAlertRepository.save(alert);
 
-        return "Security alert resolved successfully";
+        return ResponseEntity.ok(
+                Map.of(
+                        "message",
+                        "Security alert resolved successfully"));
     }
 }

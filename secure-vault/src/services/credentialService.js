@@ -1,80 +1,125 @@
 import axios from "axios";
 
-const API = "http://localhost:8080/api/credentials";
+// =====================================================
+// API URL
+// =====================================================
 
-// ================= GET MY CREDENTIALS =================
+const API_URL = "http://localhost:8080/api/credentials";
 
-export const getCredentials = () => {
-  const email = localStorage.getItem("userEmail");
 
-  return axios.get(API, {
-    params: {
-      email: email,
-    },
-  });
+// =====================================================
+// HELPER - GET LOGGED IN USER EMAIL
+// =====================================================
+
+const getUserEmail = () => {
+
+    const email = localStorage.getItem("userEmail");
+
+    if (!email) {
+        throw new Error(
+            "User session not found. Please login again."
+        );
+    }
+
+    return email;
 };
 
 
-// ================= ADD CREDENTIAL =================
+// =====================================================
+// ADD CREDENTIAL
+// =====================================================
 
 export const addCredential = (credential) => {
-  const email = localStorage.getItem("userEmail");
 
-  return axios.post(API, {
-    ...credential,
-    email: email,
-  });
+    const email = getUserEmail();
+
+    const data = {
+        website: credential.website,
+        username: credential.username,
+        password: credential.password,
+        email: email
+    };
+
+    return axios.post(
+        API_URL,
+        data
+    );
 };
 
 
-// ================= GET CREDENTIAL BY ID =================
+// =====================================================
+// GET MY CREDENTIALS
+// =====================================================
 
-export const getCredentialById = (id) => {
-  return axios.get(`${API}/${id}`);
+export const getCredentials = () => {
+
+    const email = getUserEmail();
+
+    return axios.get(
+        `${API_URL}?email=${encodeURIComponent(email)}`
+    );
 };
 
 
-// ================= UPDATE CREDENTIAL =================
-
-export const updateCredential = (id, credential) => {
-  const email = localStorage.getItem("userEmail");
-
-  return axios.put(
-    `${API}/${id}`,
-    credential,
-    {
-      params: {
-        email: email,
-      },
-    }
-  );
-};
-
-
-// ================= DELETE CREDENTIAL =================
-
-export const deleteCredential = (id) => {
-  const email = localStorage.getItem("userEmail");
-
-  return axios.delete(
-    `${API}/${id}`,
-    {
-      params: {
-        email: email,
-      },
-    }
-  );
-};
-
-
-// ================= GET SHARED CREDENTIALS =================
+// =====================================================
+// GET SHARED CREDENTIALS
+// =====================================================
 
 export const getSharedCredentials = () => {
-  const email = localStorage.getItem("userEmail");
 
-  return axios.get(`${API}/shared`, {
-    params: {
-      email: email,
-    },
-  });
+    const email = getUserEmail();
+
+    return axios.get(
+        `${API_URL}/shared?email=${encodeURIComponent(email)}`
+    );
+};
+
+
+// =====================================================
+// GET CREDENTIAL BY ID
+// =====================================================
+
+export const getCredentialById = (id) => {
+
+    return axios.get(
+        `${API_URL}/${id}`
+    );
+};
+
+
+// =====================================================
+// UPDATE CREDENTIAL
+// =====================================================
+
+export const updateCredential = (
+    id,
+    credential
+) => {
+
+    const email = getUserEmail();
+
+    const data = {
+        website: credential.website,
+        username: credential.username,
+        password: credential.password
+    };
+
+    return axios.put(
+        `${API_URL}/${id}?email=${encodeURIComponent(email)}`,
+        data
+    );
+};
+
+
+// =====================================================
+// DELETE CREDENTIAL
+// =====================================================
+
+export const deleteCredential = (id) => {
+
+    const email = getUserEmail();
+
+    return axios.delete(
+        `${API_URL}/${id}?email=${encodeURIComponent(email)}`
+    );
 };

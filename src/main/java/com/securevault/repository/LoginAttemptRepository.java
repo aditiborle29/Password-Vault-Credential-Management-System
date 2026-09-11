@@ -21,4 +21,8 @@ public interface LoginAttemptRepository
 
         List<LoginAttempt> findByEmailOrderByTimestampDesc(
                         String email);
+
+        // USER-SPECIFIC - latest 50 attempts
+        List<LoginAttempt> findTop50ByEmailOrderByTimestampDesc(
+                        String email);
 }

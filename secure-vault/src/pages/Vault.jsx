@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import {
     getCredentials,
     getSharedCredentials,
@@ -7,40 +6,43 @@ import {
 } from "../services/credentialService";
 
 import { shareCredential } from "../services/sharingService";
-
 import { Link } from "react-router-dom";
-
 import "./Vault.css";
-
 
 function Vault() {
 
     const [credentials, setCredentials] = useState([]);
-
     const [sharedCredentials, setSharedCredentials] = useState([]);
 
     const [showPassword, setShowPassword] = useState({});
 
+    const [loadingCredentials, setLoadingCredentials] = useState(true);
+    const [loadingShared, setLoadingShared] = useState(true);
+
+    const [error, setError] = useState("");
+    const [sharedError, setSharedError] = useState("");
+
+    const [deleteLoading, setDeleteLoading] = useState(null);
+
+    const [copyMessage, setCopyMessage] = useState("");
 
     // ================= SHARE MODAL =================
 
     const [showShareModal, setShowShareModal] = useState(false);
-
     const [selectedCredential, setSelectedCredential] = useState(null);
-
     const [sharedWithEmail, setSharedWithEmail] = useState("");
-
     const [permission, setPermission] = useState("VIEW");
+
+    const [shareLoading, setShareLoading] = useState(false);
+    const [shareError, setShareError] = useState("");
+    const [shareSuccess, setShareSuccess] = useState("");
 
 
     // ================= LOAD DATA =================
 
     useEffect(() => {
-
         loadCredentials();
-
         loadSharedCredentials();
-
     }, []);
 
 
@@ -50,18 +52,49 @@ function Vault() {
 
         try {
 
+            setLoadingCredentials(true);
+            setError("");
+
             const response = await getCredentials();
 
-            setCredentials(response.data);
+            setCredentials(response.data || []);
 
         } catch (error) {
 
-            console.error(error);
+            console.error("Load credentials error:", error);
 
-            alert("Failed to load credentials");
+            if (error.response) {
+
+                if (error.response.status === 401) {
+                    setError("Your session has expired. Please login again.");
+                } else if (error.response.status === 403) {
+                    setError("You are not authorized to view your credentials.");
+                } else if (error.response.status === 500) {
+                    setError("Server error. Please try again later.");
+                } else {
+                    setError(
+                        error.response.data?.message ||
+                        "Failed to load credentials."
+                    );
+                }
+
+            } else if (error.request) {
+
+                setError(
+                    "Unable to connect to the server. Please check that the backend is running."
+                );
+
+            } else {
+
+                setError("Something went wrong. Please try again.");
+
+            }
+
+        } finally {
+
+            setLoadingCredentials(false);
 
         }
-
     };
 
 
@@ -71,18 +104,57 @@ function Vault() {
 
         try {
 
+            setLoadingShared(true);
+            setSharedError("");
+
             const response = await getSharedCredentials();
 
-            setSharedCredentials(response.data);
+            setSharedCredentials(response.data || []);
 
         } catch (error) {
 
-            console.error(error);
+            console.error("Load shared credentials error:", error);
 
-            console.log("Failed to load shared credentials");
+            if (error.response) {
+
+                if (error.response.status === 401) {
+                    setSharedError(
+                        "Your session has expired. Please login again."
+                    );
+                } else if (error.response.status === 403) {
+                    setSharedError(
+                        "You are not authorized to view shared credentials."
+                    );
+                } else if (error.response.status === 500) {
+                    setSharedError(
+                        "Server error while loading shared credentials."
+                    );
+                } else {
+                    setSharedError(
+                        error.response.data?.message ||
+                        "Failed to load shared credentials."
+                    );
+                }
+
+            } else if (error.request) {
+
+                setSharedError(
+                    "Unable to connect to the server."
+                );
+
+            } else {
+
+                setSharedError(
+                    "Something went wrong while loading shared credentials."
+                );
+
+            }
+
+        } finally {
+
+            setLoadingShared(false);
 
         }
-
     };
 
 
@@ -96,34 +168,95 @@ function Vault() {
 
         if (!confirmDelete) return;
 
-
         try {
+
+            setDeleteLoading(id);
+            setError("");
 
             await deleteCredential(id);
 
-            alert("Credential Deleted Successfully");
+            setCredentials((prev) =>
+                prev.filter((credential) => credential.id !== id)
+            );
 
-            loadCredentials();
+            setCopyMessage("");
+            setError("");
 
         } catch (error) {
 
-            console.error(error);
+            console.error("Delete credential error:", error);
 
-            alert("Failed to delete credential");
+            if (error.response) {
+
+                if (error.response.status === 401) {
+                    setError(
+                        "Your session has expired. Please login again."
+                    );
+                } else if (error.response.status === 403) {
+                    setError(
+                        "You are not authorized to delete this credential."
+                    );
+                } else if (error.response.status === 404) {
+                    setError("Credential was not found.");
+                } else if (error.response.status === 500) {
+                    setError(
+                        "Server error. Unable to delete credential."
+                    );
+                } else {
+                    setError(
+                        error.response.data?.message ||
+                        "Failed to delete credential."
+                    );
+                }
+
+            } else if (error.request) {
+
+                setError(
+                    "Unable to connect to the server."
+                );
+
+            } else {
+
+                setError(
+                    "Something went wrong. Please try again."
+                );
+
+            }
+
+        } finally {
+
+            setDeleteLoading(null);
 
         }
-
     };
 
 
-    // ================= COPY =================
+    // ================= COPY PASSWORD =================
 
-    const copyPassword = (password) => {
+    const copyPassword = async (password) => {
 
-        navigator.clipboard.writeText(password);
+        try {
 
-        alert("Password Copied Successfully!");
+            await navigator.clipboard.writeText(password);
 
+            setCopyMessage("Password copied successfully!");
+
+            setTimeout(() => {
+                setCopyMessage("");
+            }, 2000);
+
+        } catch (error) {
+
+            console.error("Copy error:", error);
+
+            setCopyMessage(
+                "Unable to copy password. Please try again."
+            );
+
+            setTimeout(() => {
+                setCopyMessage("");
+            }, 2500);
+        }
     };
 
 
@@ -134,11 +267,12 @@ function Vault() {
         setSelectedCredential(credential);
 
         setSharedWithEmail("");
-
         setPermission("VIEW");
 
-        setShowShareModal(true);
+        setShareError("");
+        setShareSuccess("");
 
+        setShowShareModal(true);
     };
 
 
@@ -146,41 +280,64 @@ function Vault() {
 
     const submitShare = async () => {
 
-        const ownerEmail =
-            localStorage.getItem("userEmail");
+        const ownerEmail = localStorage.getItem("userEmail");
 
+        setShareError("");
+        setShareSuccess("");
 
         if (!ownerEmail) {
 
-            alert("Please login again.");
+            setShareError(
+                "Please login again before sharing a credential."
+            );
 
             return;
-
         }
-
 
         if (!sharedWithEmail.trim()) {
 
-            alert("Please enter recipient email.");
+            setShareError(
+                "Please enter the recipient email."
+            );
 
             return;
-
         }
 
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailPattern.test(sharedWithEmail.trim())) {
+
+            setShareError(
+                "Please enter a valid email address."
+            );
+
+            return;
+        }
+
+        if (!selectedCredential) {
+
+            setShareError(
+                "No credential selected."
+            );
+
+            return;
+        }
 
         if (
             permission !== "VIEW" &&
             permission !== "EDIT"
         ) {
 
-            alert("Invalid permission.");
+            setShareError(
+                "Please select a valid permission."
+            );
 
             return;
-
         }
 
-
         try {
+
+            setShareLoading(true);
 
             const response = await shareCredential({
 
@@ -192,43 +349,88 @@ function Vault() {
                     sharedWithEmail.trim(),
 
                 permission: permission,
-
             });
 
+            setShareSuccess(
+                response.data ||
+                "Credential shared successfully!"
+            );
 
-            alert(response.data);
+            setTimeout(() => {
 
+                setShowShareModal(false);
+                setSelectedCredential(null);
+                setSharedWithEmail("");
+                setPermission("VIEW");
+                setShareSuccess("");
 
-            // Close modal
-
-            setShowShareModal(false);
-
-            setSelectedCredential(null);
-
-            setSharedWithEmail("");
-
-            setPermission("VIEW");
-
+            }, 1000);
 
         } catch (error) {
 
-            console.error(error);
+            console.error("Share credential error:", error);
 
             if (error.response) {
 
-                alert(
-                    error.response.data ||
-                    "Failed to share credential."
+                if (error.response.status === 400) {
+
+                    setShareError(
+                        error.response.data?.message ||
+                        error.response.data ||
+                        "Invalid sharing request."
+                    );
+
+                } else if (error.response.status === 401) {
+
+                    setShareError(
+                        "Your session has expired. Please login again."
+                    );
+
+                } else if (error.response.status === 403) {
+
+                    setShareError(
+                        "You are not authorized to share this credential."
+                    );
+
+                } else if (error.response.status === 404) {
+
+                    setShareError(
+                        "Credential or recipient was not found."
+                    );
+
+                } else if (error.response.status === 500) {
+
+                    setShareError(
+                        "Server error. Please try again later."
+                    );
+
+                } else {
+
+                    setShareError(
+                        error.response.data?.message ||
+                        error.response.data ||
+                        "Failed to share credential."
+                    );
+                }
+
+            } else if (error.request) {
+
+                setShareError(
+                    "Unable to connect to the server. Please check your connection."
                 );
 
             } else {
 
-                alert("Failed to share credential.");
-
+                setShareError(
+                    "Something went wrong. Please try again."
+                );
             }
 
-        }
+        } finally {
 
+            setShareLoading(false);
+
+        }
     };
 
 
@@ -236,15 +438,38 @@ function Vault() {
 
     const closeShareModal = () => {
 
+        if (shareLoading) return;
+
         setShowShareModal(false);
-
         setSelectedCredential(null);
-
         setSharedWithEmail("");
-
         setPermission("VIEW");
-
+        setShareError("");
+        setShareSuccess("");
     };
+
+
+    // ================= LOADING =================
+
+    if (loadingCredentials) {
+
+        return (
+
+            <div className="vault-container">
+
+                <div className="vault-card loading-card">
+
+                    <div className="vault-loader"></div>
+
+                    <h2>Loading Vault...</h2>
+
+                    <p>Please wait while your credentials are loaded.</p>
+
+                </div>
+
+            </div>
+        );
+    }
 
 
     return (
@@ -253,389 +478,136 @@ function Vault() {
 
             <div className="vault-card">
 
-
-                {/* ================================================= */}
-                {/* MY CREDENTIALS */}
-                {/* ================================================= */}
+                {/* ================= MY CREDENTIALS ================= */}
 
                 <h2>
                     🔐 My Saved Credentials
                 </h2>
 
 
-                {credentials.length === 0 ? (
-
-                    <p className="no-data">
-                        No credentials found.
-                    </p>
-
-                ) : (
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    Website
-                                </th>
-
-                                <th>
-                                    Username
-                                </th>
-
-                                <th>
-                                    Password
-                                </th>
-
-                                <th>
-                                    Actions
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-                            {credentials.map(
-                                (credential) => (
-
-                                    <tr
-                                        key={credential.id}
-                                    >
-
-                                        <td>
-                                            {credential.website}
-                                        </td>
-
-
-                                        <td>
-                                            {credential.username}
-                                        </td>
-
-
-                                        <td>
-
-                                            {showPassword[
-                                                credential.id
-                                            ]
-
-                                                ? credential.password
-
-                                                : "••••••••••"}
-
-                                        </td>
-
-
-                                        <td className="action-buttons">
-
-
-                                            {/* SHOW */}
-
-                                            <button
-
-                                                className="show-btn"
-
-                                                onClick={() =>
-                                                    setShowPassword({
-
-                                                        ...showPassword,
-
-                                                        [credential.id]:
-                                                            !showPassword[
-                                                                credential.id
-                                                            ],
-
-                                                    })
-                                                }
-
-                                            >
-
-                                                {showPassword[
-                                                    credential.id
-                                                ]
-
-                                                    ? "🙈 Hide"
-
-                                                    : "👁 Show"}
-
-                                            </button>
-
-
-                                            {/* COPY */}
-
-                                            <button
-
-                                                className="copy-btn"
-
-                                                onClick={() =>
-                                                    copyPassword(
-                                                        credential.password
-                                                    )
-                                                }
-
-                                            >
-
-                                                📋 Copy
-
-                                            </button>
-
-
-                                            {/* EDIT */}
-
-                                            <Link
-
-                                                className="edit-btn"
-
-                                                to={`/edit/${credential.id}`}
-
-                                            >
-
-                                                ✏ Edit
-
-                                            </Link>
-
-
-                                            {/* SHARE */}
-
-                                            <button
-
-                                                className="share-btn"
-
-                                                onClick={() =>
-                                                    handleShare(
-                                                        credential
-                                                    )
-                                                }
-
-                                            >
-
-                                                🔗 Share
-
-                                            </button>
-
-
-                                            {/* DELETE */}
-
-                                            <button
-
-                                                className="delete-btn"
-
-                                                onClick={() =>
-                                                    handleDelete(
-                                                        credential.id
-                                                    )
-                                                }
-
-                                            >
-
-                                                🗑 Delete
-
-                                            </button>
-
-
-                                        </td>
-
-                                    </tr>
-
-                                )
-                            )}
-
-                        </tbody>
-
-                    </table>
+                {/* MAIN ERROR */}
+
+                {error && (
+
+                    <div className="vault-error">
+                        ⚠️ {error}
+
+                        <button
+                            type="button"
+                            onClick={loadCredentials}
+                        >
+                            Retry
+                        </button>
+                    </div>
 
                 )}
 
 
-                {/* ================================================= */}
-                {/* SHARED WITH ME */}
-                {/* ================================================= */}
+                {/* COPY MESSAGE */}
 
-                <h2
-                    style={{
-                        marginTop: "40px"
-                    }}
-                >
+                {copyMessage && (
 
-                    🤝 Shared
+                    <div className="copy-message">
+                        {copyMessage}
+                    </div>
 
-                </h2>
+                )}
 
 
-                {sharedCredentials.length === 0 ? (
+                {/* CREDENTIAL TABLE */}
 
-                    <p className="no-data">
+                {!error && credentials.length === 0 ? (
 
-                        No shared credentials.
+                    <div className="no-data">
 
-                    </p>
+                        <div className="empty-icon">
+                            🔐
+                        </div>
 
-                ) : (
+                        <p>No credentials found.</p>
 
-                    <table>
+                        <Link
+                            to="/add"
+                            className="add-credential-btn"
+                        >
+                            ➕ Add Credential
+                        </Link>
 
-                        <thead>
+                    </div>
 
-                            <tr>
+                ) : !error ? (
 
-                                <th>
-                                    Website
-                                </th>
+                    <div className="table-wrapper">
 
-                                <th>
-                                    Username
-                                </th>
+                        <table>
 
-                                <th>
-                                    Password
-                                </th>
+                            <thead>
 
-                                <th>
-                                    Permission
-                                </th>
+                                <tr>
 
-                                <th>
-                                    Actions
-                                </th>
+                                    <th>Website</th>
 
-                            </tr>
+                                    <th>Username</th>
 
-                        </thead>
+                                    <th>Password</th>
 
+                                    <th>Actions</th>
 
-                        <tbody>
+                                </tr>
 
-                            {sharedCredentials.map(
-                                (shared) => {
-
-                                    /*
-                                     * Depending on your backend,
-                                     * shared credential may be returned
-                                     * directly OR inside shared.credential.
-                                     */
-
-                                    const credential =
-                                        shared.credential
-                                            ? shared.credential
-                                            : shared;
+                            </thead>
 
 
-                                    const permissionValue =
-                                        shared.permission
-                                            ? shared.permission.toUpperCase()
-                                            : "VIEW";
+                            <tbody>
 
-
-                                    const displayId =
-                                        shared.id ||
-                                        credential.id;
-
-
-                                    return (
+                                {credentials.map(
+                                    (credential) => (
 
                                         <tr
-                                            key={`shared-${displayId}`}
+                                            key={credential.id}
                                         >
-
-
-                                            {/* WEBSITE */}
 
                                             <td>
                                                 {credential.website}
                                             </td>
 
-
-                                            {/* USERNAME */}
-
                                             <td>
                                                 {credential.username}
                                             </td>
 
-
-                                            {/* PASSWORD */}
-
                                             <td>
 
                                                 {showPassword[
-                                                    `s${displayId}`
+                                                    credential.id
                                                 ]
-
                                                     ? credential.password
-
                                                     : "••••••••••"}
 
                                             </td>
 
 
-                                            {/* PERMISSION */}
-
-                                            <td>
-
-                                                {permissionValue === "EDIT" ? (
-
-                                                    <strong
-                                                        style={{
-                                                            color: "green"
-                                                        }}
-                                                    >
-
-                                                        ✏ EDIT
-
-                                                    </strong>
-
-                                                ) : (
-
-                                                    <strong
-                                                        style={{
-                                                            color: "#555"
-                                                        }}
-                                                    >
-
-                                                        👁 VIEW
-
-                                                    </strong>
-
-                                                )}
-
-                                            </td>
-
-
-                                            {/* ACTIONS */}
-
                                             <td className="action-buttons">
-
 
                                                 {/* SHOW */}
 
                                                 <button
-
                                                     className="show-btn"
-
                                                     onClick={() =>
                                                         setShowPassword({
-
                                                             ...showPassword,
 
-                                                            [`s${displayId}`]:
+                                                            [credential.id]:
                                                                 !showPassword[
-                                                                    `s${displayId}`
+                                                                    credential.id
                                                                 ],
-
                                                         })
                                                     }
-
                                                 >
 
                                                     {showPassword[
-                                                        `s${displayId}`
+                                                        credential.id
                                                     ]
-
                                                         ? "🙈 Hide"
-
                                                         : "👁 Show"}
 
                                                 </button>
@@ -644,55 +616,277 @@ function Vault() {
                                                 {/* COPY */}
 
                                                 <button
-
                                                     className="copy-btn"
-
                                                     onClick={() =>
                                                         copyPassword(
                                                             credential.password
                                                         )
                                                     }
-
                                                 >
-
                                                     📋 Copy
-
                                                 </button>
 
 
-                                                {/* EDIT ONLY FOR EDIT PERMISSION */}
+                                                {/* EDIT */}
 
-                                                {permissionValue === "EDIT" && (
+                                                <Link
+                                                    className="edit-btn"
+                                                    to={`/edit/${credential.id}`}
+                                                >
+                                                    ✏ Edit
+                                                </Link>
 
-                                                    <Link
 
-                                                        className="edit-btn"
+                                                {/* SHARE */}
 
-                                                        to={`/edit/${credential.id}`}
+                                                <button
+                                                    className="share-btn"
+                                                    onClick={() =>
+                                                        handleShare(
+                                                            credential
+                                                        )
+                                                    }
+                                                >
+                                                    🔗 Share
+                                                </button>
 
-                                                    >
 
-                                                        ✏ Edit
+                                                {/* DELETE */}
 
-                                                    </Link>
+                                                <button
+                                                    className="delete-btn"
+                                                    disabled={
+                                                        deleteLoading ===
+                                                        credential.id
+                                                    }
+                                                    onClick={() =>
+                                                        handleDelete(
+                                                            credential.id
+                                                        )
+                                                    }
+                                                >
 
-                                                )}
+                                                    {deleteLoading ===
+                                                    credential.id
+                                                        ? "⏳"
+                                                        : "🗑 Delete"}
 
+                                                </button>
 
                                             </td>
 
                                         </tr>
 
-                                    );
+                                    )
+                                )}
 
-                                }
-                            )}
+                            </tbody>
 
-                        </tbody>
+                        </table>
 
-                    </table>
+                    </div>
+
+                ) : null}
+
+
+                {/* ================= SHARED WITH ME ================= */}
+
+                <h2 className="shared-heading">
+                    🤝 Shared With Me
+                </h2>
+
+
+                {sharedError && (
+
+                    <div className="vault-error shared-error">
+                        ⚠️ {sharedError}
+
+                        <button
+                            type="button"
+                            onClick={loadSharedCredentials}
+                        >
+                            Retry
+                        </button>
+                    </div>
 
                 )}
+
+
+                {loadingShared ? (
+
+                    <div className="shared-loading">
+                        Loading shared credentials...
+                    </div>
+
+                ) : !sharedError &&
+                  sharedCredentials.length === 0 ? (
+
+                    <p className="no-data">
+                        No shared credentials.
+                    </p>
+
+                ) : !sharedError ? (
+
+                    <div className="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Website</th>
+
+                                    <th>Username</th>
+
+                                    <th>Password</th>
+
+                                    <th>Permission</th>
+
+                                    <th>Actions</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {sharedCredentials.map(
+                                    (shared) => {
+
+                                        const credential =
+                                            shared.credential
+                                                ? shared.credential
+                                                : shared;
+
+                                        const permissionValue =
+                                            shared.permission
+                                                ? shared.permission.toUpperCase()
+                                                : "VIEW";
+
+                                        const displayId =
+                                            shared.id ||
+                                            credential.id;
+
+                                        const passwordKey =
+                                            `s${displayId}`;
+
+                                        return (
+
+                                            <tr
+                                                key={`shared-${displayId}`}
+                                            >
+
+                                                <td>
+                                                    {credential.website}
+                                                </td>
+
+                                                <td>
+                                                    {credential.username}
+                                                </td>
+
+                                                <td>
+
+                                                    {showPassword[
+                                                        passwordKey
+                                                    ]
+                                                        ? credential.password
+                                                        : "••••••••••"}
+
+                                                </td>
+
+
+                                                {/* PERMISSION */}
+
+                                                <td>
+
+                                                    {permissionValue ===
+                                                    "EDIT" ? (
+
+                                                        <strong className="permission-edit">
+                                                            ✏ EDIT
+                                                        </strong>
+
+                                                    ) : (
+
+                                                        <strong className="permission-view">
+                                                            👁 VIEW
+                                                        </strong>
+
+                                                    )}
+
+                                                </td>
+
+
+                                                {/* ACTIONS */}
+
+                                                <td className="action-buttons">
+
+                                                    <button
+                                                        className="show-btn"
+                                                        onClick={() =>
+                                                            setShowPassword({
+                                                                ...showPassword,
+
+                                                                [passwordKey]:
+                                                                    !showPassword[
+                                                                        passwordKey
+                                                                    ],
+                                                            })
+                                                        }
+                                                    >
+
+                                                        {showPassword[
+                                                            passwordKey
+                                                        ]
+                                                            ? "🙈 Hide"
+                                                            : "👁 Show"}
+
+                                                    </button>
+
+
+                                                    <button
+                                                        className="copy-btn"
+                                                        onClick={() =>
+                                                            copyPassword(
+                                                                credential.password
+                                                            )
+                                                        }
+                                                    >
+                                                        📋 Copy
+                                                    </button>
+
+
+                                                    {/* EDIT ONLY FOR EDIT */}
+
+                                                    {permissionValue ===
+                                                        "EDIT" && (
+
+                                                        <Link
+                                                            className="edit-btn"
+                                                            to={`/edit/${credential.id}`}
+                                                        >
+                                                            ✏ Edit
+                                                        </Link>
+
+                                                    )}
+
+                                                </td>
+
+                                            </tr>
+
+                                        );
+                                    }
+                                )}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                ) : null}
 
 
                 {/* BACK */}
@@ -701,26 +895,19 @@ function Vault() {
                     className="back-btn"
                     to="/dashboard"
                 >
-
                     ← Back to Dashboard
-
                 </Link>
-
 
             </div>
 
 
-            {/* ===================================================== */}
-            {/* SHARE CREDENTIAL MODAL */}
-            {/* ===================================================== */}
+            {/* ================= SHARE MODAL ================= */}
 
             {showShareModal && (
 
                 <div className="share-modal-overlay">
 
-
                     <div className="share-modal">
-
 
                         <h2>
                             🔗 Share Credential
@@ -732,27 +919,42 @@ function Vault() {
                             <div className="selected-credential">
 
                                 <p>
-
                                     Sharing:
-
                                     <strong>
                                         {" "}
                                         {selectedCredential.website}
                                     </strong>
-
                                 </p>
 
                                 <p>
-
                                     Username:
-
                                     <strong>
                                         {" "}
                                         {selectedCredential.username}
                                     </strong>
-
                                 </p>
 
+                            </div>
+                        )}
+
+
+                        {/* SHARE ERROR */}
+
+                        {shareError && (
+
+                            <div className="modal-error">
+                                ⚠️ {shareError}
+                            </div>
+
+                        )}
+
+
+                        {/* SHARE SUCCESS */}
+
+                        {shareSuccess && (
+
+                            <div className="modal-success">
+                                ✅ {shareSuccess}
                             </div>
 
                         )}
@@ -764,23 +966,16 @@ function Vault() {
                             Recipient Email
                         </label>
 
-
                         <input
-
                             type="email"
-
                             placeholder="Enter registered user's email"
-
                             value={sharedWithEmail}
-
-                            onChange={(e) =>
-                                setSharedWithEmail(
-                                    e.target.value
-                                )
-                            }
-
+                            onChange={(e) => {
+                                setSharedWithEmail(e.target.value);
+                                setShareError("");
+                            }}
                             autoFocus
-
+                            disabled={shareLoading}
                         />
 
 
@@ -790,50 +985,61 @@ function Vault() {
                             Permission
                         </label>
 
-
                         <select
-
                             value={permission}
-
                             onChange={(e) =>
-                                setPermission(
-                                    e.target.value
-                                )
+                                setPermission(e.target.value)
                             }
+                            disabled={shareLoading}
                         >
+
                             <option value="VIEW">
                                 VIEW - Can view credential
                             </option>
+
                             <option value="EDIT">
                                 EDIT - Can view and edit credential
                             </option>
+
                         </select>
+
+
                         {/* BUTTONS */}
 
                         <div className="share-modal-buttons">
+
                             <button
                                 type="button"
                                 className="cancel-btn"
-                                onClick={
-                                    closeShareModal
-                                }
+                                onClick={closeShareModal}
+                                disabled={shareLoading}
                             >
                                 Cancel
                             </button>
+
                             <button
                                 type="button"
                                 className="share-submit-btn"
-                                onClick={
-                                    submitShare
-                                }
+                                onClick={submitShare}
+                                disabled={shareLoading}
                             >
-                                🔗 Share Credential
+
+                                {shareLoading
+                                    ? "⏳ Sharing..."
+                                    : "🔗 Share Credential"}
+
                             </button>
+
                         </div>
+
                     </div>
+
                 </div>
+
             )}
+
         </div>
     );
 }
+
 export default Vault;
