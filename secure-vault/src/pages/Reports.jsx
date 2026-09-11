@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./Reports.css";
+import { API_URL } from "../config";
+import { Link } from "react-router-dom";
 
 function Reports() {
+
     const [passwordReport, setPasswordReport] = useState(null);
     const [loginReport, setLoginReport] = useState(null);
 
@@ -11,14 +14,16 @@ function Reports() {
 
     const userEmail = localStorage.getItem("userEmail");
 
-    const API = "http://localhost:8080/api/reports";
+    const API = `${API_URL}/api/reports`;
 
     useEffect(() => {
         loadReports();
     }, []);
 
     const loadReports = async () => {
+
         try {
+
             setLoading(true);
             setError("");
 
@@ -29,7 +34,8 @@ function Reports() {
 
             console.log("Reports user:", userEmail);
 
-            const encodedEmail = encodeURIComponent(userEmail);
+            const encodedEmail =
+                encodeURIComponent(userEmail);
 
             const passwordResponse = await axios.get(
                 `${API}/password-health?email=${encodedEmail}`
@@ -53,33 +59,54 @@ function Reports() {
             setLoginReport(loginResponse.data);
 
         } catch (err) {
+
             console.error("Reports error:", err);
 
             if (err.response) {
+
                 setError(
                     err.response.data?.message ||
                     `Server error: ${err.response.status}`
                 );
+
             } else if (err.request) {
+
                 setError(
                     "Backend is not reachable."
                 );
+
             } else {
+
                 setError(
                     "Unable to load security reports."
                 );
             }
+
         } finally {
+
             setLoading(false);
         }
     };
 
+
+    // ==========================================
+    // SESSION EXPIRED
+    // ==========================================
+
     if (!userEmail) {
+
         return (
             <div className="reports-container">
+
                 <div className="error-box">
-                    <h2>Session Expired</h2>
-                    <p>Please login again.</p>
+
+                    <h2>
+                        Session Expired
+                    </h2>
+
+                    <p>
+                        Please login again.
+                    </p>
 
                     <button
                         className="retry-button"
@@ -89,15 +116,25 @@ function Reports() {
                     >
                         Go to Login
                     </button>
+
                 </div>
+
             </div>
         );
     }
 
+
+    // ==========================================
+    // LOADING
+    // ==========================================
+
     if (loading) {
+
         return (
             <div className="reports-loading">
+
                 <div className="loading-box">
+
                     <div className="loading-icon">
                         🔐
                     </div>
@@ -109,14 +146,23 @@ function Reports() {
                     <p>
                         Loading reports for {userEmail}
                     </p>
+
                 </div>
+
             </div>
         );
     }
 
+
+    // ==========================================
+    // ERROR
+    // ==========================================
+
     if (error) {
+
         return (
             <div className="reports-container">
+
                 <div className="error-box">
 
                     <div className="error-icon">
@@ -139,14 +185,19 @@ function Reports() {
                     </button>
 
                 </div>
+
             </div>
         );
     }
 
+
     return (
+
         <div className="reports-container">
 
-            {/* HEADER */}
+            {/* ======================================
+                HEADER
+            ====================================== */}
 
             <div className="reports-header">
 
@@ -185,7 +236,9 @@ function Reports() {
             </div>
 
 
-            {/* PASSWORD HEALTH */}
+            {/* ======================================
+                PASSWORD HEALTH
+            ====================================== */}
 
             <section className="report-section">
 
@@ -196,11 +249,15 @@ function Reports() {
                     </div>
 
                     <div>
-                        <h2>Password Health</h2>
+
+                        <h2>
+                            Password Health
+                        </h2>
 
                         <p>
                             Strength of your stored passwords.
                         </p>
+
                     </div>
 
                 </div>
@@ -283,6 +340,7 @@ function Reports() {
                     <div className="health-info">
 
                         <div>
+
                             <h3>
                                 Overall Password Health
                             </h3>
@@ -290,13 +348,17 @@ function Reports() {
                             <p>
                                 Based on your password strength.
                             </p>
+
                         </div>
 
                         <div className="health-score">
+
                             {passwordReport?.healthScore || 0}%
+
                         </div>
 
                     </div>
+
 
                     <div className="health-progress">
 
@@ -312,6 +374,7 @@ function Reports() {
 
                     </div>
 
+
                     <div className="health-status">
 
                         <span>
@@ -325,7 +388,9 @@ function Reports() {
             </section>
 
 
-            {/* LOGIN ACTIVITY */}
+            {/* ======================================
+                LOGIN ACTIVITY
+            ====================================== */}
 
             <section className="report-section">
 
@@ -336,6 +401,7 @@ function Reports() {
                     </div>
 
                     <div>
+
                         <h2>
                             Login Activity
                         </h2>
@@ -343,6 +409,7 @@ function Reports() {
                         <p>
                             Your recent login attempts.
                         </p>
+
                     </div>
 
                 </div>
@@ -414,7 +481,9 @@ function Reports() {
 
                         <div className="empty-state">
 
-                            <div>📭</div>
+                            <div>
+                                📭
+                            </div>
 
                             <p>
                                 No login activities found.
@@ -429,7 +498,9 @@ function Reports() {
                             <table className="report-table">
 
                                 <thead>
+
                                     <tr>
+
                                         <th>
                                             Email
                                         </th>
@@ -441,7 +512,9 @@ function Reports() {
                                         <th>
                                             Timestamp
                                         </th>
+
                                     </tr>
+
                                 </thead>
 
                                 <tbody>
@@ -468,6 +541,7 @@ function Reports() {
                                                         <span className="status-badge failed-badge">
                                                             ✕ FAILED
                                                         </span>
+
                                                     )}
 
                                                 </td>
@@ -493,6 +567,32 @@ function Reports() {
                 </div>
 
             </section>
+
+
+            {/* ======================================
+                BACK TO DASHBOARD
+            ====================================== */}
+
+            <div
+                style={{
+                    marginTop: "25px",
+                    marginBottom: "25px"
+                }}
+            >
+
+                <Link
+                    to="/dashboard"
+                    className="retry-button"
+                    style={{
+                        display: "inline-block",
+                        textDecoration: "none",
+                        backgroundColor: "black"
+                    }}
+                >
+                    ← Back to Dashboard
+                </Link>
+
+            </div>
 
         </div>
     );

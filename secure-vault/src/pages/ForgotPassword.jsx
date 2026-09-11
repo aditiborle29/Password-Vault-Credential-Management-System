@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./ForgotPassword.css";
 import { useNavigate } from "react-router-dom";
-
+import { API_URL } from "../config";
 function ForgotPassword() {
   const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ function ForgotPassword() {
       setLoading(true);
 
       const response = await axios.post(
-        `http://localhost:8080/api/auth/send-otp?email=${encodeURIComponent(email)}`
+        `${API_URL}/api/auth/send-otp?email=${encodeURIComponent(email)}`
       );
 
       setSuccess(response.data || "OTP sent successfully.");
@@ -87,7 +87,7 @@ function ForgotPassword() {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:8080/api/auth/verify-otp",
+       `${API_URL}/api/auth/verify-otp`,
         {
           email,
           otp,

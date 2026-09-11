@@ -1,11 +1,11 @@
 import axios from "axios";
+import { API_URL } from "../config";
 
 // =====================================================
 // API URL
 // =====================================================
 
-const API_URL = "http://localhost:8080/api/credentials";
-
+const API = `${API_URL}/api/credentials`;
 
 // =====================================================
 // HELPER - GET LOGGED IN USER EMAIL
@@ -41,7 +41,7 @@ export const addCredential = (credential) => {
     };
 
     return axios.post(
-        API_URL,
+        API,
         data
     );
 };
@@ -56,7 +56,7 @@ export const getCredentials = () => {
     const email = getUserEmail();
 
     return axios.get(
-        `${API_URL}?email=${encodeURIComponent(email)}`
+        `${API}?email=${encodeURIComponent(email)}`
     );
 };
 
@@ -70,7 +70,7 @@ export const getSharedCredentials = () => {
     const email = getUserEmail();
 
     return axios.get(
-        `${API_URL}/shared?email=${encodeURIComponent(email)}`
+        `${API}/shared?email=${encodeURIComponent(email)}`
     );
 };
 
@@ -82,7 +82,7 @@ export const getSharedCredentials = () => {
 export const getCredentialById = (id) => {
 
     return axios.get(
-        `${API_URL}/${id}`
+        `${API}/${id}`
     );
 };
 
@@ -105,7 +105,7 @@ export const updateCredential = (
     };
 
     return axios.put(
-        `${API_URL}/${id}?email=${encodeURIComponent(email)}`,
+        `${API}/${id}?email=${encodeURIComponent(email)}`,
         data
     );
 };
@@ -120,6 +120,6 @@ export const deleteCredential = (id) => {
     const email = getUserEmail();
 
     return axios.delete(
-        `${API_URL}/${id}?email=${encodeURIComponent(email)}`
+        `${API}/${id}?email=${encodeURIComponent(email)}`
     );
 };

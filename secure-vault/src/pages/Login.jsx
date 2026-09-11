@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { API_URL } from "../config";
 function Login() {
 
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ function Login() {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:8080/api/auth/login",
+        `${API_URL}/api/auth/login`,
         {
           email: email.trim(),
           password: password

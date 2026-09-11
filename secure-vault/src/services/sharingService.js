@@ -1,7 +1,7 @@
 import axios from "axios";
+import { API_URL } from "../config";
 
-const API = "http://localhost:8080/api/sharing";
-
+const API = `${API_URL}/api/sharing`;
 // ================= SHARE CREDENTIAL =================
 
 export const shareCredential = (data) => {

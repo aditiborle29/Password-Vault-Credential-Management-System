@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./SecurityDashboard.css";
+import { API_URL } from "../config";
+import { Link } from "react-router-dom";
 
 function SecurityDashboard() {
 
@@ -15,7 +17,7 @@ function SecurityDashboard() {
 
     const userEmail = localStorage.getItem("userEmail");
 
-    const API = "http://localhost:8080/api/security";
+    const API = `${API_URL}/api/security`;
 
     // ==========================================
     // LOAD SECURITY DATA
@@ -854,6 +856,25 @@ function SecurityDashboard() {
                 )}
 
             </section>
+
+
+            {/* ======================================
+                BACK TO DASHBOARD
+            ====================================== */}
+
+            <div style={{ marginTop: "25px", marginBottom: "25px" }}>
+                <Link
+                    to="/dashboard"
+                    className="resolve-button"
+                    style={{
+                        display: "inline-block",
+                        textDecoration: "none",
+                        backgroundColor: "black"
+                    }}
+                >
+                    ← Back to Dashboard
+                </Link>
+            </div>
 
         </div>
     );
