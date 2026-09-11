@@ -16,6 +16,7 @@
     <groupId>com.securevault</groupId>
     <artifactId>securevault</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+
     <name>securevault</name>
     <description>Secure Vault Credential Management System</description>
 
@@ -25,13 +26,13 @@
 
     <dependencies>
 
-        <!-- Spring Boot Web -->
+        <!-- Spring Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Spring Boot JPA -->
+        <!-- Spring Data JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -49,13 +50,6 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
-
-        <!-- Resend Email API -->
-        <dependency>
-    <groupId>com.resend</groupId>
-    <artifactId>resend-java</artifactId>
-    <version>4.19.0</version>
-</dependency>
 
         <!-- Testing -->
         <dependency>

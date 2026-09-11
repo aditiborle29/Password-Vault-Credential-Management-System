@@ -52,8 +52,7 @@ public class SecurityController {
                     Map.of("message", "Email is required"));
         }
 
-        List<LoginAttempt> attempts = loginAttemptRepository
-                .findTop50ByEmailOrderByTimestampDesc(email);
+        List<LoginAttempt> attempts = loginAttemptRepository.findTop50ByEmailOrderByTimestampDesc(email);
 
         return ResponseEntity.ok(attempts);
     }
