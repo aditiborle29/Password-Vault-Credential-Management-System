@@ -3,6 +3,7 @@ import axios from "axios";
 import "./ForgotPassword.css";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../config";
+
 function ForgotPassword() {
   const navigate = useNavigate();
 
@@ -23,7 +24,7 @@ function ForgotPassword() {
     setError("");
     setSuccess("");
 
-    if (!email) {
+    if (!email.trim()) {
       setError("Please enter your email address.");
       return;
     }
@@ -32,24 +33,42 @@ function ForgotPassword() {
       setLoading(true);
 
       const response = await axios.post(
-        `${API_URL}/api/auth/send-otp?email=${encodeURIComponent(email)}`
+        `${API_URL}/api/auth/send-otp?email=${encodeURIComponent(
+          email.trim()
+        )}`
       );
 
-      setSuccess(response.data || "OTP sent successfully.");
+      setSuccess(
+        typeof response.data === "string"
+          ? response.data
+          : "OTP sent successfully. Please check your email."
+      );
+
       setOtpSent(true);
 
     } catch (error) {
       console.error("Send OTP Error:", error);
 
       if (error.response) {
-        setError(
-          error.response.data ||
-          "Unable to send OTP. Please try again."
-        );
+        const data = error.response.data;
+
+        if (typeof data === "string") {
+          setError(data);
+        } else if (data?.message) {
+          setError(data.message);
+        } else if (data?.error) {
+          setError(data.error);
+        } else {
+          setError(
+            "Unable to send OTP. Please check the email address and try again."
+          );
+        }
+
       } else if (error.request) {
         setError(
           "Unable to connect to server. Please make sure the backend is running."
         );
+
       } else {
         setError("Something went wrong. Please try again.");
       }
@@ -68,7 +87,7 @@ function ForgotPassword() {
     setError("");
     setSuccess("");
 
-    if (!otp) {
+    if (!otp.trim()) {
       setError("Please enter the OTP.");
       return;
     }
@@ -87,16 +106,18 @@ function ForgotPassword() {
       setLoading(true);
 
       const response = await axios.post(
-       `${API_URL}/api/auth/verify-otp`,
+        `${API_URL}/api/auth/verify-otp`,
         {
-          email,
-          otp,
-          newPassword,
+          email: email.trim(),
+          otp: otp.trim(),
+          newPassword: newPassword,
         }
       );
 
       setSuccess(
-        response.data || "Password updated successfully."
+        typeof response.data === "string"
+          ? response.data
+          : "Password updated successfully."
       );
 
       setTimeout(() => {
@@ -107,14 +128,23 @@ function ForgotPassword() {
       console.error("Reset Password Error:", error);
 
       if (error.response) {
-        setError(
-          error.response.data ||
-          "Invalid or expired OTP."
-        );
+        const data = error.response.data;
+
+        if (typeof data === "string") {
+          setError(data);
+        } else if (data?.message) {
+          setError(data.message);
+        } else if (data?.error) {
+          setError(data.error);
+        } else {
+          setError("Invalid or expired OTP.");
+        }
+
       } else if (error.request) {
         setError(
           "Unable to connect to server. Please try again."
         );
+
       } else {
         setError(
           "Something went wrong. Please try again."
@@ -240,3 +270,4 @@ function ForgotPassword() {
 }
 
 export default ForgotPassword;
+
