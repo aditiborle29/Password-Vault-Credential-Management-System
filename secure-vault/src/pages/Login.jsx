@@ -144,20 +144,21 @@ function Login() {
               disabled={loading}
             />
 
-            <button
-              type="button"
-              className="show-password-btn"
-              onClick={() => setShowPassword(!showPassword)}
-              disabled={loading}
-              aria-label={
-                showPassword
-                  ? "Hide password"
-                  : "Show password"
-              }
-            >
-              {showPassword ? "🙈" : "👁️"}
-            </button>
-
+            
+              <button
+                type="button"
+                className="eye-btn"
+                onClick={() =>
+                  setShowPassword(
+                    (prev) => !prev
+                  )
+                }
+                disabled={loading}
+              >
+                {showPassword
+                  ? "🙈"
+                  : "👁"}
+              </button>
           </div>
 
           <button
