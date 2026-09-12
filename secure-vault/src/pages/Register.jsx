@@ -12,6 +12,9 @@ function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // Show / Hide Password
+  const [showPassword, setShowPassword] = useState(false);
+
   // Error and loading states
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -26,6 +29,7 @@ function Register() {
     setSuccessMessage("");
 
     // Frontend validation
+
     if (!name.trim()) {
       setErrorMessage("Please enter your full name.");
       return;
@@ -84,7 +88,6 @@ function Register() {
 
       if (error.response) {
 
-        // Backend returned an error
         setErrorMessage(
           error.response.data ||
           "Registration failed. Please check your details."
@@ -92,7 +95,6 @@ function Register() {
 
       } else if (error.request) {
 
-        // Backend is not running
         setErrorMessage(
           "Unable to connect to server. Please make sure the backend is running."
         );
@@ -112,6 +114,7 @@ function Register() {
   };
 
   return (
+
     <div className="register-container">
 
       <div className="register-card">
@@ -154,12 +157,33 @@ function Register() {
             onChange={(e) => setEmail(e.target.value)}
           />
 
-          <input
-            type="password"
-            placeholder="Create Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          {/* PASSWORD WITH SHOW/HIDE */}
+
+          <div className="password-container">
+
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Create Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+            />
+
+            <button
+              type="button"
+              className="show-password-btn"
+              onClick={() => setShowPassword(!showPassword)}
+              disabled={loading}
+              aria-label={
+                showPassword
+                  ? "Hide password"
+                  : "Show password"
+              }
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </button>
+
+          </div>
 
           <button
             type="submit"
@@ -171,8 +195,13 @@ function Register() {
         </form>
 
         <p className="login-text">
+
           Already have an account?
-          <Link to="/login"> Login</Link>
+
+          <Link to="/login">
+            {" "}Login
+          </Link>
+
         </p>
 
       </div>

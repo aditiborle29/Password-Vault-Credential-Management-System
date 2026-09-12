@@ -3,18 +3,18 @@ import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../config";
-function Login() {
 
+function Login() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
-
     e.preventDefault();
 
     setError("");
@@ -37,7 +37,6 @@ function Login() {
     }
 
     try {
-
       setLoading(true);
 
       const response = await axios.post(
@@ -53,21 +52,16 @@ function Login() {
       // ==============================
 
       if (response.data === "Login Successful") {
-
         localStorage.setItem("userEmail", email.trim());
 
         navigate("/dashboard");
-
       } else {
-
         setError(
           response.data || "Invalid email or password."
         );
-
       }
 
     } catch (error) {
-
       console.error("Login Error:", error);
 
       // ==============================
@@ -75,13 +69,11 @@ function Login() {
       // ==============================
 
       if (error.response) {
-
         setError(
           typeof error.response.data === "string"
             ? error.response.data
             : "Invalid email or password."
         );
-
       }
 
       // ==============================
@@ -89,11 +81,9 @@ function Login() {
       // ==============================
 
       else if (error.request) {
-
         setError(
           "Unable to connect to server. Please make sure the backend is running."
         );
-
       }
 
       // ==============================
@@ -101,23 +91,17 @@ function Login() {
       // ==============================
 
       else {
-
         setError(
           "Something went wrong. Please try again."
         );
-
       }
 
     } finally {
-
       setLoading(false);
-
     }
   };
 
-
   return (
-
     <div className="login-container">
 
       <div className="login-card">
@@ -128,7 +112,6 @@ function Login() {
           Store and manage your credentials securely
         </p>
 
-
         {/* ERROR MESSAGE */}
 
         {error && (
@@ -136,7 +119,6 @@ function Login() {
             ⚠️ {error}
           </div>
         )}
-
 
         {/* LOGIN FORM */}
 
@@ -150,27 +132,42 @@ function Login() {
             disabled={loading}
           />
 
+          {/* PASSWORD WITH SHOW/HIDE */}
 
-          <input
-            type="password"
-            placeholder="Enter Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={loading}
-          />
+          <div className="password-container">
 
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+            />
+
+            <button
+              type="button"
+              className="show-password-btn"
+              onClick={() => setShowPassword(!showPassword)}
+              disabled={loading}
+              aria-label={
+                showPassword
+                  ? "Hide password"
+                  : "Show password"
+              }
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </button>
+
+          </div>
 
           <button
             type="submit"
             disabled={loading}
           >
-
             {loading ? "Logging in..." : "Login"}
-
           </button>
 
         </form>
-
 
         <Link
           className="forgot-link"
@@ -178,7 +175,6 @@ function Login() {
         >
           Forgot Password?
         </Link>
-
 
         <p className="register-text">
 

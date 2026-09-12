@@ -170,3 +170,37 @@ body {
         font-size: 15px;
     }
 }
+.password-container {
+  position: relative;
+  width: 100%;
+}
+
+.password-container input {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 50px;
+}
+
+.show-password-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+
+  cursor: pointer;
+  font-size: 18px;
+  padding: 5px;
+  width: auto;
+  margin: 0;
+}
+
+.show-password-btn:hover {
+  background: transparent;
+}
+
+.show-password-btn:disabled {
+  cursor: not-allowed;
+}
