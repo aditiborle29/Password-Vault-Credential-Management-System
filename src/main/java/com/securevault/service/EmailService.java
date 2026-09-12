@@ -14,10 +14,10 @@ import java.util.Map;
 @Service
 public class EmailService {
 
-        @Value("${RESEND_API_KEY:}")
-        private String resendApiKey;
+        @Value("${BREVO_API_KEY:}")
+        private String brevoApiKey;
 
-        @Value("${MAIL_FROM:onboarding@resend.dev}")
+        @Value("${MAIL_FROM:}")
         private String fromEmail;
 
         private final ObjectMapper objectMapper = new ObjectMapper();
@@ -26,27 +26,32 @@ public class EmailService {
 
                 try {
 
-                        // Check API key
-                        if (resendApiKey == null || resendApiKey.trim().isEmpty()) {
-                                return "ERROR: RESEND_API_KEY is missing in Render.";
+                        if (brevoApiKey == null || brevoApiKey.trim().isEmpty()) {
+                                return "ERROR: BREVO_API_KEY is missing.";
                         }
+
+                        if (fromEmail == null || fromEmail.trim().isEmpty()) {
+                                return "ERROR: MAIL_FROM is missing.";
+                        }
+
+                        Map<String, Object> sender = new HashMap<>();
+                        sender.put("name", "Secure Vault");
+                        sender.put("email", fromEmail);
+
+                        Map<String, String> recipient = new HashMap<>();
+                        recipient.put("email", toEmail);
 
                         Map<String, Object> emailData = new HashMap<>();
 
-                        emailData.put(
-                                        "from",
-                                        "Secure Vault <" + fromEmail + ">");
-
-                        emailData.put(
-                                        "to",
-                                        new String[] { toEmail });
+                        emailData.put("sender", sender);
+                        emailData.put("to", new Map[] { recipient });
 
                         emailData.put(
                                         "subject",
                                         "Secure Vault - Password Reset OTP");
 
                         emailData.put(
-                                        "html",
+                                        "htmlContent",
                                         "<h2>Secure Vault</h2>" +
                                                         "<p>Hello,</p>" +
                                                         "<p>Your OTP for resetting your password is:</p>" +
@@ -61,15 +66,21 @@ public class EmailService {
                         HttpClient client = HttpClient.newHttpClient();
 
                         HttpRequest request = HttpRequest.newBuilder()
-                                        .uri(URI.create("https://api.resend.com/emails"))
+                                        .uri(
+                                                        URI.create(
+                                                                        "https://api.brevo.com/v3/smtp/email"))
                                         .header(
-                                                        "Authorization",
-                                                        "Bearer " + resendApiKey)
+                                                        "api-key",
+                                                        brevoApiKey)
                                         .header(
                                                         "Content-Type",
                                                         "application/json")
+                                        .header(
+                                                        "Accept",
+                                                        "application/json")
                                         .POST(
-                                                        HttpRequest.BodyPublishers.ofString(json))
+                                                        HttpRequest.BodyPublishers
+                                                                        .ofString(json))
                                         .build();
 
                         HttpResponse<String> response = client.send(
@@ -77,10 +88,12 @@ public class EmailService {
                                         HttpResponse.BodyHandlers.ofString());
 
                         System.out.println(
-                                        "RESEND STATUS = " + response.statusCode());
+                                        "BREVO STATUS = "
+                                                        + response.statusCode());
 
                         System.out.println(
-                                        "RESEND RESPONSE = " + response.body());
+                                        "BREVO RESPONSE = "
+                                                        + response.body());
 
                         if (response.statusCode() >= 200 &&
                                         response.statusCode() < 300) {
@@ -88,14 +101,17 @@ public class EmailService {
                                 return "OTP sent successfully";
                         }
 
-                        return "RESEND ERROR: " + response.body();
+                        return "BREVO ERROR: "
+                                        + response.body();
 
                 } catch (Exception e) {
 
                         System.out.println(
-                                        "EMAIL ERROR = " + e.getMessage());
+                                        "EMAIL ERROR = "
+                                                        + e.getMessage());
 
-                        return "EMAIL ERROR: " + e.getMessage();
+                        return "EMAIL ERROR: "
+                                        + e.getMessage();
                 }
         }
 }
