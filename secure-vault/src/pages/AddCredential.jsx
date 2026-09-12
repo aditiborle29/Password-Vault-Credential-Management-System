@@ -23,7 +23,6 @@ function AddCredential() {
 
   // =====================================================
   // PASSWORD STRENGTH
-  // SAME RULES USED BY REPORT
   // =====================================================
 
   const checkStrength = (password) => {
@@ -34,32 +33,30 @@ function AddCredential() {
 
     let score = 0;
 
-    // 1. Length
+    // Length
     if (password.length >= 8) {
       score++;
     }
 
-    // 2. Uppercase
+    // Uppercase
     if (/[A-Z]/.test(password)) {
       score++;
     }
 
-    // 3. Lowercase
+    // Lowercase
     if (/[a-z]/.test(password)) {
       score++;
     }
 
-    // 4. Number
+    // Number
     if (/[0-9]/.test(password)) {
       score++;
     }
 
-    // 5. Special character
+    // Special character
     if (/[^A-Za-z0-9]/.test(password)) {
       score++;
     }
-
-    // SAME RULES AS BACKEND
 
     if (score <= 2) {
       return "Weak";
@@ -127,12 +124,17 @@ function AddCredential() {
     };
 
 
+    // Make sure generated password contains
+    // uppercase, lowercase, number and symbol
+
     let password =
       getRandomCharacter(upper) +
       getRandomCharacter(lower) +
       getRandomCharacter(numbers) +
       getRandomCharacter(symbols);
 
+
+    // Make password 16 characters long
 
     while (password.length < 16) {
 
@@ -141,16 +143,23 @@ function AddCredential() {
     }
 
 
+    // Shuffle password
+
     password = password
       .split("")
       .sort(() => Math.random() - 0.5)
       .join("");
 
 
+    // Store generated password
+
     setCredential((prev) => ({
       ...prev,
       password,
     }));
+
+
+    // Update strength
 
     setStrength(
       checkStrength(password)
@@ -185,16 +194,11 @@ function AddCredential() {
     }
 
 
-    // Minimum length required for storing password
     if (credential.password.length < 8) {
 
       return "Password must contain at least 8 characters.";
     }
 
-
-    // IMPORTANT:
-    // Weak password is NOT blocked.
-    // It can be stored and detected in Reports.
 
     return "";
   };
@@ -346,6 +350,8 @@ function AddCredential() {
         </p>
 
 
+        {/* ERROR */}
+
         {error && (
           <div
             className="error-message"
@@ -355,6 +361,8 @@ function AddCredential() {
           </div>
         )}
 
+
+        {/* SUCCESS */}
 
         {success && (
           <div
@@ -368,8 +376,9 @@ function AddCredential() {
 
         <form onSubmit={handleSubmit}>
 
-
-          {/* WEBSITE */}
+          {/* =====================================================
+              WEBSITE
+          ===================================================== */}
 
           <div className="input-group">
 
@@ -391,7 +400,9 @@ function AddCredential() {
           </div>
 
 
-          {/* USERNAME */}
+          {/* =====================================================
+              USERNAME
+          ===================================================== */}
 
           <div className="input-group">
 
@@ -413,7 +424,9 @@ function AddCredential() {
           </div>
 
 
-          {/* PASSWORD */}
+          {/* =====================================================
+              PASSWORD
+          ===================================================== */}
 
           <div className="input-group">
 
@@ -422,27 +435,52 @@ function AddCredential() {
             </label>
 
 
-          <div className="password-container">
-  <input
-    type={showPassword ? "text" : "password"}
-    placeholder="Enter Password"
-    value={password}
-    onChange={(e) => setPassword(e.target.value)}
-    disabled={loading}
-  />
+            <div className="password-container">
 
-  <button
-    type="button"
-    className="eye-btn"
-    onClick={() => setShowPassword(!showPassword)}
-    disabled={loading}
-  >
-    {showPassword ? "🙈" : "👁️"}
-  </button>
-</div>
-</div>
+              <input
+                id="password"
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
+                name="password"
+                placeholder="Enter Password"
+                value={credential.password}
+                onChange={handleChange}
+                autoComplete="new-password"
+                disabled={loading}
+              />
 
-          {/* GENERATE PASSWORD */}
+
+              <button
+                type="button"
+                className="eye-btn"
+                onClick={() =>
+                  setShowPassword(
+                    (prev) => !prev
+                  )
+                }
+                disabled={loading}
+                aria-label={
+                  showPassword
+                    ? "Hide password"
+                    : "Show password"
+                }
+              >
+                {showPassword
+                  ? "🙈"
+                  : "👁️"}
+              </button>
+
+            </div>
+
+          </div>
+
+
+          {/* =====================================================
+              GENERATE PASSWORD
+          ===================================================== */}
 
           <button
             type="button"
@@ -454,7 +492,9 @@ function AddCredential() {
           </button>
 
 
-          {/* PASSWORD STRENGTH */}
+          {/* =====================================================
+              PASSWORD STRENGTH
+          ===================================================== */}
 
           {strength && (
 
@@ -474,6 +514,7 @@ function AddCredential() {
                 className={`strength-text ${strength.toLowerCase()}`}
               >
                 Password Strength:{" "}
+
                 <strong>
                   {strength}
                 </strong>
@@ -491,23 +532,30 @@ function AddCredential() {
               )}
 
             </div>
+
           )}
 
 
-          {/* SAVE */}
+          {/* =====================================================
+              SAVE BUTTON
+          ===================================================== */}
 
           <button
             type="submit"
             className="save-btn"
             disabled={loading}
           >
+
             {loading
               ? "⏳ Saving..."
               : "💾 Save Credential"}
+
           </button>
 
 
-          {/* BACK */}
+          {/* =====================================================
+              BACK BUTTON
+          ===================================================== */}
 
           <button
             type="button"
