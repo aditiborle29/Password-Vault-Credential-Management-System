@@ -38,17 +38,7 @@ public class AuthController {
     @PostMapping("/send-otp")
     public String sendOtp(@RequestParam String email) {
 
-        try {
-            return userService.sendOtp(email);
-
-        } catch (Exception e) {
-
-            System.out.println(
-                    "SEND OTP ERROR: " + e.getMessage());
-
-            throw new RuntimeException(
-                    e.getMessage());
-        }
+        return userService.sendOtp(email);
     }
 
     // ================= VERIFY OTP =================

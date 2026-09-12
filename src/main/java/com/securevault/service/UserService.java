@@ -103,9 +103,7 @@ public class UserService {
 
     public String sendOtp(String email) {
 
-        User user = userRepository
-                .findByEmail(email)
-                .orElse(null);
+        User user = userRepository.findByEmail(email).orElse(null);
 
         if (user == null) {
             return "User not found!";
@@ -113,11 +111,10 @@ public class UserService {
 
         String otp = otpService.generateOtp(email);
 
-        emailService.sendOtp(email, otp);
+        String result = emailService.sendOtp(email, otp);
 
-        return "OTP sent successfully";
+        return result;
     }
-
     // ================= VERIFY OTP =================
 
     public String verifyOtpAndResetPassword(

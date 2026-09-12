@@ -22,14 +22,13 @@ public class EmailService {
 
         private final ObjectMapper objectMapper = new ObjectMapper();
 
-        public void sendOtp(String toEmail, String otp) {
+        public String sendOtp(String toEmail, String otp) {
 
                 try {
 
                         // Check API key
                         if (resendApiKey == null || resendApiKey.trim().isEmpty()) {
-                                throw new RuntimeException(
-                                                "RESEND_API_KEY is missing in Render environment variables.");
+                                return "ERROR: RESEND_API_KEY is missing in Render.";
                         }
 
                         Map<String, Object> emailData = new HashMap<>();
@@ -78,31 +77,25 @@ public class EmailService {
                                         HttpResponse.BodyHandlers.ofString());
 
                         System.out.println(
-                                        "RESEND STATUS: " + response.statusCode());
+                                        "RESEND STATUS = " + response.statusCode());
 
                         System.out.println(
-                                        "RESEND RESPONSE: " + response.body());
+                                        "RESEND RESPONSE = " + response.body());
 
-                        if (response.statusCode() < 200 ||
-                                        response.statusCode() >= 300) {
+                        if (response.statusCode() >= 200 &&
+                                        response.statusCode() < 300) {
 
-                                throw new RuntimeException(
-                                                "Resend API error: "
-                                                                + response.body());
+                                return "OTP sent successfully";
                         }
 
-                        System.out.println(
-                                        "OTP email sent successfully to: "
-                                                        + toEmail);
+                        return "RESEND ERROR: " + response.body();
 
                 } catch (Exception e) {
 
                         System.out.println(
-                                        "EMAIL ERROR: " + e.getMessage());
+                                        "EMAIL ERROR = " + e.getMessage());
 
-                        throw new RuntimeException(
-                                        "Unable to send OTP email: "
-                                                        + e.getMessage());
+                        return "EMAIL ERROR: " + e.getMessage();
                 }
         }
 }
