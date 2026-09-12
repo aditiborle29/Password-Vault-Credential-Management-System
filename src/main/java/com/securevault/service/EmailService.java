@@ -14,88 +14,95 @@ import java.util.Map;
 @Service
 public class EmailService {
 
-    @Value("${RESEND_API_KEY}")
-    private String resendApiKey;
+        @Value("${RESEND_API_KEY:}")
+        private String resendApiKey;
 
-    @Value("${MAIL_FROM:onboarding@resend.dev}")
-    private String fromEmail;
+        @Value("${MAIL_FROM:onboarding@resend.dev}")
+        private String fromEmail;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+        private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public void sendOtp(String toEmail, String otp) {
+        public void sendOtp(String toEmail, String otp) {
 
-        try {
+                try {
 
-            // Create email data
-            Map<String, Object> emailData = new HashMap<>();
+                        // Check API key
+                        if (resendApiKey == null || resendApiKey.trim().isEmpty()) {
+                                throw new RuntimeException(
+                                                "RESEND_API_KEY is missing in Render environment variables.");
+                        }
 
-            emailData.put(
-                    "from",
-                    "Secure Vault <" + fromEmail + ">");
+                        Map<String, Object> emailData = new HashMap<>();
 
-            emailData.put(
-                    "to",
-                    new String[] { toEmail });
+                        emailData.put(
+                                        "from",
+                                        "Secure Vault <" + fromEmail + ">");
 
-            emailData.put(
-                    "subject",
-                    "Secure Vault - Password Reset OTP");
+                        emailData.put(
+                                        "to",
+                                        new String[] { toEmail });
 
-            emailData.put(
-                    "html",
-                    "<h2>Secure Vault</h2>" +
-                            "<p>Hello,</p>" +
-                            "<p>Your OTP for resetting your password is:</p>" +
-                            "<h1>" + otp + "</h1>" +
-                            "<p>This OTP is valid for 5 minutes.</p>" +
-                            "<p>Do not share this OTP with anyone.</p>" +
-                            "<br>" +
-                            "<p>Regards,<br>Secure Vault</p>");
+                        emailData.put(
+                                        "subject",
+                                        "Secure Vault - Password Reset OTP");
 
-            // Convert data to JSON
-            String json = objectMapper.writeValueAsString(emailData);
+                        emailData.put(
+                                        "html",
+                                        "<h2>Secure Vault</h2>" +
+                                                        "<p>Hello,</p>" +
+                                                        "<p>Your OTP for resetting your password is:</p>" +
+                                                        "<h1>" + otp + "</h1>" +
+                                                        "<p>This OTP is valid for 5 minutes.</p>" +
+                                                        "<p>Do not share this OTP with anyone.</p>" +
+                                                        "<br>" +
+                                                        "<p>Regards,<br>Secure Vault</p>");
 
-            // Create HTTP client
-            HttpClient client = HttpClient.newHttpClient();
+                        String json = objectMapper.writeValueAsString(emailData);
 
-            // Create request
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://api.resend.com/emails"))
-                    .header(
-                            "Authorization",
-                            "Bearer " + resendApiKey)
-                    .header(
-                            "Content-Type",
-                            "application/json")
-                    .POST(
-                            HttpRequest.BodyPublishers.ofString(json))
-                    .build();
+                        HttpClient client = HttpClient.newHttpClient();
 
-            // Send request
-            HttpResponse<String> response = client.send(
-                    request,
-                    HttpResponse.BodyHandlers.ofString());
+                        HttpRequest request = HttpRequest.newBuilder()
+                                        .uri(URI.create("https://api.resend.com/emails"))
+                                        .header(
+                                                        "Authorization",
+                                                        "Bearer " + resendApiKey)
+                                        .header(
+                                                        "Content-Type",
+                                                        "application/json")
+                                        .POST(
+                                                        HttpRequest.BodyPublishers.ofString(json))
+                                        .build();
 
-            // Check response
-            if (response.statusCode() < 200 ||
-                    response.statusCode() >= 300) {
+                        HttpResponse<String> response = client.send(
+                                        request,
+                                        HttpResponse.BodyHandlers.ofString());
 
-                throw new RuntimeException(
-                        "Resend email failed. Status: "
-                                + response.statusCode()
-                                + ", Response: "
-                                + response.body());
-            }
+                        System.out.println(
+                                        "RESEND STATUS: " + response.statusCode());
 
-            System.out.println(
-                    "OTP email sent successfully to: " + toEmail);
+                        System.out.println(
+                                        "RESEND RESPONSE: " + response.body());
 
-        } catch (Exception e) {
+                        if (response.statusCode() < 200 ||
+                                        response.statusCode() >= 300) {
 
-            throw new RuntimeException(
-                    "Unable to send OTP email: "
-                            + e.getMessage(),
-                    e);
+                                throw new RuntimeException(
+                                                "Resend API error: "
+                                                                + response.body());
+                        }
+
+                        System.out.println(
+                                        "OTP email sent successfully to: "
+                                                        + toEmail);
+
+                } catch (Exception e) {
+
+                        System.out.println(
+                                        "EMAIL ERROR: " + e.getMessage());
+
+                        throw new RuntimeException(
+                                        "Unable to send OTP email: "
+                                                        + e.getMessage());
+                }
         }
-    }
 }
