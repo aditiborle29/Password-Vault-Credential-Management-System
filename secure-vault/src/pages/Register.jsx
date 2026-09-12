@@ -24,7 +24,6 @@ function Register() {
 
     e.preventDefault();
 
-    // Clear previous messages
     setErrorMessage("");
     setSuccessMessage("");
 
@@ -109,7 +108,6 @@ function Register() {
     } finally {
 
       setLoading(false);
-
     }
   };
 
@@ -143,21 +141,27 @@ function Register() {
 
         <form onSubmit={handleRegister}>
 
+          {/* NAME */}
+
           <input
             type="text"
             placeholder="Full Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            disabled={loading}
           />
+
+          {/* EMAIL */}
 
           <input
             type="email"
             placeholder="Email Address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={loading}
           />
 
-          {/* PASSWORD WITH SHOW/HIDE */}
+          {/* PASSWORD */}
 
           <div className="password-container">
 
@@ -171,8 +175,10 @@ function Register() {
 
             <button
               type="button"
-              className="show-password-btn"
-              onClick={() => setShowPassword(!showPassword)}
+              className="eye-btn"
+              onClick={() =>
+                setShowPassword((prev) => !prev)
+              }
               disabled={loading}
               aria-label={
                 showPassword
@@ -185,11 +191,15 @@ function Register() {
 
           </div>
 
+          {/* REGISTER BUTTON */}
+
           <button
             type="submit"
             disabled={loading}
           >
-            {loading ? "Creating Account..." : "Register"}
+            {loading
+              ? "Creating Account..."
+              : "Register"}
           </button>
 
         </form>

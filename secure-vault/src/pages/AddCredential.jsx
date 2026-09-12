@@ -422,43 +422,25 @@ function AddCredential() {
             </label>
 
 
-            <div className="password-container">
+          <div className="password-container">
+  <input
+    type={showPassword ? "text" : "password"}
+    placeholder="Enter Password"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    disabled={loading}
+  />
 
-              <input
-                id="password"
-                type={
-                  showPassword
-                    ? "text"
-                    : "password"
-                }
-                name="password"
-                placeholder="Enter password"
-                value={credential.password}
-                onChange={handleChange}
-                autoComplete="new-password"
-                disabled={loading}
-              />
-
-
-              <button
-                type="button"
-                className="eye-btn"
-                onClick={() =>
-                  setShowPassword(
-                    (prev) => !prev
-                  )
-                }
-                disabled={loading}
-              >
-                {showPassword
-                  ? "🙈"
-                  : "👁"}
-              </button>
-
-            </div>
-
-          </div>
-
+  <button
+    type="button"
+    className="eye-btn"
+    onClick={() => setShowPassword(!showPassword)}
+    disabled={loading}
+  >
+    {showPassword ? "🙈" : "👁️"}
+  </button>
+</div>
+</div>
 
           {/* GENERATE PASSWORD */}
 
