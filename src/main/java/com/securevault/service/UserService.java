@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class UserService {
 
@@ -27,16 +29,26 @@ public class UserService {
     @Autowired
     private LoginMonitoringService loginMonitoringService;
 
+    @Autowired
+    private NotificationService notificationService;
+
+
     // ================= REGISTER =================
 
     public String register(User user) {
 
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+        if (userRepository
+                .findByEmail(user.getEmail())
+                .isPresent()) {
+
             return "Email already exists!";
         }
 
         user.setPassword(
-                passwordEncoder.encode(user.getPassword()));
+                passwordEncoder.encode(
+                        user.getPassword()
+                )
+        );
 
         user.setRole("USER");
 
@@ -44,6 +56,7 @@ public class UserService {
 
         return "User Registered Successfully";
     }
+
 
     // ================= LOGIN =================
 
@@ -53,15 +66,13 @@ public class UserService {
 
         String email = request.getEmail();
 
-        /*
-         * For local development.
-         * Later this can be replaced with the
-         * actual client IP address.
-         */
+
+        // Find user
 
         User user = userRepository
                 .findByEmail(email)
                 .orElse(null);
+
 
         // ================= USER NOT FOUND =================
 
@@ -70,10 +81,12 @@ public class UserService {
             loginMonitoringService.recordLogin(
                     email,
                     false,
-                    ipAddress);
+                    ipAddress
+            );
 
             return "User not found!";
         }
+
 
         // ================= WRONG PASSWORD =================
 
@@ -84,53 +97,96 @@ public class UserService {
             loginMonitoringService.recordLogin(
                     email,
                     false,
-                    ipAddress);
+                    ipAddress
+            );
 
             return "Invalid Password!";
         }
+
 
         // ================= SUCCESSFUL LOGIN =================
 
         loginMonitoringService.recordLogin(
                 email,
                 true,
-                ipAddress);
+                ipAddress
+        );
+
+
+        // ================= IN-APP LOGIN NOTIFICATION =================
+
+        notificationService.createNotification(
+                user.getId(),
+                "LOGIN",
+                "New Login Detected",
+                "New login detected on your SecureVault account."
+        );
+
+
+        // ================= LOGIN EMAIL NOTIFICATION =================
+
+        String loginTime =
+                LocalDateTime.now().toString();
+
+        emailService.sendLoginNotification(
+                user.getEmail(),
+                user.getName(),
+                loginTime,
+                ipAddress
+        );
+
 
         return "Login Successful";
     }
+
 
     // ================= SEND OTP =================
 
     public String sendOtp(String email) {
 
-        User user = userRepository.findByEmail(email).orElse(null);
+        User user =
+                userRepository
+                        .findByEmail(email)
+                        .orElse(null);
 
         if (user == null) {
             return "User not found!";
         }
 
-        String otp = otpService.generateOtp(email);
+        String otp =
+                otpService.generateOtp(email);
 
-        String result = emailService.sendOtp(email, otp);
+        String result =
+                emailService.sendOtp(
+                        email,
+                        otp
+                );
 
         return result;
     }
+
+
     // ================= VERIFY OTP =================
 
     public String verifyOtpAndResetPassword(
             VerifyOtpRequest request) {
 
-        User user = userRepository
-                .findByEmail(request.getEmail())
-                .orElse(null);
+        User user =
+                userRepository
+                        .findByEmail(
+                                request.getEmail()
+                        )
+                        .orElse(null);
 
         if (user == null) {
             return "User not found!";
         }
 
-        boolean validOtp = otpService.verifyOtp(
-                request.getEmail(),
-                request.getOtp());
+        boolean validOtp =
+                otpService.verifyOtp(
+                        request.getEmail(),
+                        request.getOtp()
+                );
 
         if (!validOtp) {
             return "Invalid OTP";
@@ -138,12 +194,26 @@ public class UserService {
 
         user.setPassword(
                 passwordEncoder.encode(
-                        request.getNewPassword()));
+                        request.getNewPassword()
+                )
+        );
 
         userRepository.save(user);
 
-        otpService.removeOtp(request.getEmail());
+        otpService.removeOtp(
+                request.getEmail()
+        );
 
         return "Password Updated Successfully";
+    }
+
+
+    // ================= GET USER BY EMAIL =================
+
+    public User getUserByEmail(String email) {
+
+        return userRepository
+                .findByEmail(email)
+                .orElse(null);
     }
 }

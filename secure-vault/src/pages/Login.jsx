@@ -135,23 +135,26 @@ function Login() {
           {/* PASSWORD WITH SHOW/HIDE */}
 
           <div className="password-container">
-  <input
-    type={showPassword ? "text" : "password"}
-    placeholder="Enter Password"
-    value={password}
-    onChange={(e) => setPassword(e.target.value)}
-    disabled={loading}
-  />
 
-  <button
-    type="button"
-    className="eye-btn"
-    onClick={() => setShowPassword(!showPassword)}
-    disabled={loading}
-  >
-    {showPassword ? "🙈" : "👁️"}
-  </button>
-</div>
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+            />
+
+            <button
+              type="button"
+              className="eye-btn"
+              onClick={() => setShowPassword(!showPassword)}
+              disabled={loading}
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </button>
+
+          </div>
+
           <button
             type="submit"
             disabled={loading}

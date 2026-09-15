@@ -1,16 +1,55 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./Dashboard.css";
+import { API_URL } from "../config";
 
 function Dashboard() {
 
     const navigate = useNavigate();
 
+    const [notifications, setNotifications] = useState([]);
+
+    // ================= GET NOTIFICATIONS =================
+
+    useEffect(() => {
+
+        const email = localStorage.getItem("userEmail");
+
+        if (!email) {
+            return;
+        }
+
+        axios.get(
+            `${API_URL}/api/notifications?email=${encodeURIComponent(email)}`
+        )
+        .then((response) => {
+
+            setNotifications(response.data);
+
+        })
+        .catch((error) => {
+
+            console.error(
+                "Notification Error:",
+                error
+            );
+
+        });
+
+    }, []);
+
+
+    // ================= LOGOUT =================
+
     const handleLogout = () => {
+
         localStorage.removeItem("user");
         localStorage.removeItem("userEmail");
+
         navigate("/login");
     };
+
 
     return (
         <div className="dashboard-container">
@@ -19,27 +58,28 @@ function Dashboard() {
 
             <div className="navbar">
 
-    <h2>🔐 Secure Vault</h2>
+                <h2>🔐 Secure Vault</h2>
 
-    <div className="nav-links">
+                <div className="nav-links">
 
-        <Link
-            to="/security"
-            className="security-link"
-        >
-            🛡️ Security
-        </Link>
+                    <Link
+                        to="/security"
+                        className="security-link"
+                    >
+                        🛡️ Security
+                    </Link>
 
-        <button
-            className="logout-btn"
-            onClick={handleLogout}
-        >
-            Logout
-        </button>
+                    <button
+                        className="logout-btn"
+                        onClick={handleLogout}
+                    >
+                        Logout
+                    </button>
 
-    </div>
+                </div>
 
-</div>
+            </div>
+
 
             {/* WELCOME */}
 
@@ -54,7 +94,59 @@ function Dashboard() {
             </div>
 
 
-            {/* CARDS */}
+            {/* ================= NOTIFICATIONS ================= */}
+
+            <div className="notifications-section">
+
+                <h2>🔔 Notifications</h2>
+
+                {notifications.length === 0 ? (
+
+                    <p className="no-notifications">
+                        No new notifications.
+                    </p>
+
+                ) : (
+
+                    notifications.map((notification) => (
+
+                        <div
+                            className="notification-card"
+                            key={notification.id}
+                        >
+
+                            <div className="notification-icon">
+                                🔐
+                            </div>
+
+                            <div>
+
+                                <h3>
+                                    {notification.title}
+                                </h3>
+
+                                <p>
+                                    {notification.message}
+                                </p>
+
+                                <small>
+                                    {new Date(
+                                        notification.createdAt
+                                    ).toLocaleString()}
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    ))
+
+                )}
+
+            </div>
+
+
+            {/* ================= CARDS ================= */}
 
             <div className="card-container">
 
@@ -123,47 +215,28 @@ function Dashboard() {
 
                 </Link>
 
+
+                {/* SECURITY REPORTS */}
+
                 <Link
-    to="/reports"
-    className="card"
->
-
-    <div className="icon">
-        📊
-    </div>
-
-    <h3>
-        Security Reports
-    </h3>
-
-    <p>
-        View password health and login
-        activity reports.
-    </p>
-
-</Link>
-                {/* FORGOT PASSWORD */}
-
-                {/* 
-                <Link
-                    to="/forgot-password"
+                    to="/reports"
                     className="card"
                 >
 
                     <div className="icon">
-                        🔑
+                        📊
                     </div>
 
                     <h3>
-                        Forgot Password
+                        Security Reports
                     </h3>
 
                     <p>
-                        Update your account password.
+                        View password health and login
+                        activity reports.
                     </p>
 
                 </Link>
-                */}
 
             </div>
 

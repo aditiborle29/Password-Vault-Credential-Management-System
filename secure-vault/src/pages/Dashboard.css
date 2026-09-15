@@ -732,3 +732,48 @@ body {
         padding: 18px;
     }
 }
+/* ================= NOTIFICATIONS ================= */
+
+.notifications-section {
+    width: 90%;
+    max-width: 1000px;
+    margin: 30px auto;
+}
+
+.notifications-section h2 {
+    margin-bottom: 15px;
+}
+
+.no-notifications {
+    color: #666;
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.notification-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    background: white;
+    padding: 18px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.notification-icon {
+    font-size: 28px;
+}
+
+.notification-card h3 {
+    margin: 0 0 6px 0;
+}
+
+.notification-card p {
+    margin: 0 0 6px 0;
+}
+
+.notification-card small {
+    color: #777;
+}

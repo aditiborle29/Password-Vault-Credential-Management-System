@@ -4,13 +4,16 @@ import com.securevault.dto.LoginRequest;
 import com.securevault.dto.VerifyOtpRequest;
 import com.securevault.entity.User;
 import com.securevault.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
     @Autowired
     private UserService userService;
 
@@ -30,13 +33,25 @@ public class AuthController {
 
         String ipAddress = httpRequest.getRemoteAddr();
 
-        return userService.login(request, ipAddress);
+        return userService.login(
+                request,
+                ipAddress);
+    }
+
+    // ================= GET USER =================
+
+    @GetMapping("/user")
+    public User getUser(
+            @RequestParam String email) {
+
+        return userService.getUserByEmail(email);
     }
 
     // ================= SEND OTP =================
 
     @PostMapping("/send-otp")
-    public String sendOtp(@RequestParam String email) {
+    public String sendOtp(
+            @RequestParam String email) {
 
         return userService.sendOtp(email);
     }
@@ -44,8 +59,9 @@ public class AuthController {
     // ================= VERIFY OTP =================
 
     @PostMapping("/verify-otp")
-    public String verifyOtp(@RequestBody VerifyOtpRequest request) {
+    public String verifyOtp(
+            @RequestBody VerifyOtpRequest request) {
+
         return userService.verifyOtpAndResetPassword(request);
     }
-
 }
