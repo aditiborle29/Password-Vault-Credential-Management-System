@@ -1,7 +1,9 @@
+
 package com.securevault.service;
 
 import com.securevault.entity.Credential;
 import com.securevault.entity.LoginAttempt;
+import com.securevault.entity.Notification;
 import com.securevault.entity.User;
 import com.securevault.repository.CredentialRepository;
 import com.securevault.repository.LoginAttemptRepository;
@@ -22,17 +24,28 @@ public class ReportService {
     private final LoginAttemptRepository loginAttemptRepository;
     private final UserRepository userRepository;
 
+    private final NotificationService notificationService;
+    private final EmailService emailService;
+
+
     public ReportService(
             CredentialRepository credentialRepository,
             LoginAttemptRepository loginAttemptRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            NotificationService notificationService,
+            EmailService emailService) {
 
         this.credentialRepository = credentialRepository;
 
         this.loginAttemptRepository = loginAttemptRepository;
 
         this.userRepository = userRepository;
+
+        this.notificationService = notificationService;
+
+        this.emailService = emailService;
     }
+
 
     // =====================================================
     // PASSWORD HEALTH REPORT
@@ -47,17 +60,25 @@ public class ReportService {
                         () -> new RuntimeException(
                                 "User not found"));
 
+
         // Get only logged-in user's credentials
 
-        List<Credential> credentials = credentialRepository.findByUser(user);
+        List<Credential> credentials =
+                credentialRepository.findByUser(user);
+
 
         int total = credentials.size();
 
         int strong = 0;
+
         int medium = 0;
+
         int weak = 0;
 
-        List<Map<String, Object>> passwordDetails = new ArrayList<>();
+
+        List<Map<String, Object>> passwordDetails =
+                new ArrayList<>();
+
 
         // =================================================
         // ANALYZE EACH PASSWORD
@@ -65,9 +86,11 @@ public class ReportService {
 
         for (Credential credential : credentials) {
 
-            String storedPassword = credential.getPassword();
+            String storedPassword =
+                    credential.getPassword();
 
             String originalPassword = null;
+
 
             // -------------------------------------------------
             // Decrypt password
@@ -78,8 +101,9 @@ public class ReportService {
                 if (storedPassword != null &&
                         !storedPassword.isEmpty()) {
 
-                    originalPassword = AESUtil.decrypt(
-                            storedPassword);
+                    originalPassword =
+                            AESUtil.decrypt(
+                                    storedPassword);
                 }
 
             } catch (Exception e) {
@@ -87,12 +111,15 @@ public class ReportService {
                 originalPassword = null;
             }
 
+
             // -------------------------------------------------
             // Calculate strength
             // -------------------------------------------------
 
-            String strength = calculatePasswordStrength(
-                    originalPassword);
+            String strength =
+                    calculatePasswordStrength(
+                            originalPassword);
+
 
             // -------------------------------------------------
             // Count
@@ -111,27 +138,46 @@ public class ReportService {
                 weak++;
             }
 
+
+            // -------------------------------------------------
+            // Password Health Notification
+            // -------------------------------------------------
+
+            if ("Weak".equals(strength)) {
+
+                createPasswordHealthNotification(
+                        user,
+                        credential);
+            }
+
+
             // -------------------------------------------------
             // Safe response
             // -------------------------------------------------
 
-            Map<String, Object> details = new HashMap<>();
+            Map<String, Object> details =
+                    new HashMap<>();
+
 
             details.put(
                     "credentialId",
                     credential.getId());
 
+
             details.put(
                     "website",
                     credential.getWebsite());
+
 
             details.put(
                     "strength",
                     strength);
 
+
             passwordDetails.add(
                     details);
         }
+
 
         // =====================================================
         // HEALTH SCORE
@@ -139,24 +185,31 @@ public class ReportService {
 
         double healthScore = 0;
 
+
         if (total > 0) {
 
-            healthScore = ((strong * 100.0)
-                    +
-                    (medium * 60.0)
-                    +
-                    (weak * 20.0))
-                    / total;
+            healthScore =
+                    ((strong * 100.0)
+                            +
+                            (medium * 60.0)
+                            +
+                            (weak * 20.0))
+                            / total;
         }
 
-        healthScore = Math.round(
-                healthScore * 100.0) / 100.0;
+
+        healthScore =
+                Math.round(
+                        healthScore * 100.0)
+                        / 100.0;
+
 
         // =====================================================
         // OVERALL HEALTH
         // =====================================================
 
         String overallHealth;
+
 
         if (total == 0) {
 
@@ -179,46 +232,161 @@ public class ReportService {
             overallHealth = "Weak";
         }
 
+
         // =====================================================
         // RESPONSE
         // =====================================================
 
-        Map<String, Object> report = new HashMap<>();
+        Map<String, Object> report =
+                new HashMap<>();
+
 
         report.put(
                 "email",
                 email);
 
+
         report.put(
                 "totalCredentials",
                 total);
+
 
         report.put(
                 "strongPasswords",
                 strong);
 
+
         report.put(
                 "mediumPasswords",
                 medium);
+
 
         report.put(
                 "weakPasswords",
                 weak);
 
+
         report.put(
                 "healthScore",
                 healthScore);
+
 
         report.put(
                 "overallHealth",
                 overallHealth);
 
+
         report.put(
                 "passwordDetails",
                 passwordDetails);
 
+
         return report;
     }
+
+
+    // =====================================================
+    // PASSWORD HEALTH NOTIFICATION
+    // =====================================================
+
+    private void createPasswordHealthNotification(
+            User user,
+            Credential credential) {
+
+        try {
+
+            String website =
+                    credential.getWebsite();
+
+
+            String notificationMessage =
+                    "Your password for "
+                    + website
+                    + " is weak. Please update it "
+                    + "to a stronger password.";
+
+
+            // -------------------------------------------------
+            // Check if same notification already exists
+            // -------------------------------------------------
+
+            boolean alreadyExists = false;
+
+
+            List<Notification> notifications =
+                    notificationService
+                            .getUserNotifications(
+                                    user.getId());
+
+
+            for (Notification notification :
+                    notifications) {
+
+                if ("PASSWORD_HEALTH".equals(
+                        notification.getType())
+                        &&
+                        notification.getMessage()
+                                .equals(
+                                        notificationMessage)) {
+
+                    alreadyExists = true;
+
+                    break;
+                }
+            }
+
+
+            // -------------------------------------------------
+            // Create notification + send email
+            // only if it does not already exist
+            // -------------------------------------------------
+
+            if (!alreadyExists) {
+
+                notificationService.createNotification(
+                        user.getId(),
+                        "PASSWORD_HEALTH",
+                        "Weak Password Detected",
+                        notificationMessage
+                );
+
+
+                System.out.println(
+                        "✅ PASSWORD HEALTH NOTIFICATION CREATED FOR: "
+                        + user.getEmail()
+                );
+
+
+                // -------------------------------------------------
+                // Send Email
+                // -------------------------------------------------
+
+                String emailResult =
+                        emailService
+                                .sendPasswordHealthNotification(
+                                        user.getEmail(),
+                                        user.getName(),
+                                        website,
+                                        "Weak"
+                                );
+
+
+                System.out.println(
+                        "PASSWORD HEALTH EMAIL RESULT = "
+                        + emailResult
+                );
+            }
+
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "❌ PASSWORD HEALTH NOTIFICATION ERROR = "
+                    + e.getMessage()
+            );
+        }
+    }
+
 
     // =====================================================
     // PASSWORD STRENGTH
@@ -233,13 +401,17 @@ public class ReportService {
             return "Weak";
         }
 
+
         int score = 0;
+
 
         // 1. Length >= 8
 
         if (password.length() >= 8) {
+
             score++;
         }
+
 
         // 2. Uppercase
 
@@ -249,6 +421,7 @@ public class ReportService {
             score++;
         }
 
+
         // 3. Lowercase
 
         if (password.matches(
@@ -256,6 +429,7 @@ public class ReportService {
 
             score++;
         }
+
 
         // 4. Number
 
@@ -265,6 +439,7 @@ public class ReportService {
             score++;
         }
 
+
         // 5. Special character
 
         if (password.matches(
@@ -272,6 +447,7 @@ public class ReportService {
 
             score++;
         }
+
 
         // IMPORTANT:
         // Same rules as AddCredential
@@ -281,13 +457,16 @@ public class ReportService {
             return "Weak";
         }
 
+
         if (score <= 4) {
 
             return "Medium";
         }
 
+
         return "Strong";
     }
+
 
     // =====================================================
     // LOGIN ACTIVITY REPORT
@@ -296,14 +475,19 @@ public class ReportService {
     public Map<String, Object> getLoginActivityReport(
             String email) {
 
-        List<LoginAttempt> attempts = loginAttemptRepository
-                .findTop50ByEmailOrderByTimestampDesc(
-                        email);
+        List<LoginAttempt> attempts =
+                loginAttemptRepository
+                        .findTop50ByEmailOrderByTimestampDesc(
+                                email);
+
 
         int successful = 0;
+
         int failed = 0;
 
-        for (LoginAttempt attempt : attempts) {
+
+        for (LoginAttempt attempt :
+                attempts) {
 
             if (attempt.isSuccess()) {
 
@@ -315,28 +499,37 @@ public class ReportService {
             }
         }
 
-        Map<String, Object> report = new HashMap<>();
+
+        Map<String, Object> report =
+                new HashMap<>();
+
 
         report.put(
                 "email",
                 email);
 
+
         report.put(
                 "totalAttempts",
                 attempts.size());
+
 
         report.put(
                 "successfulLogins",
                 successful);
 
+
         report.put(
                 "failedLogins",
                 failed);
+
 
         report.put(
                 "recentActivities",
                 attempts);
 
+
         return report;
     }
 }
+

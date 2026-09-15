@@ -1,7 +1,5 @@
-
 package com.securevault.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -9,8 +7,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class EmailService {
@@ -21,133 +17,38 @@ public class EmailService {
     @Value("${MAIL_FROM:}")
     private String fromEmail;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
-
-    // =====================================================
+    // =========================================================
     // SEND OTP EMAIL
-    // =====================================================
+    // =========================================================
 
-    public String sendOtp(String toEmail, String otp) {
+    public String sendOtp(
+            String toEmail,
+            String otp) {
 
-        try {
+        String subject =
+                "Secure Vault - Password Reset OTP";
 
-            if (brevoApiKey == null ||
-                    brevoApiKey.trim().isEmpty()) {
+        String htmlContent =
+                "<h2>Password Reset Request</h2>"
+                + "<p>Your SecureVault OTP is:</p>"
+                + "<h1>" + otp + "</h1>"
+                + "<p>This OTP is required to reset your password.</p>"
+                + "<p>If you did not request a password reset, "
+                + "please ignore this email.</p>"
+                + "<p>SecureVault Security Team</p>";
 
-                return "ERROR: BREVO_API_KEY is missing.";
-            }
-
-            if (fromEmail == null ||
-                    fromEmail.trim().isEmpty()) {
-
-                return "ERROR: MAIL_FROM is missing.";
-            }
-
-            Map<String, Object> sender = new HashMap<>();
-            sender.put("name", "Secure Vault");
-            sender.put("email", fromEmail);
-
-            Map<String, String> recipient = new HashMap<>();
-            recipient.put("email", toEmail);
-
-            Map<String, Object> emailData = new HashMap<>();
-
-            emailData.put("sender", sender);
-            emailData.put(
-                    "to",
-                    new Map[]{recipient}
-            );
-
-            emailData.put(
-                    "subject",
-                    "Secure Vault - Password Reset OTP"
-            );
-
-            emailData.put(
-                    "htmlContent",
-                    "<h2>Secure Vault</h2>" +
-                    "<p>Hello,</p>" +
-                    "<p>Your OTP for resetting your password is:</p>" +
-                    "<h1>" + otp + "</h1>" +
-                    "<p>This OTP is valid for 5 minutes.</p>" +
-                    "<p>Do not share this OTP with anyone.</p>" +
-                    "<br>" +
-                    "<p>Regards,<br>Secure Vault</p>"
-            );
-
-            String json =
-                    objectMapper.writeValueAsString(emailData);
-
-            HttpClient client =
-                    HttpClient.newHttpClient();
-
-            HttpRequest request =
-                    HttpRequest.newBuilder()
-                            .uri(
-                                    URI.create(
-                                            "https://api.brevo.com/v3/smtp/email"
-                                    )
-                            )
-                            .header(
-                                    "api-key",
-                                    brevoApiKey
-                            )
-                            .header(
-                                    "Content-Type",
-                                    "application/json"
-                            )
-                            .header(
-                                    "Accept",
-                                    "application/json"
-                            )
-                            .POST(
-                                    HttpRequest.BodyPublishers
-                                            .ofString(json)
-                            )
-                            .build();
-
-            HttpResponse<String> response =
-                    client.send(
-                            request,
-                            HttpResponse.BodyHandlers.ofString()
-                    );
-
-            System.out.println(
-                    "BREVO STATUS = "
-                            + response.statusCode()
-            );
-
-            System.out.println(
-                    "BREVO RESPONSE = "
-                            + response.body()
-            );
-
-            if (response.statusCode() >= 200 &&
-                    response.statusCode() < 300) {
-
-                return "OTP sent successfully";
-            }
-
-            return "BREVO ERROR: "
-                    + response.body();
-
-        } catch (Exception e) {
-
-            System.out.println(
-                    "EMAIL ERROR = "
-                            + e.getMessage()
-            );
-
-            return "EMAIL ERROR: "
-                    + e.getMessage();
-        }
+        return sendEmail(
+                toEmail,
+                subject,
+                htmlContent
+        );
     }
 
 
-    // =====================================================
-    // SEND LOGIN NOTIFICATION EMAIL
-    // =====================================================
+    // =========================================================
+    // LOGIN NOTIFICATION EMAIL
+    // =========================================================
 
     public String sendLoginNotification(
             String toEmail,
@@ -155,169 +56,45 @@ public class EmailService {
             String loginTime,
             String ipAddress) {
 
-        try {
+        String subject =
+                "Secure Vault - New Login Detected";
 
-            if (brevoApiKey == null ||
-                    brevoApiKey.trim().isEmpty()) {
+        String htmlContent =
+                "<h2>New Login Detected</h2>"
 
-                return "ERROR: BREVO_API_KEY is missing.";
-            }
+                + "<p>Hello " + userName + ",</p>"
 
-            if (fromEmail == null ||
-                    fromEmail.trim().isEmpty()) {
+                + "<p>New login detected on your "
+                + "SecureVault account.</p>"
 
-                return "ERROR: MAIL_FROM is missing.";
-            }
+                + "<p><b>Login Date & Time:</b> "
+                + loginTime
+                + "</p>"
 
-            Map<String, Object> sender =
-                    new HashMap<>();
+                + "<p><b>Account:</b> "
+                + toEmail
+                + "</p>"
 
-            sender.put(
-                    "name",
-                    "Secure Vault"
-            );
+                + "<p><b>IP Address:</b> "
+                + ipAddress
+                + "</p>"
 
-            sender.put(
-                    "email",
-                    fromEmail
-            );
+                + "<p>If this was not you, please log in to "
+                + "SecureVault and review your account security.</p>"
 
-            Map<String, String> recipient =
-                    new HashMap<>();
+                + "<p>SecureVault Security Team</p>";
 
-            recipient.put(
-                    "email",
-                    toEmail
-            );
-
-            Map<String, Object> emailData =
-                    new HashMap<>();
-
-            emailData.put(
-                    "sender",
-                    sender
-            );
-
-            emailData.put(
-                    "to",
-                    new Map[]{recipient}
-            );
-
-            emailData.put(
-                    "subject",
-                    "Secure Vault - New Login Detected"
-            );
-
-            emailData.put(
-                    "htmlContent",
-
-                    "<h2>🔐 Secure Vault</h2>" +
-
-                    "<p>Hello "
-                    + userName
-                    + ",</p>" +
-
-                    "<p><strong>" +
-                    "New login detected on your SecureVault account." +
-                    "</strong></p>" +
-
-                    "<hr>" +
-
-                    "<p><strong>Login Date & Time:</strong><br>"
-                    + loginTime
-                    + "</p>" +
-
-                    "<p><strong>Account:</strong><br>"
-                    + toEmail
-                    + "</p>" +
-
-                    "<p><strong>IP Address:</strong><br>"
-                    + ipAddress
-                    + "</p>" +
-
-                    "<p>If this login was not made by you, " +
-                    "please check your SecureVault account immediately.</p>" +
-
-                    "<br>" +
-
-                    "<p>Regards,<br>" +
-                    "Secure Vault Team</p>"
-            );
-
-            String json =
-                    objectMapper.writeValueAsString(
-                            emailData
-                    );
-
-            HttpClient client =
-                    HttpClient.newHttpClient();
-
-            HttpRequest request =
-                    HttpRequest.newBuilder()
-                            .uri(
-                                    URI.create(
-                                            "https://api.brevo.com/v3/smtp/email"
-                                    )
-                            )
-                            .header(
-                                    "api-key",
-                                    brevoApiKey
-                            )
-                            .header(
-                                    "Content-Type",
-                                    "application/json"
-                            )
-                            .header(
-                                    "Accept",
-                                    "application/json"
-                            )
-                            .POST(
-                                    HttpRequest.BodyPublishers
-                                            .ofString(json)
-                            )
-                            .build();
-
-            HttpResponse<String> response =
-                    client.send(
-                            request,
-                            HttpResponse.BodyHandlers.ofString()
-                    );
-
-            System.out.println(
-                    "LOGIN EMAIL STATUS = "
-                            + response.statusCode()
-            );
-
-            System.out.println(
-                    "LOGIN EMAIL RESPONSE = "
-                            + response.body()
-            );
-
-            if (response.statusCode() >= 200 &&
-                    response.statusCode() < 300) {
-
-                return "Login email sent successfully";
-            }
-
-            return "LOGIN EMAIL ERROR: "
-                    + response.body();
-
-        } catch (Exception e) {
-
-            System.out.println(
-                    "LOGIN EMAIL ERROR = "
-                            + e.getMessage()
-            );
-
-            return "LOGIN EMAIL ERROR: "
-                    + e.getMessage();
-        }
+        return sendEmail(
+                toEmail,
+                subject,
+                htmlContent
+        );
     }
 
 
-    // =====================================================
-    // SEND CREDENTIAL SHARING NOTIFICATION EMAIL
-    // =====================================================
+    // =========================================================
+    // CREDENTIAL SHARING NOTIFICATION EMAIL
+    // =========================================================
 
     public String sendCredentialSharingNotification(
             String toEmail,
@@ -325,127 +102,151 @@ public class EmailService {
             String website,
             String permission) {
 
+        String subject =
+                "Secure Vault - Credential Shared With You";
+
+        String htmlContent =
+                "<h2>Credential Shared With You</h2>"
+
+                + "<p>Hello,</p>"
+
+                + "<p><b>"
+                + ownerName
+                + "</b> has shared a credential with you "
+                + "in SecureVault.</p>"
+
+                + "<p><b>Website:</b> "
+                + website
+                + "</p>"
+
+                + "<p><b>Permission:</b> "
+                + permission
+                + "</p>"
+
+                + "<p>Please log in to your SecureVault account "
+                + "to view the shared credential.</p>"
+
+                + "<p><b>For your security, the credential password "
+                + "is not included in this email.</b></p>"
+
+                + "<p>SecureVault Security Team</p>";
+
+        return sendEmail(
+                toEmail,
+                subject,
+                htmlContent
+        );
+    }
+
+
+    // =========================================================
+    // PASSWORD HEALTH NOTIFICATION EMAIL
+    // =========================================================
+
+    public String sendPasswordHealthNotification(
+            String toEmail,
+            String userName,
+            String website,
+            String healthStatus) {
+
+        String subject =
+                "Secure Vault - Password Health Alert";
+
+        String htmlContent =
+                "<h2>Password Health Alert</h2>"
+
+                + "<p>Hello "
+                + userName
+                + ",</p>"
+
+                + "<p>Your SecureVault password health check "
+                + "has detected a credential that needs attention.</p>"
+
+                + "<p><b>Website:</b> "
+                + website
+                + "</p>"
+
+                + "<p><b>Password Status:</b> "
+                + healthStatus
+                + "</p>"
+
+                + "<p>Please log in to SecureVault and update "
+                + "your password to a stronger one.</p>"
+
+                + "<p><b>For your security, your password is "
+                + "not included in this email.</b></p>"
+
+                + "<p>SecureVault Security Team</p>";
+
+        return sendEmail(
+                toEmail,
+                subject,
+                htmlContent
+        );
+    }
+
+
+    // =========================================================
+    // COMMON EMAIL METHOD
+    // =========================================================
+
+    private String sendEmail(
+            String toEmail,
+            String subject,
+            String htmlContent) {
+
         try {
 
             if (brevoApiKey == null ||
-                    brevoApiKey.trim().isEmpty()) {
+                    brevoApiKey.isBlank()) {
 
-                return "ERROR: BREVO_API_KEY is missing.";
+                return "BREVO_API_KEY is missing";
             }
 
             if (fromEmail == null ||
-                    fromEmail.trim().isEmpty()) {
+                    fromEmail.isBlank()) {
 
-                return "ERROR: MAIL_FROM is missing.";
+                return "MAIL_FROM is missing";
             }
 
 
-            // ================= SENDER =================
-
-            Map<String, Object> sender =
-                    new HashMap<>();
-
-            sender.put(
-                    "name",
-                    "Secure Vault"
-            );
-
-            sender.put(
-                    "email",
-                    fromEmail
-            );
+            // Escape characters for JSON
+            String escapedHtml =
+                    htmlContent
+                            .replace("\\", "\\\\")
+                            .replace("\"", "\\\"")
+                            .replace("\n", "\\n")
+                            .replace("\r", "");
 
 
-            // ================= RECIPIENT =================
+            String jsonBody =
+                    "{"
+                    + "\"sender\":{"
+                    + "\"name\":\"SecureVault\","
+                    + "\"email\":\""
+                    + fromEmail
+                    + "\""
+                    + "},"
 
-            Map<String, String> recipient =
-                    new HashMap<>();
+                    + "\"to\":[{"
+                    + "\"email\":\""
+                    + toEmail
+                    + "\""
+                    + "}],"
 
-            recipient.put(
-                    "email",
-                    toEmail
-            );
+                    + "\"subject\":\""
+                    + subject
+                    + "\","
 
+                    + "\"htmlContent\":\""
+                    + escapedHtml
+                    + "\""
+                    + "}";
 
-            // ================= EMAIL DATA =================
-
-            Map<String, Object> emailData =
-                    new HashMap<>();
-
-            emailData.put(
-                    "sender",
-                    sender
-            );
-
-            emailData.put(
-                    "to",
-                    new Map[]{recipient}
-            );
-
-            emailData.put(
-                    "subject",
-                    "Secure Vault - Credential Shared With You"
-            );
-
-
-            // IMPORTANT:
-            // DO NOT include the credential password
-            // in this email.
-
-            emailData.put(
-                    "htmlContent",
-
-                    "<h2>🔗 Secure Vault</h2>" +
-
-                    "<p>Hello,</p>" +
-
-                    "<p><strong>" +
-                    "A credential has been shared with you." +
-                    "</strong></p>" +
-
-                    "<hr>" +
-
-                    "<p><strong>Shared By:</strong><br>" +
-                    ownerName +
-                    "</p>" +
-
-                    "<p><strong>Website:</strong><br>" +
-                    website +
-                    "</p>" +
-
-                    "<p><strong>Permission:</strong><br>" +
-                    permission +
-                    "</p>" +
-
-                    "<p>" +
-                    "Please log in to your SecureVault account " +
-                    "to access the shared credential." +
-                    "</p>" +
-
-                    "<p><strong>" +
-                    "For security reasons, the credential password " +
-                    "is not included in this email." +
-                    "</strong></p>" +
-
-                    "<br>" +
-
-                    "<p>Regards,<br>" +
-                    "Secure Vault Team</p>"
-            );
-
-
-            // ================= CONVERT TO JSON =================
-
-            String json =
-                    objectMapper.writeValueAsString(
-                            emailData
-                    );
-
-
-            // ================= SEND USING BREVO =================
 
             HttpClient client =
                     HttpClient.newHttpClient();
+
 
             HttpRequest request =
                     HttpRequest.newBuilder()
@@ -455,20 +256,20 @@ public class EmailService {
                                     )
                             )
                             .header(
+                                    "accept",
+                                    "application/json"
+                            )
+                            .header(
                                     "api-key",
                                     brevoApiKey
                             )
                             .header(
-                                    "Content-Type",
-                                    "application/json"
-                            )
-                            .header(
-                                    "Accept",
+                                    "content-type",
                                     "application/json"
                             )
                             .POST(
                                     HttpRequest.BodyPublishers
-                                            .ofString(json)
+                                            .ofString(jsonBody)
                             )
                             .build();
 
@@ -476,41 +277,43 @@ public class EmailService {
             HttpResponse<String> response =
                     client.send(
                             request,
-                            HttpResponse.BodyHandlers.ofString()
+                            HttpResponse.BodyHandlers
+                                    .ofString()
                     );
 
 
             System.out.println(
-                    "SHARING EMAIL STATUS = "
-                            + response.statusCode()
+                    "EMAIL STATUS = "
+                    + response.statusCode()
             );
 
             System.out.println(
-                    "SHARING EMAIL RESPONSE = "
-                            + response.body()
+                    "EMAIL RESPONSE = "
+                    + response.body()
             );
 
 
             if (response.statusCode() >= 200 &&
                     response.statusCode() < 300) {
 
-                return "Credential sharing email sent successfully";
+                return "Email sent successfully";
             }
 
 
-            return "SHARING EMAIL ERROR: "
+            return "Email failed: "
                     + response.body();
 
 
         } catch (Exception e) {
 
             System.out.println(
-                    "SHARING EMAIL ERROR = "
-                            + e.getMessage()
+                    "❌ EMAIL ERROR = "
+                    + e.getMessage()
             );
 
-            return "SHARING EMAIL ERROR: "
+            return "Email error: "
                     + e.getMessage();
         }
     }
 }
+
