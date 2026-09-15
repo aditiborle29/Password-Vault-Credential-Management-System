@@ -34,46 +34,45 @@ function SecurityDashboard() {
         try {
 
             /*
-             * Backend uses LocalDateTime and stores the time
-             * in Asia/Kolkata (IST).
+             * Backend uses Java LocalDateTime.
              *
-             * Do NOT use new Date(dateTime) because
-             * Java LocalDateTime has no timezone information.
+             * The backend already stores the time in IST
+             * (Asia/Kolkata).
              *
-             * We directly format the values as IST.
+             * Therefore, DO NOT use:
+             *
+             * new Date(dateTime)
+             *
+             * because LocalDateTime does not contain timezone
+             * information and JavaScript may convert it again.
+             *
+             * We directly format the received IST value.
              */
 
-            const [datePart, timePart] =
-                dateTime.split("T");
+            const [datePart, timePart] = dateTime.split("T");
 
             if (!datePart || !timePart) {
                 return dateTime;
             }
 
-            const [year, month, day] =
-                datePart.split("-");
+            const [year, month, day] = datePart.split("-");
 
-            const timeParts =
-                timePart.split(":");
+            const timeParts = timePart.split(":");
 
-            const hour =
-                Number(timeParts[0]);
+            const hour = Number(timeParts[0] || 0);
 
-            const minute =
-                Number(timeParts[1]);
+            const minute = Number(timeParts[1] || 0);
 
-            const second =
-                Number(
-                    timeParts[2]?.split(".")[0] || 0
-                );
+            const second = Number(
+                timeParts[2]?.split(".")[0] || 0
+            );
 
 
             // =================================================
             // 12-HOUR FORMAT
             // =================================================
 
-            const period =
-                hour >= 12 ? "PM" : "AM";
+            const period = hour >= 12 ? "PM" : "AM";
 
             const hour12 =
                 hour === 0
@@ -103,8 +102,18 @@ function SecurityDashboard() {
             ];
 
 
+            const monthIndex = Number(month) - 1;
+
+            const monthName =
+                months[monthIndex] || month;
+
+
+            // =================================================
+            // RETURN FINAL IST TIME
+            // =================================================
+
             return (
-                `${day} ${months[Number(month) - 1]} ${year}, ` +
+                `${day} ${monthName} ${year}, ` +
                 `${String(hour12).padStart(2, "0")}:` +
                 `${String(minute).padStart(2, "0")}:` +
                 `${String(second).padStart(2, "0")} ${period}`
@@ -144,6 +153,10 @@ function SecurityDashboard() {
             setError("");
 
 
+            // ==========================================
+            // CHECK USER SESSION
+            // ==========================================
+
             if (!userEmail) {
 
                 setError(
@@ -159,7 +172,7 @@ function SecurityDashboard() {
 
 
             // ==========================================
-            // USER-SPECIFIC LOGIN ATTEMPTS
+            // LOGIN ATTEMPTS
             // ==========================================
 
             const loginResponse =
@@ -169,7 +182,7 @@ function SecurityDashboard() {
 
 
             // ==========================================
-            // USER-SPECIFIC SECURITY ALERTS
+            // SECURITY ALERTS
             // ==========================================
 
             const alertResponse =
@@ -179,7 +192,7 @@ function SecurityDashboard() {
 
 
             // ==========================================
-            // USER-SPECIFIC SUSPICIOUS ACTIVITIES
+            // SUSPICIOUS ACTIVITIES
             // ==========================================
 
             const suspiciousResponse =
@@ -189,7 +202,7 @@ function SecurityDashboard() {
 
 
             // ==========================================
-            // USER-SPECIFIC AUDIT LOGS
+            // AUDIT LOGS
             // ==========================================
 
             const auditResponse =
@@ -197,6 +210,10 @@ function SecurityDashboard() {
                     `${API}/audit-logs?email=${encodedEmail}`
                 );
 
+
+            // ==========================================
+            // SET DATA
+            // ==========================================
 
             setLoginAttempts(
                 loginResponse.data
@@ -222,6 +239,10 @@ function SecurityDashboard() {
                 error
             );
 
+
+            // ==========================================
+            // BACKEND ERROR
+            // ==========================================
 
             if (error.response) {
 
@@ -259,6 +280,10 @@ function SecurityDashboard() {
                 }
 
 
+            // ==========================================
+            // NETWORK ERROR
+            // ==========================================
+
             } else if (error.request) {
 
                 setError(
@@ -266,15 +291,24 @@ function SecurityDashboard() {
                 );
 
 
+            // ==========================================
+            // OTHER ERROR
+            // ==========================================
+
             } else {
 
                 setError(
                     "Something went wrong while loading security data."
                 );
             }
+        }
 
 
-        } finally {
+        // ==========================================
+        // FINALLY
+        // ==========================================
+
+        finally {
 
             setLoading(false);
             setRefreshing(false);
@@ -309,6 +343,7 @@ function SecurityDashboard() {
             );
 
 
+            // Reload security information
             await loadSecurityData();
 
 
