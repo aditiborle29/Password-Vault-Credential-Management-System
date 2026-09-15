@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./SecurityDashboard.css";
@@ -19,14 +20,120 @@ function SecurityDashboard() {
 
     const API = `${API_URL}/api/security`;
 
+
+    // =====================================================
+    // FORMAT TIME
+    // =====================================================
+
+    const formatTime = (dateTime) => {
+
+        if (!dateTime) {
+            return "";
+        }
+
+        try {
+
+            /*
+             * Backend uses LocalDateTime and stores the time
+             * in Asia/Kolkata (IST).
+             *
+             * Do NOT use new Date(dateTime) because
+             * Java LocalDateTime has no timezone information.
+             *
+             * We directly format the values as IST.
+             */
+
+            const [datePart, timePart] =
+                dateTime.split("T");
+
+            if (!datePart || !timePart) {
+                return dateTime;
+            }
+
+            const [year, month, day] =
+                datePart.split("-");
+
+            const timeParts =
+                timePart.split(":");
+
+            const hour =
+                Number(timeParts[0]);
+
+            const minute =
+                Number(timeParts[1]);
+
+            const second =
+                Number(
+                    timeParts[2]?.split(".")[0] || 0
+                );
+
+
+            // =================================================
+            // 12-HOUR FORMAT
+            // =================================================
+
+            const period =
+                hour >= 12 ? "PM" : "AM";
+
+            const hour12 =
+                hour === 0
+                    ? 12
+                    : hour > 12
+                        ? hour - 12
+                        : hour;
+
+
+            // =================================================
+            // MONTH NAMES
+            // =================================================
+
+            const months = [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec"
+            ];
+
+
+            return (
+                `${day} ${months[Number(month) - 1]} ${year}, ` +
+                `${String(hour12).padStart(2, "0")}:` +
+                `${String(minute).padStart(2, "0")}:` +
+                `${String(second).padStart(2, "0")} ${period}`
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Time Formatting Error:",
+                error
+            );
+
+            return dateTime;
+        }
+    };
+
+
     // ==========================================
     // LOAD SECURITY DATA
     // ==========================================
 
     useEffect(() => {
+
         loadSecurityData();
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
+
     }, []);
+
 
     const loadSecurityData = async () => {
 
@@ -35,6 +142,7 @@ function SecurityDashboard() {
             setLoading(true);
             setRefreshing(true);
             setError("");
+
 
             if (!userEmail) {
 
@@ -45,32 +153,50 @@ function SecurityDashboard() {
                 return;
             }
 
+
             const encodedEmail =
                 encodeURIComponent(userEmail);
 
+
+            // ==========================================
             // USER-SPECIFIC LOGIN ATTEMPTS
+            // ==========================================
+
             const loginResponse =
                 await axios.get(
                     `${API}/login-attempts?email=${encodedEmail}`
                 );
 
+
+            // ==========================================
             // USER-SPECIFIC SECURITY ALERTS
+            // ==========================================
+
             const alertResponse =
                 await axios.get(
                     `${API}/alerts?email=${encodedEmail}`
                 );
 
+
+            // ==========================================
             // USER-SPECIFIC SUSPICIOUS ACTIVITIES
+            // ==========================================
+
             const suspiciousResponse =
                 await axios.get(
                     `${API}/suspicious-activities?email=${encodedEmail}`
                 );
 
+
+            // ==========================================
             // USER-SPECIFIC AUDIT LOGS
+            // ==========================================
+
             const auditResponse =
                 await axios.get(
                     `${API}/audit-logs?email=${encodedEmail}`
                 );
+
 
             setLoginAttempts(
                 loginResponse.data
@@ -88,12 +214,14 @@ function SecurityDashboard() {
                 auditResponse.data
             );
 
+
         } catch (error) {
 
             console.error(
                 "Error loading security data:",
                 error
             );
+
 
             if (error.response) {
 
@@ -130,11 +258,13 @@ function SecurityDashboard() {
                     );
                 }
 
+
             } else if (error.request) {
 
                 setError(
                     "Unable to connect to backend. Please make sure Spring Boot is running."
                 );
+
 
             } else {
 
@@ -142,6 +272,7 @@ function SecurityDashboard() {
                     "Something went wrong while loading security data."
                 );
             }
+
 
         } finally {
 
@@ -160,20 +291,26 @@ function SecurityDashboard() {
         try {
 
             if (!userEmail) {
+
                 setError(
                     "User session not found. Please login again."
                 );
+
                 return;
             }
 
+
             const encodedEmail =
                 encodeURIComponent(userEmail);
+
 
             await axios.put(
                 `${API}/alerts/${id}/resolve?email=${encodedEmail}`
             );
 
+
             await loadSecurityData();
+
 
         } catch (error) {
 
@@ -181,6 +318,7 @@ function SecurityDashboard() {
                 "Error resolving alert:",
                 error
             );
+
 
             if (error.response) {
 
@@ -204,11 +342,13 @@ function SecurityDashboard() {
                     );
                 }
 
+
             } else if (error.request) {
 
                 setError(
                     "Unable to connect to the backend."
                 );
+
 
             } else {
 
@@ -227,6 +367,7 @@ function SecurityDashboard() {
     if (!userEmail) {
 
         return (
+
             <div className="security-dashboard">
 
                 <div className="security-section">
@@ -267,6 +408,7 @@ function SecurityDashboard() {
     if (loading) {
 
         return (
+
             <div className="security-dashboard">
 
                 <div className="security-section">
@@ -298,6 +440,7 @@ function SecurityDashboard() {
     if (error) {
 
         return (
+
             <div className="security-dashboard">
 
                 <div className="security-section">
@@ -331,9 +474,14 @@ function SecurityDashboard() {
     }
 
 
+    // ==========================================
+    // MAIN SECURITY DASHBOARD
+    // ==========================================
+
     return (
 
         <div className="security-dashboard">
+
 
             {/* ======================================
                 HEADER
@@ -359,6 +507,7 @@ function SecurityDashboard() {
 
                 </div>
 
+
                 <button
                     className="resolve-button"
                     onClick={loadSecurityData}
@@ -377,6 +526,7 @@ function SecurityDashboard() {
             ====================================== */}
 
             <div className="security-cards">
+
 
                 {/* LOGIN ATTEMPTS */}
 
@@ -537,17 +687,15 @@ function SecurityDashboard() {
                                         </td>
 
                                         <td>
-
                                             <span className="status-high">
                                                 {alertItem.severity}
                                             </span>
-
                                         </td>
 
                                         <td>
-                                            {new Date(
+                                            {formatTime(
                                                 alertItem.timestamp
-                                            ).toLocaleString()}
+                                            )}
                                         </td>
 
                                         <td>
@@ -666,9 +814,9 @@ function SecurityDashboard() {
                                             </td>
 
                                             <td>
-                                                {new Date(
+                                                {formatTime(
                                                     activity.detectedAt
-                                                ).toLocaleString()}
+                                                )}
                                             </td>
 
                                             <td>
@@ -759,9 +907,9 @@ function SecurityDashboard() {
                                         </td>
 
                                         <td>
-                                            {new Date(
+                                            {formatTime(
                                                 attempt.timestamp
-                                            ).toLocaleString()}
+                                            )}
                                         </td>
 
                                     </tr>
@@ -838,9 +986,9 @@ function SecurityDashboard() {
                                         </td>
 
                                         <td>
-                                            {new Date(
+                                            {formatTime(
                                                 log.timestamp
-                                            ).toLocaleString()}
+                                            )}
                                         </td>
 
                                     </tr>
@@ -862,7 +1010,13 @@ function SecurityDashboard() {
                 BACK TO DASHBOARD
             ====================================== */}
 
-            <div style={{ marginTop: "25px", marginBottom: "25px" }}>
+            <div
+                style={{
+                    marginTop: "25px",
+                    marginBottom: "25px"
+                }}
+            >
+
                 <Link
                     to="/dashboard"
                     className="resolve-button"
@@ -874,6 +1028,7 @@ function SecurityDashboard() {
                 >
                     ← Back to Dashboard
                 </Link>
+
             </div>
 
         </div>
