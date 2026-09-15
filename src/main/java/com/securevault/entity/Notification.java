@@ -1,7 +1,10 @@
+
 package com.securevault.entity;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Table(name = "notifications")
@@ -31,13 +34,17 @@ public class Notification {
             Long userId,
             String type,
             String title,
-            String message
-    ) {
+            String message) {
+
         this.userId = userId;
         this.type = type;
         this.title = title;
         this.message = message;
-        this.createdAt = LocalDateTime.now();
+
+        createdAt = LocalDateTime.now(
+                ZoneId.of("Asia/Kolkata")
+        );
+
         this.isRead = false;
     }
 

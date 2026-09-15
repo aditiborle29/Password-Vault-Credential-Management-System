@@ -30,14 +30,14 @@ body {
 
 
 /* =========================
-   DASHBOARD CONTAINER
+   DASHBOARD
 ========================= */
 
 .dashboard-container {
     width: 100%;
     min-height: 100vh;
     padding: 30px;
-    background: lightskyblue;
+    background: lightskyblue !important;
 }
 
 
@@ -47,37 +47,58 @@ body {
 
 .navbar {
     width: 100%;
+
+    min-height: 70px;
+
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+
+    padding: 14px 30px;
 
     background: white;
-    padding: 18px 35px;
 
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 
-    gap: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+
+    position: relative;
+
+    z-index: 100;
 }
 
+
+/* =========================
+   LOGO
+========================= */
+
 .navbar h2 {
+    margin: 0;
+
     color: #2563eb;
-    background-color: white;
+
+    background: white;
+
+    font-size: 22px;
+
+    font-weight: 700;
+
     white-space: nowrap;
 }
 
 
 /* =========================
-   RIGHT SIDE NAVIGATION
+   NAVIGATION LINKS
 ========================= */
 
 .nav-links {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
 
-    background-color: white;
+    align-items: center;
+
+    gap: 18px;
+
+    background: white;
 }
 
 
@@ -86,15 +107,23 @@ body {
 ========================= */
 
 .security-link {
-    background-color: white;
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: white;
+
     text-decoration: none;
+
     color: #333;
 
     font-weight: 600;
 
-    padding: 8px 14px;
+    padding: 9px 13px;
 
-    border-radius: 6px;
+    border-radius: 7px;
 
     transition: 0.2s;
 
@@ -103,16 +132,381 @@ body {
 
 .security-link:hover {
     background-color: #f0f2f5;
-    color: #0d6efd;
+
+    color: #2563eb;
+}
+
+
+/* =====================================================
+   NOTIFICATION
+===================================================== */
+
+
+/* =========================
+   NOTIFICATION WRAPPER
+========================= */
+
+.notification-wrapper {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: transparent;
 }
 
 
 /* =========================
-   LOGOUT BUTTON
+   BELL BUTTON
+========================= */
+
+.notification-btn {
+    width: 44px;
+
+    height: 44px;
+
+    padding: 0;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 50%;
+
+    background: white;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    position: relative;
+
+    transition: all 0.25s ease;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.notification-btn:hover {
+    background: #f8fafc;
+
+    border-color: #2563eb;
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   BELL
+========================= */
+
+.bell-icon {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 100%;
+
+    height: 100%;
+
+    font-size: 21px;
+
+    line-height: 1;
+
+    background: transparent;
+
+    transform-origin: top center;
+
+    transition: transform 0.2s ease;
+}
+
+.notification-btn:hover .bell-icon {
+    transform: rotate(-8deg);
+}
+
+
+/* =========================
+   RED UNREAD BADGE
+========================= */
+
+.notification-badge {
+    position: absolute;
+
+    top: -4px;
+
+    right: -4px;
+
+    min-width: 20px;
+
+    height: 20px;
+
+    padding: 0 5px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #ef4444;
+
+    color: white;
+
+    border: 2px solid white;
+
+    border-radius: 50%;
+
+    font-size: 10px;
+
+    font-weight: bold;
+
+    line-height: 1;
+
+    z-index: 5;
+}
+
+
+/* =========================
+   NOTIFICATION DROPDOWN
+========================= */
+
+.notification-dropdown {
+    position: absolute;
+
+    top: 54px;
+
+    right: -5px;
+
+    width: 380px;
+
+    max-width: 90vw;
+
+    background: white;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.18);
+
+    overflow: hidden;
+
+    z-index: 9999;
+
+    border: 1px solid #e5e7eb;
+}
+
+
+/* =========================
+   NOTIFICATION HEADER
+========================= */
+
+.notification-header {
+    min-height: 55px;
+
+    padding: 12px 16px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    background: white;
+
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.notification-header h3 {
+    margin: 0;
+
+    color: #1f2937;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================
+   MARK ALL READ
+========================= */
+
+.mark-read-btn {
+    border: none;
+
+    background: transparent;
+
+    color: #2563eb;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+.mark-read-btn:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================
+   NOTIFICATION LIST
+========================= */
+
+.notification-list {
+    width: 100%;
+
+    max-height: 400px;
+
+    overflow-y: auto;
+
+    background: white;
+}
+
+
+/* =========================
+   NO NOTIFICATIONS
+========================= */
+
+.no-notifications {
+    padding: 30px 20px;
+
+    text-align: center;
+
+    color: #6b7280;
+
+    font-size: 14px;
+
+    background: white;
+}
+
+
+/* =========================
+   NOTIFICATION ITEM
+========================= */
+
+.notification-item {
+    width: 100%;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 15px 16px;
+
+    background: white;
+
+    border-bottom: 1px solid #f1f5f9;
+
+    cursor: pointer;
+
+    transition: background 0.2s ease;
+}
+
+.notification-item:hover {
+    background: #f8fafc;
+}
+
+
+/* =========================
+   UNREAD ITEM
+========================= */
+
+.notification-item.unread {
+    background: #eff6ff;
+
+    border-left: 4px solid #2563eb;
+
+    padding-left: 12px;
+}
+
+.notification-item.unread:hover {
+    background: #e0efff;
+}
+
+
+/* =========================
+   NOTIFICATION ITEM ICON
+========================= */
+
+.notification-item-icon {
+    min-width: 32px;
+
+    height: 32px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 21px;
+
+    background: transparent;
+}
+
+
+/* =========================
+   NOTIFICATION CONTENT
+========================= */
+
+.notification-content {
+    flex: 1;
+
+    min-width: 0;
+}
+
+.notification-content h4 {
+    margin: 0 0 5px 0;
+
+    color: #1f2937;
+
+    font-size: 14px;
+
+    font-weight: 700;
+}
+
+.notification-content p {
+    margin: 0 0 6px 0;
+
+    color: #4b5563;
+
+    font-size: 13px;
+
+    line-height: 1.4;
+}
+
+.notification-content small {
+    color: #6b7280;
+
+    font-size: 11px;
+}
+
+
+/* =========================
+   LOGOUT
 ========================= */
 
 .logout-btn {
     background: #ef4444;
+
     color: white;
 
     border: none;
@@ -125,6 +519,8 @@ body {
 
     font-size: 15px;
 
+    font-weight: 500;
+
     transition: 0.3s;
 
     white-space: nowrap;
@@ -136,22 +532,26 @@ body {
 
 
 /* =========================
-   WELCOME SECTION
+   WELCOME
 ========================= */
 
 .welcome {
     width: 100%;
+
     text-align: center;
+
     margin-top: 40px;
 }
 
 .welcome h1 {
     color: #1f2937;
+
     margin-bottom: 10px;
 }
 
 .welcome p {
     color: #6b7280;
+
     font-size: 17px;
 }
 
@@ -166,12 +566,16 @@ body {
     margin-top: 50px;
 
     display: flex;
+
     justify-content: center;
+
     align-items: stretch;
 
     gap: 30px;
 
     flex-wrap: wrap;
+
+    background: transparent !important;
 }
 
 
@@ -181,9 +585,10 @@ body {
 
 .card {
     width: 280px;
+
     min-height: 220px;
 
-    background: white;
+    background: white !important;
 
     padding: 30px;
 
@@ -200,16 +605,19 @@ body {
     transition: 0.3s;
 
     display: flex;
+
     flex-direction: column;
 
     align-items: center;
+
     justify-content: center;
 }
 
 .card:hover {
     transform: translateY(-8px);
 
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    box-shadow:
+        0 15px 30px rgba(0, 0, 0, 0.15);
 }
 
 
@@ -275,8 +683,6 @@ body {
 
     font-size: 13px;
 
-    text-decoration: none;
-
     cursor: pointer;
 }
 
@@ -293,30 +699,21 @@ body {
 
     .dashboard-container {
         padding: 20px;
-        min-height: 100vh;
     }
-
-
-    /* Navbar */
 
     .navbar {
         padding: 16px 20px;
 
         flex-direction: column;
 
-        align-items: stretch;
+        align-items: center;
 
-        text-align: center;
+        gap: 12px;
     }
 
     .navbar h2 {
         font-size: 20px;
-
-        margin-bottom: 12px;
     }
-
-
-    /* Navigation */
 
     .nav-links {
         justify-content: center;
@@ -326,13 +723,11 @@ body {
         gap: 10px;
     }
 
-
     .security-link {
         padding: 8px 12px;
 
         font-size: 14px;
     }
-
 
     .logout-btn {
         padding: 9px 14px;
@@ -340,8 +735,13 @@ body {
         font-size: 14px;
     }
 
+    .notification-dropdown {
+        right: 50%;
 
-    /* Welcome */
+        transform: translateX(50%);
+
+        width: 360px;
+    }
 
     .welcome {
         margin-top: 30px;
@@ -356,9 +756,6 @@ body {
 
         line-height: 1.5;
     }
-
-
-    /* Cards */
 
     .card-container {
         margin-top: 35px;
@@ -390,12 +787,7 @@ body {
         min-height: 100vh;
 
         padding: 15px;
-
-        background: lightskyblue;
     }
-
-
-    /* Navbar */
 
     .navbar {
         width: 100%;
@@ -408,11 +800,8 @@ body {
     .navbar h2 {
         font-size: 20px;
 
-        margin-bottom: 12px;
+        margin-bottom: 5px;
     }
-
-
-    /* Navigation */
 
     .nav-links {
         width: 100%;
@@ -424,22 +813,39 @@ body {
         gap: 10px;
     }
 
-
     .security-link {
         padding: 9px 12px;
 
         font-size: 14px;
     }
 
+    .notification-btn {
+        width: 42px;
+
+        height: 42px;
+    }
+
+    .notification-dropdown {
+        position: fixed;
+
+        top: 95px;
+
+        left: 50%;
+
+        right: auto;
+
+        transform: translateX(-50%);
+
+        width: calc(100vw - 30px);
+
+        max-width: 400px;
+    }
 
     .logout-btn {
         padding: 9px 15px;
 
         font-size: 14px;
     }
-
-
-    /* Welcome */
 
     .welcome {
         margin-top: 25px;
@@ -459,15 +865,10 @@ body {
         padding: 0 10px;
     }
 
-
-    /* Cards */
-
     .card-container {
         width: 100%;
 
         margin-top: 30px;
-
-        display: flex;
 
         flex-direction: column;
 
@@ -475,7 +876,6 @@ body {
 
         gap: 18px;
     }
-
 
     .card {
         width: 100%;
@@ -489,25 +889,19 @@ body {
         padding: 25px 20px;
     }
 
-
     .icon {
         font-size: 40px;
 
         margin-bottom: 12px;
     }
 
-
     .card h3 {
         font-size: 19px;
     }
 
-
     .card p {
         font-size: 14px;
     }
-
-
-    /* Back button */
 
     .back-btn {
         margin-top: 25px;
@@ -523,31 +917,19 @@ body {
 
     .dashboard-container {
         padding: 10px;
-
-        min-height: 100vh;
-
-        background: lightskyblue;
     }
-
-
-    /* Navbar */
 
     .navbar {
         padding: 15px 10px;
     }
 
-
     .navbar h2 {
         font-size: 18px;
     }
 
-
-    /* Navigation */
-
     .nav-links {
         gap: 8px;
     }
-
 
     .security-link,
     .logout-btn {
@@ -556,8 +938,37 @@ body {
         padding: 8px 10px;
     }
 
+    .notification-btn {
+        width: 40px;
 
-    /* Welcome */
+        height: 40px;
+    }
+
+    .bell-icon {
+        font-size: 20px;
+    }
+
+    .notification-dropdown {
+        top: 90px;
+
+        width: calc(100vw - 20px);
+    }
+
+    .notification-header {
+        padding: 12px;
+    }
+
+    .notification-header h3 {
+        font-size: 15px;
+    }
+
+    .notification-content h4 {
+        font-size: 13px;
+    }
+
+    .notification-content p {
+        font-size: 12px;
+    }
 
     .welcome {
         margin-top: 20px;
@@ -573,15 +984,11 @@ body {
         padding: 0 5px;
     }
 
-
-    /* Cards */
-
     .card-container {
         margin-top: 25px;
 
         gap: 15px;
     }
-
 
     .card {
         width: 100%;
@@ -593,20 +1000,17 @@ body {
         padding: 20px 15px;
     }
 
-
     .icon {
         font-size: 36px;
 
         margin-bottom: 10px;
     }
 
-
     .card h3 {
         font-size: 18px;
 
         margin-bottom: 8px;
     }
-
 
     .card p {
         font-size: 13px;
@@ -624,16 +1028,13 @@ body {
         padding: 8px;
     }
 
-
     .navbar {
         padding: 14px 8px;
     }
 
-
     .navbar h2 {
         font-size: 17px;
     }
-
 
     .security-link,
     .logout-btn {
@@ -642,16 +1043,27 @@ body {
         padding: 7px 9px;
     }
 
+    .notification-btn {
+        width: 38px;
+
+        height: 38px;
+
+        font-size: 20px;
+    }
+
+    .notification-dropdown {
+        top: 85px;
+
+        width: calc(100vw - 16px);
+    }
 
     .welcome h1 {
         font-size: 20px;
     }
 
-
     .welcome p {
         font-size: 13px;
     }
-
 
     .card {
         min-height: 165px;
@@ -659,121 +1071,15 @@ body {
         padding: 18px 12px;
     }
 
-
     .icon {
         font-size: 32px;
     }
-
 
     .card h3 {
         font-size: 17px;
     }
 
-
     .card p {
         font-size: 12px;
     }
-}
-
-.card-container {
-    background: transparent !important;
-}
-.dashboard-container {
-    background: lightskyblue !important;
-}
-
-.card {
-    background: white !important;
-}
-
-@media (max-width: 1000px) {
-
-    .card-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .dashboard-container {
-        padding: 25px;
-    }
-}
-
-@media (max-width: 700px) {
-
-    .dashboard-container {
-        padding: 15px;
-    }
-
-    .navbar {
-        flex-direction: column;
-        gap: 12px;
-        text-align: center;
-    }
-
-    .card-container {
-        grid-template-columns: 1fr;
-    }
-
-    .card {
-        width: 100%;
-    }
-}
-
-@media (max-width: 450px) {
-
-    .dashboard-container {
-        padding: 10px;
-    }
-
-    .navbar {
-        padding: 15px;
-    }
-
-    .card {
-        padding: 18px;
-    }
-}
-/* ================= NOTIFICATIONS ================= */
-
-.notifications-section {
-    width: 90%;
-    max-width: 1000px;
-    margin: 30px auto;
-}
-
-.notifications-section h2 {
-    margin-bottom: 15px;
-}
-
-.no-notifications {
-    color: #666;
-    background: #f5f5f5;
-    padding: 15px;
-    border-radius: 10px;
-}
-
-.notification-card {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-    background: white;
-    padding: 18px;
-    margin-bottom: 12px;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-}
-
-.notification-icon {
-    font-size: 28px;
-}
-
-.notification-card h3 {
-    margin: 0 0 6px 0;
-}
-
-.notification-card p {
-    margin: 0 0 6px 0;
-}
-
-.notification-card small {
-    color: #777;
 }

@@ -2,6 +2,7 @@ package com.securevault.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Table(name = "login_attempts")
@@ -26,10 +27,16 @@ public class LoginAttempt {
             String email,
             boolean success,
             String ipAddress) {
+
         this.email = email;
         this.success = success;
         this.ipAddress = ipAddress;
-        this.timestamp = LocalDateTime.now();
+
+        // Store login time in IST
+        this.timestamp =
+                LocalDateTime.now(
+                        ZoneId.of("Asia/Kolkata")
+                );
     }
 
     public Long getId() {
