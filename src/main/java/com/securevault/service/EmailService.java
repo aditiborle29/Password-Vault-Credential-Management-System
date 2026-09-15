@@ -1,3 +1,4 @@
+
 package com.securevault.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,7 +23,10 @@ public class EmailService {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // ================= SEND OTP EMAIL =================
+
+    // =====================================================
+    // SEND OTP EMAIL
+    // =====================================================
 
     public String sendOtp(String toEmail, String otp) {
 
@@ -141,7 +145,9 @@ public class EmailService {
     }
 
 
-    // ================= SEND LOGIN NOTIFICATION EMAIL =================
+    // =====================================================
+    // SEND LOGIN NOTIFICATION EMAIL
+    // =====================================================
 
     public String sendLoginNotification(
             String toEmail,
@@ -163,7 +169,6 @@ public class EmailService {
                 return "ERROR: MAIL_FROM is missing.";
             }
 
-            // Sender
             Map<String, Object> sender =
                     new HashMap<>();
 
@@ -177,7 +182,6 @@ public class EmailService {
                     fromEmail
             );
 
-            // Recipient
             Map<String, String> recipient =
                     new HashMap<>();
 
@@ -186,7 +190,6 @@ public class EmailService {
                     toEmail
             );
 
-            // Email data
             Map<String, Object> emailData =
                     new HashMap<>();
 
@@ -307,6 +310,206 @@ public class EmailService {
             );
 
             return "LOGIN EMAIL ERROR: "
+                    + e.getMessage();
+        }
+    }
+
+
+    // =====================================================
+    // SEND CREDENTIAL SHARING NOTIFICATION EMAIL
+    // =====================================================
+
+    public String sendCredentialSharingNotification(
+            String toEmail,
+            String ownerName,
+            String website,
+            String permission) {
+
+        try {
+
+            if (brevoApiKey == null ||
+                    brevoApiKey.trim().isEmpty()) {
+
+                return "ERROR: BREVO_API_KEY is missing.";
+            }
+
+            if (fromEmail == null ||
+                    fromEmail.trim().isEmpty()) {
+
+                return "ERROR: MAIL_FROM is missing.";
+            }
+
+
+            // ================= SENDER =================
+
+            Map<String, Object> sender =
+                    new HashMap<>();
+
+            sender.put(
+                    "name",
+                    "Secure Vault"
+            );
+
+            sender.put(
+                    "email",
+                    fromEmail
+            );
+
+
+            // ================= RECIPIENT =================
+
+            Map<String, String> recipient =
+                    new HashMap<>();
+
+            recipient.put(
+                    "email",
+                    toEmail
+            );
+
+
+            // ================= EMAIL DATA =================
+
+            Map<String, Object> emailData =
+                    new HashMap<>();
+
+            emailData.put(
+                    "sender",
+                    sender
+            );
+
+            emailData.put(
+                    "to",
+                    new Map[]{recipient}
+            );
+
+            emailData.put(
+                    "subject",
+                    "Secure Vault - Credential Shared With You"
+            );
+
+
+            // IMPORTANT:
+            // DO NOT include the credential password
+            // in this email.
+
+            emailData.put(
+                    "htmlContent",
+
+                    "<h2>🔗 Secure Vault</h2>" +
+
+                    "<p>Hello,</p>" +
+
+                    "<p><strong>" +
+                    "A credential has been shared with you." +
+                    "</strong></p>" +
+
+                    "<hr>" +
+
+                    "<p><strong>Shared By:</strong><br>" +
+                    ownerName +
+                    "</p>" +
+
+                    "<p><strong>Website:</strong><br>" +
+                    website +
+                    "</p>" +
+
+                    "<p><strong>Permission:</strong><br>" +
+                    permission +
+                    "</p>" +
+
+                    "<p>" +
+                    "Please log in to your SecureVault account " +
+                    "to access the shared credential." +
+                    "</p>" +
+
+                    "<p><strong>" +
+                    "For security reasons, the credential password " +
+                    "is not included in this email." +
+                    "</strong></p>" +
+
+                    "<br>" +
+
+                    "<p>Regards,<br>" +
+                    "Secure Vault Team</p>"
+            );
+
+
+            // ================= CONVERT TO JSON =================
+
+            String json =
+                    objectMapper.writeValueAsString(
+                            emailData
+                    );
+
+
+            // ================= SEND USING BREVO =================
+
+            HttpClient client =
+                    HttpClient.newHttpClient();
+
+            HttpRequest request =
+                    HttpRequest.newBuilder()
+                            .uri(
+                                    URI.create(
+                                            "https://api.brevo.com/v3/smtp/email"
+                                    )
+                            )
+                            .header(
+                                    "api-key",
+                                    brevoApiKey
+                            )
+                            .header(
+                                    "Content-Type",
+                                    "application/json"
+                            )
+                            .header(
+                                    "Accept",
+                                    "application/json"
+                            )
+                            .POST(
+                                    HttpRequest.BodyPublishers
+                                            .ofString(json)
+                            )
+                            .build();
+
+
+            HttpResponse<String> response =
+                    client.send(
+                            request,
+                            HttpResponse.BodyHandlers.ofString()
+                    );
+
+
+            System.out.println(
+                    "SHARING EMAIL STATUS = "
+                            + response.statusCode()
+            );
+
+            System.out.println(
+                    "SHARING EMAIL RESPONSE = "
+                            + response.body()
+            );
+
+
+            if (response.statusCode() >= 200 &&
+                    response.statusCode() < 300) {
+
+                return "Credential sharing email sent successfully";
+            }
+
+
+            return "SHARING EMAIL ERROR: "
+                    + response.body();
+
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "SHARING EMAIL ERROR = "
+                            + e.getMessage()
+            );
+
+            return "SHARING EMAIL ERROR: "
                     + e.getMessage();
         }
     }

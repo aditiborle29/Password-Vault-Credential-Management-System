@@ -20,14 +20,29 @@ import java.util.stream.Collectors;
 @Service
 public class SharingService {
 
+        // ================= EMAIL SERVICE =================
+
+        @Autowired
+        private EmailService emailService;
+
+
+        // ================= SHARING REPOSITORY =================
+
         @Autowired
         private SharedCredentialRepository sharedCredentialRepository;
+
+
+        // ================= CREDENTIAL REPOSITORY =================
 
         @Autowired
         private CredentialRepository credentialRepository;
 
+
+        // ================= USER REPOSITORY =================
+
         @Autowired
         private UserRepository userRepository;
+
 
         // ================= NOTIFICATION SERVICE =================
 
@@ -35,12 +50,18 @@ public class SharingService {
         private NotificationService notificationService;
 
 
-        // ================= SHARE CREDENTIAL =================
+        // =====================================================
+        // SHARE CREDENTIAL
+        // =====================================================
 
-        public String shareCredential(ShareCredentialRequest request) {
+        public String shareCredential(
+                        ShareCredentialRequest request) {
+
+                // ================= FIND OWNER =================
 
                 User owner = userRepository
-                                .findByEmail(request.getOwnerEmail())
+                                .findByEmail(
+                                                request.getOwnerEmail())
                                 .orElse(null);
 
                 if (owner == null) {
@@ -48,8 +69,11 @@ public class SharingService {
                 }
 
 
+                // ================= FIND RECIPIENT =================
+
                 User sharedWith = userRepository
-                                .findByEmail(request.getSharedWithEmail())
+                                .findByEmail(
+                                                request.getSharedWithEmail())
                                 .orElse(null);
 
                 if (sharedWith == null) {
@@ -57,8 +81,11 @@ public class SharingService {
                 }
 
 
+                // ================= FIND CREDENTIAL =================
+
                 Credential credential = credentialRepository
-                                .findById(request.getCredentialId())
+                                .findById(
+                                                request.getCredentialId())
                                 .orElse(null);
 
                 if (credential == null) {
@@ -66,16 +93,18 @@ public class SharingService {
                 }
 
 
-                // Make sure only the owner can share
+                // ================= CHECK OWNER =================
 
                 if (credential.getUser() == null ||
-                                !credential.getUser().getId().equals(owner.getId())) {
+                                !credential.getUser()
+                                                .getId()
+                                                .equals(owner.getId())) {
 
                         return "Only the owner can share this credential";
                 }
 
 
-                // Check whether already shared
+                // ================= CHECK ALREADY SHARED =================
 
                 boolean alreadyShared =
                                 sharedCredentialRepository
@@ -84,30 +113,39 @@ public class SharingService {
                                                                 sharedWith);
 
                 if (alreadyShared) {
+
                         return "Credential already shared with this user";
                 }
 
 
-                // ================= CREATE SHARING =================
+                // =====================================================
+                // CREATE SHARED CREDENTIAL
+                // =====================================================
 
                 SharedCredential sharedCredential =
                                 new SharedCredential();
 
-                sharedCredential.setCredential(credential);
+                sharedCredential.setCredential(
+                                credential);
 
-                sharedCredential.setOwner(owner);
+                sharedCredential.setOwner(
+                                owner);
 
-                sharedCredential.setSharedWith(sharedWith);
+                sharedCredential.setSharedWith(
+                                sharedWith);
 
                 sharedCredential.setPermission(
-                                request.getPermission().toUpperCase()
-                );
+                                request.getPermission()
+                                                .toUpperCase());
 
 
-                sharedCredentialRepository.save(sharedCredential);
+                sharedCredentialRepository.save(
+                                sharedCredential);
 
 
-                // ================= CREATE NOTIFICATION =================
+                // =====================================================
+                // CREATE IN-APP NOTIFICATION
+                // =====================================================
 
                 try {
 
@@ -115,13 +153,19 @@ public class SharingService {
                                         "A credential has been shared with you by "
                                         + owner.getName()
                                         + ". Permission: "
-                                        + request.getPermission().toUpperCase()
+                                        + request.getPermission()
+                                                        .toUpperCase()
                                         + ". Please open SecureVault to view it.";
 
+
                         notificationService.createNotification(
+
                                         sharedWith.getId(),
+
                                         "CREDENTIAL_SHARED",
+
                                         "Credential Shared With You",
+
                                         notificationMessage
                         );
 
@@ -140,11 +184,53 @@ public class SharingService {
                 }
 
 
+                // =====================================================
+                // SEND EMAIL NOTIFICATION
+                // =====================================================
+
+                try {
+
+                        String emailResult =
+                                        emailService
+                                                        .sendCredentialSharingNotification(
+
+                                                                        sharedWith.getEmail(),
+
+                                                                        owner.getName(),
+
+                                                                        credential.getWebsite(),
+
+                                                                        request.getPermission()
+                                                                                        .toUpperCase()
+                                                        );
+
+
+                        System.out.println(
+                                        "SHARING EMAIL RESULT = "
+                                        + emailResult
+                        );
+
+
+                } catch (Exception e) {
+
+                        System.out.println(
+                                        "❌ SHARING EMAIL ERROR: "
+                                        + e.getMessage()
+                        );
+                }
+
+
+                // =====================================================
+                // SUCCESS
+                // =====================================================
+
                 return "Credential shared successfully";
         }
 
 
-        // ================= GET SHARED WITH ME =================
+        // =====================================================
+        // GET SHARED WITH ME
+        // =====================================================
 
         public List<SharedCredentialResponse> getSharedCredentials(
                         String email) {
@@ -157,9 +243,11 @@ public class SharingService {
                         return List.of();
                 }
 
+
                 List<SharedCredential> sharedCredentials =
                                 sharedCredentialRepository
                                                 .findBySharedWith(user);
+
 
                 return sharedCredentials.stream()
                                 .map(shared -> {
@@ -170,20 +258,27 @@ public class SharingService {
                                         SharedCredentialResponse response =
                                                         new SharedCredentialResponse();
 
-                                        response.setId(shared.getId());
+
+                                        response.setId(
+                                                        shared.getId());
+
 
                                         response.setWebsite(
                                                         credential.getWebsite());
 
+
                                         response.setUsername(
                                                         credential.getUsername());
+
 
                                         response.setPassword(
                                                         AESUtil.decrypt(
                                                                         credential.getPassword()));
 
+
                                         response.setPermission(
                                                         shared.getPermission());
+
 
                                         return response;
 
@@ -192,7 +287,9 @@ public class SharingService {
         }
 
 
-        // ================= GET ONE SHARED CREDENTIAL =================
+        // =====================================================
+        // GET ONE SHARED CREDENTIAL
+        // =====================================================
 
         public SharedCredentialResponse getSharedCredentialById(
                         Long id) {
@@ -206,34 +303,46 @@ public class SharingService {
                         return null;
                 }
 
+
                 Credential credential =
                                 shared.getCredential();
+
 
                 SharedCredentialResponse response =
                                 new SharedCredentialResponse();
 
-                response.setId(shared.getId());
+
+                response.setId(
+                                shared.getId());
+
 
                 response.setWebsite(
                                 credential.getWebsite());
 
+
                 response.setUsername(
                                 credential.getUsername());
+
 
                 response.setPassword(
                                 AESUtil.decrypt(
                                                 credential.getPassword()));
 
+
                 response.setPermission(
                                 shared.getPermission());
+
 
                 return response;
         }
 
 
-        // ================= REMOVE SHARING =================
+        // =====================================================
+        // REMOVE SHARING
+        // =====================================================
 
-        public String removeSharing(Long id) {
+        public String removeSharing(
+                        Long id) {
 
                 SharedCredential shared =
                                 sharedCredentialRepository
@@ -244,7 +353,10 @@ public class SharingService {
                         return "Shared credential not found";
                 }
 
-                sharedCredentialRepository.deleteById(id);
+
+                sharedCredentialRepository.deleteById(
+                                id);
+
 
                 return "Sharing removed successfully";
         }
