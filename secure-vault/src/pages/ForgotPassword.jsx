@@ -11,6 +11,8 @@ function ForgotPassword() {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
+  const [showPassword, setShowPassword] = useState(false);
+
   const [otpSent, setOtpSent] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -45,7 +47,6 @@ function ForgotPassword() {
       );
 
       setOtpSent(true);
-
     } catch (error) {
       console.error("Send OTP Error:", error);
 
@@ -63,21 +64,17 @@ function ForgotPassword() {
             "Unable to send OTP. Please check the email address and try again."
           );
         }
-
       } else if (error.request) {
         setError(
           "Unable to connect to server. Please make sure the backend is running."
         );
-
       } else {
         setError("Something went wrong. Please try again.");
       }
-
     } finally {
       setLoading(false);
     }
   };
-
 
   // ================================
   // RESET PASSWORD
@@ -123,7 +120,6 @@ function ForgotPassword() {
       setTimeout(() => {
         navigate("/login");
       }, 1500);
-
     } catch (error) {
       console.error("Reset Password Error:", error);
 
@@ -139,23 +135,15 @@ function ForgotPassword() {
         } else {
           setError("Invalid or expired OTP.");
         }
-
       } else if (error.request) {
-        setError(
-          "Unable to connect to server. Please try again."
-        );
-
+        setError("Unable to connect to server. Please try again.");
       } else {
-        setError(
-          "Something went wrong. Please try again."
-        );
+        setError("Something went wrong. Please try again.");
       }
-
     } finally {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="forgot-container">
@@ -168,7 +156,6 @@ function ForgotPassword() {
           Reset your password using Email OTP
         </p>
 
-
         {/* ERROR MESSAGE */}
 
         {error && (
@@ -177,7 +164,6 @@ function ForgotPassword() {
           </div>
         )}
 
-
         {/* SUCCESS MESSAGE */}
 
         {success && (
@@ -185,7 +171,6 @@ function ForgotPassword() {
             ✅ {success}
           </div>
         )}
-
 
         {/* EMAIL */}
 
@@ -200,7 +185,6 @@ function ForgotPassword() {
           disabled={loading}
         />
 
-
         {/* SEND OTP */}
 
         <button
@@ -210,11 +194,12 @@ function ForgotPassword() {
           {loading ? "Please wait..." : "Send OTP"}
         </button>
 
-
         {/* OTP + NEW PASSWORD */}
 
         {otpSent && (
           <div className="reset-section">
+
+            {/* OTP */}
 
             <input
               type="text"
@@ -227,18 +212,49 @@ function ForgotPassword() {
               disabled={loading}
             />
 
+            {/* NEW PASSWORD */}
 
-            <input
-              type="password"
-              placeholder="Enter New Password"
-              value={newPassword}
-              onChange={(e) => {
-                setNewPassword(e.target.value);
-                setError("");
-              }}
-              disabled={loading}
-            />
+            <div className="password-container">
 
+            <div className="password-container">
+
+  <input
+    type={showPassword ? "text" : "password"}
+    placeholder="Enter New Password"
+    value={newPassword}
+    onChange={(e) => {
+      setNewPassword(e.target.value);
+      setError("");
+    }}
+    disabled={loading}
+  />
+
+  <button
+    type="button"
+    className="eye-btn"
+    onClick={() => setShowPassword(!showPassword)}
+    disabled={loading}
+  >
+    {showPassword ? "🙈" : "👁️"}
+  </button>
+
+</div>  
+
+              <button
+                type="button"
+                className="eye-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                disabled={loading}
+                aria-label={
+                  showPassword ? "Hide password" : "Show password"
+                }
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </button>
+
+            </div>
+
+            {/* RESET PASSWORD */}
 
             <button
               onClick={resetPassword}
@@ -251,7 +267,6 @@ function ForgotPassword() {
 
           </div>
         )}
-
 
         {/* BACK TO LOGIN */}
 
@@ -270,4 +285,3 @@ function ForgotPassword() {
 }
 
 export default ForgotPassword;
-
