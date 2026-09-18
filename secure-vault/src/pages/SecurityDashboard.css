@@ -20,12 +20,12 @@ body,
 html,
 body {
     min-height: 100vh;
-    background: lightskyblue;
+    background: radial-gradient(circle at 10% 15%, #b9e7ff 0%, transparent 32%), radial-gradient(circle at 90% 20%, #d9c7ff 0%, transparent 30%), radial-gradient(circle at 80% 90%, #bcecff 0%, transparent 32%), linear-gradient(135deg, #e9f7ff 0%, #cfeaff 45%, #e8ddff 100%) !important;
 }
 
 #root {
     min-height: 100vh;
-    background: lightskyblue;
+    background: radial-gradient(circle at 10% 15%, #b9e7ff 0%, transparent 32%), radial-gradient(circle at 90% 20%, #d9c7ff 0%, transparent 30%), radial-gradient(circle at 80% 90%, #bcecff 0%, transparent 32%), linear-gradient(135deg, #e9f7ff 0%, #cfeaff 45%, #e8ddff 100%) !important;
 }
 
 
@@ -37,7 +37,7 @@ body {
     width: 100%;
     min-height: 100vh;
 
-    background: lightskyblue;
+    background: radial-gradient(circle at 10% 15%, #b9e7ff 0%, transparent 32%), radial-gradient(circle at 90% 20%, #d9c7ff 0%, transparent 30%), radial-gradient(circle at 80% 90%, #bcecff 0%, transparent 32%), linear-gradient(135deg, #e9f7ff 0%, #cfeaff 45%, #e8ddff 100%) !important;
 
     padding: 30px 40px;
 
@@ -506,7 +506,7 @@ body {
 
         min-height: 100vh;
 
-        background: lightskyblue;
+        background: radial-gradient(circle at 10% 15%, #b9e7ff 0%, transparent 32%), radial-gradient(circle at 90% 20%, #d9c7ff 0%, transparent 30%), radial-gradient(circle at 80% 90%, #bcecff 0%, transparent 32%), linear-gradient(135deg, #e9f7ff 0%, #cfeaff 45%, #e8ddff 100%) !important;
     }
 
     .security-cards {
@@ -542,7 +542,7 @@ body {
 
         padding: 12px;
 
-        background: lightskyblue;
+        background: radial-gradient(circle at 10% 15%, #b9e7ff 0%, transparent 32%), radial-gradient(circle at 90% 20%, #d9c7ff 0%, transparent 30%), radial-gradient(circle at 80% 90%, #bcecff 0%, transparent 32%), linear-gradient(135deg, #e9f7ff 0%, #cfeaff 45%, #e8ddff 100%) !important;
     }
 
 
@@ -652,7 +652,7 @@ body {
     .security-dashboard {
         padding: 10px;
 
-        background: lightskyblue;
+        background: radial-gradient(circle at 10% 15%, #b9e7ff 0%, transparent 32%), radial-gradient(circle at 90% 20%, #d9c7ff 0%, transparent 30%), radial-gradient(circle at 80% 90%, #bcecff 0%, transparent 32%), linear-gradient(135deg, #e9f7ff 0%, #cfeaff 45%, #e8ddff 100%) !important;
     }
 
     .security-header {
@@ -715,7 +715,7 @@ body {
     .security-dashboard {
         padding: 8px;
 
-        background: lightskyblue;
+        background: radial-gradient(circle at 10% 15%, #b9e7ff 0%, transparent 32%), radial-gradient(circle at 90% 20%, #d9c7ff 0%, transparent 30%), radial-gradient(circle at 80% 90%, #bcecff 0%, transparent 32%), linear-gradient(135deg, #e9f7ff 0%, #cfeaff 45%, #e8ddff 100%) !important;
     }
 
     .security-header {
@@ -739,3 +739,12 @@ body {
     }
 }
 
+.security-dashboard {
+    background:
+        radial-gradient(circle at 10% 15%, #b9e7ff 0%, transparent 32%),
+        radial-gradient(circle at 90% 20%, #d9c7ff 0%, transparent 30%),
+        radial-gradient(circle at 80% 90%, #bcecff 0%, transparent 32%),
+        linear-gradient(135deg, #e9f7ff 0%, #cfeaff 45%, #e8ddff 100%) !important;
+
+    background-attachment: fixed !important;
+}

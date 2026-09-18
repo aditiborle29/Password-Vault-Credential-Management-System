@@ -1,1 +1,327 @@
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; } body { background: linear-gradient(135deg, #2563eb, #60a5fa); } .register-container { height: 100vh; display: flex; justify-content: center; align-items: center; } .register-card { width: 420px; background: white; padding: 35px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0, 0, 0, .2); text-align: center; } .register-card h1 { color: #2563eb; margin-bottom: 10px; background-color: white; } .register-card form{ background-color: white; } .subtitle { color: #666; margin-bottom: 25px; background-color: white; } .register-card input { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; transition: .3s; background-color: white; } .register-card input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 8px rgba(37, 99, 235, .3); } .register-card button { width: 100%; padding: 14px; margin-top: 15px; border: none; border-radius: 8px; background: #2563eb; color: white; font-size: 16px; cursor: pointer; transition: .3s; } .register-card button:hover { background: #1d4ed8; transform: translateY(-2px); } .login-text { margin-top: 20px; color: #555; background-color: white; } .login-text a { color: #2563eb; text-decoration: none; font-weight: bold; background-color: white; } .login-text a:hover { text-decoration: underline; } .password-container { position: relative; width: 100%; } .password-container input { width: 100%; box-sizing: border-box; padding-right: 50px; } .show-password-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: transparent; cursor: pointer; font-size: 18px; padding: 5px; width: auto; margin: 0; } .show-password-btn:hover { background: transparent; } .show-password-btn:disabled { cursor: not-allowed; } /* ========================= PASSWORD SHOW / HIDE ========================= */ .password-container { position: relative; width: 100%; } .password-container input { width: 100%; padding-right: 50px !important; } .password-container .eye-btn { position: absolute !important; right: 10px !important; top: 50% !important; transform: translateY(-50%) !important; width: 35px !important; height: 35px !important; padding: 0 !important; margin: 0 !important; border: none !important; background: transparent !important; color: #333 !important; font-size: 20px !important; cursor: pointer !important; display: flex !important; align-items: center !important; justify-content: center !important; box-shadow: none !important; z-index: 10; } .password-container .eye-btn:hover { background: transparent !important; color: #2563eb !important; transform: translateY(-50%) scale(1.08) !important; } .password-container .eye-btn:disabled { cursor: not-allowed !important; opacity: 0.6; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+html,
+body,
+#root {
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background:
+        radial-gradient(circle at 10% 15%, #b9e7ff 0%, transparent 32%),
+        radial-gradient(circle at 90% 20%, #d9c7ff 0%, transparent 30%),
+        radial-gradient(circle at 80% 90%, #bcecff 0%, transparent 32%),
+        linear-gradient(135deg, #e9f7ff 0%, #cfeaff 45%, #e8ddff 100%) !important;
+
+    background-attachment: fixed !important;
+}
+
+/* IMPORTANT: don't let React root cover the background */
+#root {
+    background: transparent !important;
+}
+
+/* REGISTER PAGE */
+.register-container {
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+
+    background:
+        radial-gradient(circle at 10% 15%, #b9e7ff 0%, transparent 32%),
+        radial-gradient(circle at 90% 20%, #d9c7ff 0%, transparent 30%),
+        radial-gradient(circle at 80% 90%, #bcecff 0%, transparent 32%),
+        linear-gradient(135deg, #e9f7ff 0%, #cfeaff 45%, #e8ddff 100%) !important;
+
+    background-attachment: fixed !important;
+}
+
+/* =========================
+   REGISTER CONTAINER
+========================= */
+
+.register-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: transparent;
+}
+
+/* =========================
+   REGISTER CARD
+========================= */
+
+.register-card {
+    width: 420px;
+    max-width: 100%;
+    background: white;
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.register-card h1 {
+    color: #2563eb;
+    margin-bottom: 10px;
+    background-color: white;
+}
+
+.register-card form {
+    background-color: white;
+}
+
+.subtitle {
+    color: #666;
+    margin-bottom: 25px;
+    background-color: white;
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+.register-card input {
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: 0.3s;
+    background-color: white;
+}
+
+.register-card input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 8px rgba(37, 99, 235, 0.3);
+}
+
+/* =========================
+   REGISTER BUTTON
+========================= */
+
+.register-card button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.register-card button:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+/* =========================
+   LOGIN TEXT
+========================= */
+
+.login-text {
+    margin-top: 20px;
+    color: #555;
+    background-color: white;
+}
+
+.login-text a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: bold;
+    background-color: white;
+}
+
+.login-text a:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   PASSWORD CONTAINER
+========================= */
+
+.password-container {
+    position: relative;
+    width: 100%;
+}
+
+.password-container input {
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 50px !important;
+}
+
+/* =========================
+   PASSWORD SHOW / HIDE
+========================= */
+
+.show-password-btn {
+    position: absolute !important;
+    right: 10px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+
+    width: 35px !important;
+    height: 35px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border: none !important;
+    background: transparent !important;
+    color: #333 !important;
+
+    font-size: 18px !important;
+    cursor: pointer !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    box-shadow: none !important;
+    z-index: 10;
+}
+
+.show-password-btn:hover {
+    background: transparent !important;
+    color: #2563eb !important;
+    transform: translateY(-50%) scale(1.08) !important;
+}
+
+.show-password-btn:disabled {
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
+/* Support for eye-btn class if used in JSX */
+
+.password-container .eye-btn {
+    position: absolute !important;
+    right: 10px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+
+    width: 35px !important;
+    height: 35px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border: none !important;
+    background: transparent !important;
+    color: #333 !important;
+
+    font-size: 20px !important;
+    cursor: pointer !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    box-shadow: none !important;
+    z-index: 10;
+}
+
+.password-container .eye-btn:hover {
+    background: transparent !important;
+    color: #2563eb !important;
+    transform: translateY(-50%) scale(1.08) !important;
+}
+
+.password-container .eye-btn:disabled {
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 768px) {
+    .register-card {
+        width: 400px;
+        padding: 30px;
+    }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+    .register-container {
+        padding: 15px;
+    }
+
+    .register-card {
+        width: 100%;
+        max-width: 400px;
+        padding: 28px 22px;
+    }
+
+    .register-card h1 {
+        font-size: 26px;
+    }
+
+    .register-card input {
+        padding: 13px;
+        font-size: 14px;
+    }
+
+    .register-card button {
+        padding: 13px;
+        font-size: 15px;
+    }
+}
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media (max-width: 400px) {
+    .register-container {
+        padding: 10px;
+    }
+
+    .register-card {
+        padding: 25px 18px;
+        border-radius: 12px;
+    }
+
+    .register-card h1 {
+        font-size: 23px;
+    }
+
+    .subtitle {
+        font-size: 14px;
+    }
+
+    .register-card input {
+        padding: 12px;
+    }
+
+    .register-card button {
+        padding: 12px;
+    }
+}

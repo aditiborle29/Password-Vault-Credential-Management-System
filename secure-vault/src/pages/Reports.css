@@ -23,7 +23,11 @@ body {
     width: 100%;
     min-height: 100vh;
     padding: 35px 45px;
-    background: lightskyblue;
+    background:
+        radial-gradient(circle at 10% 15%, #b9e7ff 0%, transparent 32%),
+        radial-gradient(circle at 90% 20%, #d9c7ff 0%, transparent 30%),
+        radial-gradient(circle at 80% 90%, #bcecff 0%, transparent 32%),
+        linear-gradient(135deg, #e9f7ff 0%, #cfeaff 45%, #e8ddff 100%);
     color: #212529;
 }
 
@@ -675,7 +679,11 @@ body {
 
     padding: 30px;
 
-    background: lightskyblue;
+    background:
+        radial-gradient(circle at 10% 15%, #b9e7ff 0%, transparent 32%),
+        radial-gradient(circle at 90% 20%, #d9c7ff 0%, transparent 30%),
+        radial-gradient(circle at 80% 90%, #bcecff 0%, transparent 32%),
+        linear-gradient(135deg, #e9f7ff 0%, #cfeaff 45%, #e8ddff 100%);
 
     font-family: Arial, sans-serif;
 }
@@ -829,7 +837,11 @@ body {
 
         padding: 20px 15px;
 
-        background: lightskyblue;
+        background:
+        radial-gradient(circle at 10% 15%, #b9e7ff 0%, transparent 32%),
+        radial-gradient(circle at 90% 20%, #d9c7ff 0%, transparent 30%),
+        radial-gradient(circle at 80% 90%, #bcecff 0%, transparent 32%),
+        linear-gradient(135deg, #e9f7ff 0%, #cfeaff 45%, #e8ddff 100%);
     }
 
     .reports-header {

@@ -20,12 +20,20 @@ body,
 html,
 body {
     min-height: 100vh;
-    background: lightskyblue;
+    margin: 0;
+}
+
+body {
+    background:
+        radial-gradient(circle at 10% 15%, #b9e7ff 0%, transparent 32%),
+        radial-gradient(circle at 90% 20%, #d9c7ff 0%, transparent 30%),
+        radial-gradient(circle at 80% 90%, #bcecff 0%, transparent 32%),
+        linear-gradient(135deg, #e9f7ff 0%, #cfeaff 45%, #e8ddff 100%);
 }
 
 #root {
     min-height: 100vh;
-    background: lightskyblue;
+    background: transparent;
 }
 
 
@@ -37,7 +45,72 @@ body {
     width: 100%;
     min-height: 100vh;
     padding: 30px;
-    background: lightskyblue !important;
+
+    background:
+        radial-gradient(circle at 10% 15%, #b9e7ff 0%, transparent 32%),
+        radial-gradient(circle at 90% 20%, #d9c7ff 0%, transparent 30%),
+        radial-gradient(circle at 80% 90%, #bcecff 0%, transparent 32%),
+        linear-gradient(135deg, #e9f7ff 0%, #cfeaff 45%, #e8ddff 100%);
+
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* Soft background glow */
+
+.dashboard-container::before {
+    content: "";
+
+    position: absolute;
+
+    width: 350px;
+    height: 350px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.35);
+
+    filter: blur(10px);
+
+    top: -150px;
+    left: -100px;
+
+    pointer-events: none;
+}
+
+
+/* Bottom glow */
+
+.dashboard-container::after {
+    content: "";
+
+    position: absolute;
+
+    width: 350px;
+    height: 350px;
+
+    border-radius: 50%;
+
+    background: rgba(196, 181, 253, 0.25);
+
+    filter: blur(15px);
+
+    bottom: -150px;
+    right: -100px;
+
+    pointer-events: none;
+}
+
+
+/* Keep dashboard content above background effects */
+
+.navbar,
+.welcome,
+.card-container,
+.back-btn {
+    position: relative;
+    z-index: 2;
 }
 
 
@@ -673,9 +746,9 @@ body {
 
     padding: 8px 15px;
 
-    background-color: #000000;
-
-    color: white;
+    background: black !important;
+    background-color: black !important;
+    color: white !important;
 
     border: none;
 
